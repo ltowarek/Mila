@@ -2,6 +2,8 @@ language: cpp
 
 compiler: gcc
 
+install: cmake
+
 before_script:
     - mkdir build
     - cd build
