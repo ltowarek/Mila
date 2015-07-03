@@ -2,13 +2,6 @@ language: cpp
 
 compiler: gcc
 
-sudo: required
-
-install:
-    - wget http://www.cmake.org/files/v3.2/cmake-3.2.2-Linux-i386.tar.gz
-    - tar -xzf cmake-3.2.2-Linux-i386.tar.gz
-    - sudo cp -fR cmake-3.2.2-Linux-i386/* /usr
-
 before_script:
     - mkdir build
     - cd build
