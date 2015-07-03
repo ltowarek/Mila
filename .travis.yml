@@ -2,7 +2,9 @@ language: cpp
 
 compiler: gcc
 
-install: cmake
+sudo: required
+
+install: sudo apt-get install cmake
 
 before_script:
     - mkdir build
