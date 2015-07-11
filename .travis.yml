@@ -17,10 +17,4 @@ script:
     - bii find --update
     - bii cpp:configure -DCMAKE_CXX_COMPILER=$(which $CXX)
     - bii cpp:build
-deploy:
-    provider: biicode
-    user: ltowarek
-    password:
-        secure: jgfnN4eqgMxJW9JNNqLux2Ad55U8ybPEXcVsc3wnpyzolCPi42r6204dDILpuliN8qYEHyN3C9pKq94kK6Ew2oSuPCRZj83LlsqRK3X6mns5w4ObY42IOaE0wafhDkavPCd9WV+NrOBHP35niZE/S83rf0Dx/LR7aoVn8NKQt8A=
-    on:
-        repo: ltowarek/Mila
+
