@@ -18,7 +18,6 @@ script:
     - bii cpp:configure -DCMAKE_CXX_COMPILER=$(which $CXX)
     - bii cpp:build
 deploy:
-    - bii init -L
     provider: biicode
     user: ltowarek
     password:
@@ -26,3 +25,4 @@ deploy:
     on:
         repo: ltowarek/Mila
         all_branches: true
+    skip_cleanup: true
