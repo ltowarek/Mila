@@ -24,4 +24,5 @@ deploy:
         secure: HzjuUX2VmgUlLROCARUcH0u4r5TxQFuVdVV/Qto9zOHNlrXjH5MNLZ5WJLj6BriO5eHehz0O+cNp2xzFY9vn6JivJ+HjQlO4ctSrKvpqNu+uC85T9g3jvogEOuoWN6/mz9bh2bBIwxICnRb1CNxlvJb8JcjZz7UXwKZ02yCuBLA/TGM3IpRPtydmQwL34IseWJwMAsY6mLZGgVsLjij++JXVm/Nf2YthtqizAyGZPQivTvj5280DnC6YXRTBk8jXNTYDb0Gx7eTiPvHfLxRCn+9RSY+9YoyN9SJ39rCs7saFeJxN+N6rzeUbBhoQvgwXYPboojiMc9UP1qU6MGo+rqKEpNFyz3FRDD0NqksoDNDlonRervUD9BnDikUDztrO15Yi8uCYrkdCmR4DdQfPqUh/9exau4YnoTWIrX/K+oMdoJlhR/hFC9alIw3KiezWmSbcCW7o0IZImnVsXSW3q1RKl2sPUZsUuhmTHE8CKrnZSpDZq3v/hPwBmZ9FrEogisMRa2ZuaC7jJXmwXDeGSKX+vrgvREJXbiEnyE3Jw1URda3dSWyZdugNYBbwZqm+BeLMM0sBsCzEX0wgD+s2QWAX7QG4Ms3QmnpEPmPqzFy7T8IYdMJzprmYeUEMufE3MvHhQwiX3iWWtDs9apC9JZlvEgDW6MYrT3W1BbRMiy0=
     on:
         repo: ltowarek/Mila
+        all_branches: true
     skip_cleanup: true
