@@ -1,23 +1,24 @@
-language: cpp
-
+language: c++
 compiler: gcc
-
+env:
+    global:
+        - GCC_VERSION="4.9"
 before_install:
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update -qq
-
+    - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION}; fi
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
 install:
-    - sudo apt-get install -qq g++-4.8
-    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
-    - wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
-    - tar -xvzf cmake-3.2.3-Linux-x86_64.tar.gz
-    - sudo cp -rf cmake-3.2.3-Linux-x86_64/* /usr
-    - rm -rf cmake-3.2.3-Linux-x86_64
-    - rm cmake-3.2.3-Linux-x86_64.tar.gz
-
-before_script:
-    - mkdir build
-    - cd build
-    - cmake ..
-
-script: make
+    - wget http://apt.biicode.com/install.sh && chmod +x install.sh && ./install.sh
+    - bii setup:cpp
+script:
+    - bii find --update
+    - bii cpp:configure -DCMAKE_CXX_COMPILER=$(which $CXX)
+    - bii cpp:build
+deploy:
+    provider: biicode
+    user: ltowarek
+    password:
+        secure: jgfnN4eqgMxJW9JNNqLux2Ad55U8ybPEXcVsc3wnpyzolCPi42r6204dDILpuliN8qYEHyN3C9pKq94kK6Ew2oSuPCRZj83LlsqRK3X6mns5w4ObY42IOaE0wafhDkavPCd9WV+NrOBHP35niZE/S83rf0Dx/LR7aoVn8NKQt8A=
+    on:
+        repo: ltowarek/Mila
