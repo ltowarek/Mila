@@ -2,6 +2,7 @@
 #include <math.h>
 #include <vector>
 #include <assert.h>
+#include <string>
 
 const std::vector<double> kPowersOfTwo = {1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 2048.0,
                                           4096.0, 8192.0, 16384.0, 32768.0, 65536.0, 131072.0, 262144.0, 524288.0,
@@ -59,7 +60,7 @@ double Series(const double j, const double d) {
         sum -= static_cast<int>(sum);
     }
 
-    for (int k = d; k <= d + 100; ++k) {
+    for (double k = d; k <= d + 100; ++k) {
         double ak = 8.0 * k + j;
         double t = pow(16.0, d - k) / ak;
 
@@ -84,7 +85,30 @@ double BBP(const double position) {
     return result;
 }
 
+void DoubleToHex(const double input, const int precision, std::string &output) {
+    std::string hex = "0123456789ABCDEF";
+
+    double tmp = fabs(input);
+
+    for (int i = 0; i < precision; ++i) {
+        tmp = 16.0 * (tmp - floor(tmp));
+        output[i] = hex[(int)tmp];
+    }
+
+    output[precision] = 0;
+}
+
 int main() {
-    printf("%f\n", BBP(1000000));
+    const long number_of_digits = 1000;
+    std::vector<double> digits(number_of_digits, 0.0);
+    std::string output = "";
+    for (int i = 0; i < number_of_digits; ++i) {
+        digits[i] = BBP(i);
+        std::string hex = "";
+        DoubleToHex(digits[i], 10, hex);
+        output += hex[0];
+    }
+    output[number_of_digits] = 0;
+    printf("%s\n", output.c_str());
     return 0;
 }
