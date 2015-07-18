@@ -5,13 +5,13 @@
 #include <CL/cl.h>
 #include <fstream>
 
-void DoubleToHex(const double input, const int precision, std::string &output) {
+void DoubleToHex(const float input, const int precision, std::string &output) {
     const std::string hex = "0123456789ABCDEF";
 
-    double tmp = fabs(input);
+    float tmp = fabsf(input);
 
     for (int i = 0; i < precision; ++i) {
-        tmp = 16.0 * (tmp - floor(tmp));
+        tmp = 16.0f * (tmp - floorf(tmp));
         output[i] = hex[(int)tmp];
     }
 

@@ -4,11 +4,11 @@
 #include <assert.h>
 #include <string>
 
-const std::vector<double> kPowersOfTwo = {1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 2048.0,
-                                          4096.0, 8192.0, 16384.0, 32768.0, 65536.0, 131072.0, 262144.0, 524288.0,
-                                          1048576.0, 2097152.0, 4194304.0, 8388608.0, 16777216.0, 33554432.0};
+const std::vector<float> kPowersOfTwo = {1.0f, 2.0f, 4.0f, 8.0f, 16.0f, 32.0f, 64.0f, 128.0f, 256.0f, 512.0f, 1024.0f, 2048.0f,
+                                         4096.0f, 8192.0f, 16384.0f, 32768.0f, 65536.0f, 131072.0f, 262144.0f, 524288.0f,
+                                         1048576.0f, 2097152.0f, 4194304.0f, 8388608.0f, 16777216.0f, 33554432.0f};
 
-double LargestPowerOfTwoLessOrEqual(const double kN) {
+float LargestPowerOfTwoLessOrEqual(const float kN) {
     assert (kN <= kPowersOfTwo.back());
 
     int i = 0;
@@ -20,15 +20,15 @@ double LargestPowerOfTwoLessOrEqual(const double kN) {
     return i;
 }
 
-double BinaryModularExponentiation(const double kB, const double kN, const double kK) {
-    if (kK == 1.0) {
-        return 0.0;
+float BinaryModularExponentiation(const float kB, const float kN, const float kK) {
+    if (kK == 1.0f) {
+        return 0.0f;
     }
 
-    double n = kN;
-    double r = 1.0;
-    double p = LargestPowerOfTwoLessOrEqual(kN);
-    double t = pow(2.0, p - 1.0);
+    float n = kN;
+    float r = 1.0f;
+    float p = LargestPowerOfTwoLessOrEqual(kN);
+    float t = powf(2.0f, p - 1.0f);
 
     for (int i = 0; i < static_cast<int>(p); ++i) {
         if (n >= t) {
@@ -37,9 +37,9 @@ double BinaryModularExponentiation(const double kB, const double kN, const doubl
             n -= t;
         }
 
-        t *= 0.5;
+        t *= 0.5f;
 
-        if (t >= 1.0) {
+        if (t >= 1.0f) {
             r *= r;
             r -= static_cast<int>(r / kK) * kK;
         }
@@ -49,20 +49,20 @@ double BinaryModularExponentiation(const double kB, const double kN, const doubl
     return r;
 }
 
-double Series(const double j, const double d) {
-    double sum = 0.0;
+float Series(const float j, const float d) {
+    float sum = 0.0f;
 
     for (int k = 0; k < d; ++k) {
-        double ak = 8.0 * k + j;
-        double p = d - k;
-        double t = BinaryModularExponentiation(16.0, p, ak);
+        float ak = 8.0f * k + j;
+        float p = d - k;
+        float t = BinaryModularExponentiation(16.0, p, ak);
         sum += t / ak;
         sum -= static_cast<int>(sum);
     }
 
-    for (double k = d; k <= d + 100; ++k) {
-        double ak = 8.0 * k + j;
-        double t = pow(16.0, d - k) / ak;
+    for (float k = d; k <= d + 100; ++k) {
+        float ak = 8.0f * k + j;
+        float t = powf(16.0f, d - k) / ak;
 
         if (t < 1e-17) {
             break;
@@ -75,23 +75,23 @@ double Series(const double j, const double d) {
     return sum;
 }
 
-double BBP(const double position) {
-    double s1 = Series(1, position);
-    double s2 = Series(4, position);
-    double s3 = Series(5, position);
-    double s4 = Series(6, position);
-    double result = 4.0 * s1 - 2.0 * s2 - s3 - s4;
-    result = result - static_cast<int>(result) + 1.0;
+float BBP(const float position) {
+    float s1 = Series(1, position);
+    float s2 = Series(4, position);
+    float s3 = Series(5, position);
+    float s4 = Series(6, position);
+    float result = 4.0f * s1 - 2.0f * s2 - s3 - s4;
+    result = result - static_cast<int>(result) + 1.0f;
     return result;
 }
 
-void DoubleToHex(const double input, const int precision, std::string &output) {
+void DoubleToHex(const float input, const int precision, std::string &output) {
     std::string hex = "0123456789ABCDEF";
 
-    double tmp = fabs(input);
+    float tmp = fabsf(input);
 
     for (int i = 0; i < precision; ++i) {
-        tmp = 16.0 * (tmp - floor(tmp));
+        tmp = 16.0f * (tmp - floorf(tmp));
         output[i] = hex[(int)tmp];
     }
 
@@ -100,7 +100,7 @@ void DoubleToHex(const double input, const int precision, std::string &output) {
 
 int main() {
     const long number_of_digits = 1000;
-    std::vector<double> digits(number_of_digits, 0.0);
+    std::vector<float> digits(number_of_digits, 0.0);
     std::string output = "";
     for (int i = 0; i < number_of_digits; ++i) {
         digits[i] = BBP(i);
