@@ -12,7 +12,7 @@ install:
     - wget http://apt.biicode.com/install.sh && chmod +x install.sh && ./install.sh
     - bii --version
     - bii setup:cpp
-    - sudo apt-get install fglrx opencl-headers
+    - sudo apt-get install fglrx opencl-headers xorg-dev libglu1-mesa-dev
 script:
     - bii init -L
     - bii find --update
