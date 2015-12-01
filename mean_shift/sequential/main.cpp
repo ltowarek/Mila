@@ -8,32 +8,35 @@
 
 const float kPI = 3.14159265358979323846f;
 
-struct Point { uint8_t r; uint8_t g; uint8_t b; uint8_t a; };
+struct Point { float r; float g; float b; float a; };
 
-float Distance(const std::vector<float> &kPoint1, const std::vector<float> &kPoint2) {
-    return sqrtf(powf(kPoint1[0] - kPoint2[0], 2.0f) + powf(kPoint1[1] - kPoint2[1], 2.0f));
+float Distance(const Point &kPoint1, const Point &kPoint2) {
+    return sqrtf(powf(kPoint1.r - kPoint2.r, 2.0f) + powf(kPoint1.g - kPoint2.g, 2.0f) + powf(kPoint1.b - kPoint2.b, 2.0f));
 }
 
 float GaussianKernel(const float kDistance, const float kBandwidth) {
     return (1.0f / (sqrtf(2.0f * kPI) * kBandwidth)) * expf(-0.5f * powf(kDistance / kBandwidth, 2.0f));
 }
 
-void ShiftPoint(const std::vector<float> &kPoint, const std::vector<std::vector<float>> kPoints, const float kBandwidth, std::vector<float> &shift) {
-    shift[0] = 0.0f;
-    shift[1] = 0.0f;
+void ShiftPoint(const Point &kPoint, const std::vector<Point> kPoints, const float kBandwidth, Point &shift) {
+    shift.r = 0.0f;
+    shift.g = 0.0f;
+    shift.b = 0.0f;
     float scale = 0.0f;
     for (int i = 0; i < kPoints.size(); ++i) {
         float distance = Distance(kPoint, kPoints[i]);
         float weight = GaussianKernel(distance, kBandwidth);
-        shift[0] += weight * kPoints[i][0];
-        shift[1] += weight * kPoints[i][1];
+        shift.r += weight * kPoints[i].r;
+        shift.g += weight * kPoints[i].g;
+        shift.b += weight * kPoints[i].b;
         scale += weight;
     }
-    shift[0] /= scale;
-    shift[1] /= scale;
+    shift.r /= scale;
+    shift.g /= scale;
+    shift.b /= scale;
 }
 
-void MeanShift(const float kBandwidth, std::vector<std::vector<float>> &points) {
+void MeanShift(const float kBandwidth, std::vector<Point> &points) {
     const float kEpsilon = 1e-2;
     float difference_distance = 0.0f;
 
@@ -46,7 +49,7 @@ void MeanShift(const float kBandwidth, std::vector<std::vector<float>> &points) 
                 continue;
             }
 
-            std::vector<float> new_point = points[i];
+            Point new_point = points[i];
             ShiftPoint(points[i], points, kBandwidth, new_point);
             float distance = Distance(points[i], new_point);
 
@@ -133,10 +136,10 @@ void ReadPNGFile(const char *file_name, int &width, int &height, std::vector<Poi
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < row_bytes; x+=4) {
             Point p = {
-                    row_pointers[y][x],
-                    row_pointers[y][x + 1],
-                    row_pointers[y][x + 2],
-                    row_pointers[y][x + 3]
+                    static_cast<float>(row_pointers[y][x]),
+                    static_cast<float>(row_pointers[y][x + 1]),
+                    static_cast<float>(row_pointers[y][x + 2]),
+                    static_cast<float>(row_pointers[y][x + 3])
             };
             pixels[i] = p;
             ++i;
@@ -179,10 +182,10 @@ void WritePNGFile(const char *file_name, const int &width, const int &height, st
     for (int y = 0; y < height; ++y) {
         row_pointers[y] = (png_byte*)malloc(sizeof(png_byte) * row_bytes);
         for (int x = 0; x < row_bytes; x+=4) {
-            row_pointers[y][x] = pixels[i].r;
-            row_pointers[y][x + 1] = pixels[i].g;
-            row_pointers[y][x + 2] = pixels[i].b;
-            row_pointers[y][x + 3] = pixels[i].a;
+            row_pointers[y][x] = static_cast<uint8_t>(pixels[i].r);
+            row_pointers[y][x + 1] = static_cast<uint8_t>(pixels[i].g);
+            row_pointers[y][x + 2] = static_cast<uint8_t>(pixels[i].b);
+            row_pointers[y][x + 3] = static_cast<uint8_t>(pixels[i].a);
             ++i;
         }
     }
@@ -199,26 +202,25 @@ void WritePNGFile(const char *file_name, const int &width, const int &height, st
 }
 
 int main() {
-    const float kBandwidth = 2.0f;
-    char *input_file_name = "input_480_270.png";
+    const float kBandwidth = 25.0f;
+    char *input_file_name = "input.png";
     char *output_file_name = "output.png";
     int width = 0;
     int height = 0;
     std::vector<Point> points;
 
     ReadPNGFile(input_file_name, width, height, points);
-
 //    printf("Original points\n");
 //    for (int i = 0; i < points.size(); ++i) {
-//        printf("[%d] = %d, %d, %d, %d\n", i, points[i].r, points[i].g, points[i].b, points[i].a);
+//        printf("[%d] = %f, %f, %f\n", i, points[i].r, points[i].g, points[i].b);
 //    }
 
-//    MeanShift(kBandwidth, bytes);
-    WritePNGFile(output_file_name, width, height, points);
+    MeanShift(kBandwidth, points);
 
+    WritePNGFile(output_file_name, width, height, points);
 //    printf("Shifted points\n");
 //    for (int i = 0; i < points.size(); ++i) {
-//        printf("[%d] = %d, %d, %d, %d\n", i, points[i].r, points[i].g, points[i].b, points[i].a);
+//        printf("[%d] = %f, %f, %f\n", i, points[i].r, points[i].g, points[i].b);
 //    }
 
     return 0;
