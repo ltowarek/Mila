@@ -1,10 +1,11 @@
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
+#include <cstdlib>
+#include <string>
 #include <vector>
 
 #include <glenn/png/png.h>
-#include <stdlib.h>
-#include <stdint.h>
 
 const float kPI = 3.14159265358979323846f;
 
@@ -36,9 +37,9 @@ void ShiftPoint(const Point &kPoint, const std::vector<Point> kPoints, const flo
     shift.b /= scale;
 }
 
-void MeanShift(const float kBandwidth, std::vector<Point> &points) {
-    const float kEpsilon = 1e-2;
+void MeanShift(const float kBandwidth, const float kEpsilon, const int kMaxIterations, std::vector<Point> &points) {
     float difference_distance = 0.0f;
+    int iteration = 0;
 
     std::vector<bool> still_shifting(points.size(), true);
 
@@ -63,7 +64,8 @@ void MeanShift(const float kBandwidth, std::vector<Point> &points) {
 
             points[i] = new_point;
         }
-    } while (difference_distance > kEpsilon);
+        ++iteration;
+    } while ((difference_distance > kEpsilon) && (iteration < kMaxIterations));
 }
 
 void ReadPNGFile(const char *file_name, int &width, int &height, std::vector<Point> &pixels) {
@@ -131,7 +133,7 @@ void ReadPNGFile(const char *file_name, int &width, int &height, std::vector<Poi
 
     png_read_image(png, row_pointers);
 
-    pixels.resize(height * width);
+    pixels.resize(static_cast<unsigned int>(height * width));
     int i = 0;
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < row_bytes; x+=4) {
@@ -202,26 +204,18 @@ void WritePNGFile(const char *file_name, const int &width, const int &height, st
 }
 
 int main() {
-    const float kBandwidth = 25.0f;
-    char *input_file_name = "input.png";
-    char *output_file_name = "output.png";
+    const float kBandwidth = 10.0f;
+    const float kEpsilon = 0.1f;
+    const int kMaxIterations = 100;
+    const std::string kInputFileName = "input.png";
+    const std::string kOutputFileName = "output.png";
     int width = 0;
     int height = 0;
     std::vector<Point> points;
 
-    ReadPNGFile(input_file_name, width, height, points);
-//    printf("Original points\n");
-//    for (int i = 0; i < points.size(); ++i) {
-//        printf("[%d] = %f, %f, %f\n", i, points[i].r, points[i].g, points[i].b);
-//    }
-
-    MeanShift(kBandwidth, points);
-
-    WritePNGFile(output_file_name, width, height, points);
-//    printf("Shifted points\n");
-//    for (int i = 0; i < points.size(); ++i) {
-//        printf("[%d] = %f, %f, %f\n", i, points[i].r, points[i].g, points[i].b);
-//    }
+    ReadPNGFile(kInputFileName.c_str(), width, height, points);
+    MeanShift(kBandwidth, kEpsilon, kMaxIterations, points);
+    WritePNGFile(kOutputFileName.c_str(), width, height, points);
 
     return 0;
 }
