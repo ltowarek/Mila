@@ -2,9 +2,9 @@ float GaussianKernel(const float kDistance, const float kBandwidth) {
     return (1.0f / (sqrt(2.0f * M_PI_F) * kBandwidth)) * exp(-0.5f * pow(kDistance / kBandwidth, 2.0f));
 }
 
-kernel void MeanShift(constant float2 *actual_points, const int kNumberOfPoints, const float kBandwidth, global float2 *shifted_points, global float *distances) {
+kernel void MeanShift(constant float4 *actual_points, const int kNumberOfPoints, const float kBandwidth, global float4 *shifted_points, global float *distances) {
     const int kTid = get_global_id(0);
-    float2 shift = { 0.0f, 0.0f };
+    float4 shift = { 0.0f, 0.0f, 0.0f, 0.0f };
     float scale = 0.0f;
 
     for (int i = 0; i < kNumberOfPoints; ++i) {

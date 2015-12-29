@@ -1,35 +1,45 @@
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
+#include <cstdlib>
+#include <string>
 #include <vector>
+
+#include <glenn/png/png.h>
 
 const float kPI = 3.14159265358979323846f;
 
-float Distance(const std::vector<float> &kPoint1, const std::vector<float> &kPoint2) {
-    return sqrtf(powf(kPoint1[0] - kPoint2[0], 2.0f) + powf(kPoint1[1] - kPoint2[1], 2.0f));
+struct Point { float r; float g; float b; float a; };
+
+float Distance(const Point &kPoint1, const Point &kPoint2) {
+    return sqrtf(powf(kPoint1.r - kPoint2.r, 2.0f) + powf(kPoint1.g - kPoint2.g, 2.0f) + powf(kPoint1.b - kPoint2.b, 2.0f));
 }
 
 float GaussianKernel(const float kDistance, const float kBandwidth) {
     return (1.0f / (sqrtf(2.0f * kPI) * kBandwidth)) * expf(-0.5f * powf(kDistance / kBandwidth, 2.0f));
 }
 
-void ShiftPoint(const std::vector<float> &kPoint, const std::vector<std::vector<float>> kPoints, const float kBandwidth, std::vector<float> &shift) {
-    shift[0] = 0.0f;
-    shift[1] = 0.0f;
+void ShiftPoint(const Point &kPoint, const std::vector<Point> kPoints, const float kBandwidth, Point &shift) {
+    shift.r = 0.0f;
+    shift.g = 0.0f;
+    shift.b = 0.0f;
     float scale = 0.0f;
     for (int i = 0; i < kPoints.size(); ++i) {
         float distance = Distance(kPoint, kPoints[i]);
         float weight = GaussianKernel(distance, kBandwidth);
-        shift[0] += weight * kPoints[i][0];
-        shift[1] += weight * kPoints[i][1];
+        shift.r += weight * kPoints[i].r;
+        shift.g += weight * kPoints[i].g;
+        shift.b += weight * kPoints[i].b;
         scale += weight;
     }
-    shift[0] /= scale;
-    shift[1] /= scale;
+    shift.r /= scale;
+    shift.g /= scale;
+    shift.b /= scale;
 }
 
-void MeanShift(const float kBandwidth, std::vector<std::vector<float>> &points) {
-    const float kEpsilon = 1e-2;
+void MeanShift(const float kBandwidth, const float kEpsilon, const int kMaxIterations, std::vector<Point> &points) {
     float difference_distance = 0.0f;
+    int iteration = 0;
 
     std::vector<bool> still_shifting(points.size(), true);
 
@@ -40,7 +50,7 @@ void MeanShift(const float kBandwidth, std::vector<std::vector<float>> &points) 
                 continue;
             }
 
-            std::vector<float> new_point = points[i];
+            Point new_point = points[i];
             ShiftPoint(points[i], points, kBandwidth, new_point);
             float distance = Distance(points[i], new_point);
 
@@ -54,150 +64,158 @@ void MeanShift(const float kBandwidth, std::vector<std::vector<float>> &points) 
 
             points[i] = new_point;
         }
-    } while (difference_distance > kEpsilon);
+        ++iteration;
+    } while ((difference_distance > kEpsilon) && (iteration < kMaxIterations));
+}
+
+void ReadPNGFile(const char *file_name, int &width, int &height, std::vector<Point> &pixels) {
+    FILE *fp = fopen(file_name, "rb");
+    if (!fp) {
+        printf("Failed to open input file!");
+    }
+
+    png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png) {
+        printf("Failed to create PNG read struct!");
+    }
+
+    png_infop info = png_create_info_struct(png);
+    if (!png) {
+        printf("Failed to create PNG info struct!");
+    }
+
+    if (setjmp(png_jmpbuf(png))) {
+        printf("Failed to set jmp!");
+    }
+
+    png_init_io(png, fp);
+
+    png_read_info(png, info);
+
+    width = png_get_image_width(png, info);
+    height = png_get_image_height(png, info);
+    png_byte color_type = png_get_color_type(png, info);
+    png_byte bit_depth = png_get_bit_depth(png, info);
+
+    // Read any color_type into 8bit depth, RGBA format.
+    // See http://www.libpng.org/pub/png/libpng-manual.txt
+
+    if(bit_depth == 16)
+        png_set_strip_16(png);
+
+    if(color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_palette_to_rgb(png);
+
+    // PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
+    if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+        png_set_expand_gray_1_2_4_to_8(png);
+
+    if(png_get_valid(png, info, PNG_INFO_tRNS))
+        png_set_tRNS_to_alpha(png);
+
+    // These color_type don't have an alpha channel then fill it with 0xff.
+    if(color_type == PNG_COLOR_TYPE_RGB ||
+       color_type == PNG_COLOR_TYPE_GRAY ||
+       color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
+
+    if(color_type == PNG_COLOR_TYPE_GRAY ||
+       color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb(png);
+
+    png_read_update_info(png, info);
+
+    int row_bytes = png_get_rowbytes(png, info);
+    png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+    for (int y = 0; y < height; ++y) {
+        row_pointers[y] = (png_byte*)malloc(sizeof(png_byte) * row_bytes);
+    }
+
+    png_read_image(png, row_pointers);
+
+    pixels.resize(static_cast<unsigned int>(height * width));
+    int i = 0;
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < row_bytes; x+=4) {
+            Point p = {
+                    static_cast<float>(row_pointers[y][x]),
+                    static_cast<float>(row_pointers[y][x + 1]),
+                    static_cast<float>(row_pointers[y][x + 2]),
+                    static_cast<float>(row_pointers[y][x + 3])
+            };
+            pixels[i] = p;
+            ++i;
+        }
+        free(row_pointers[y]);
+    }
+    free(row_pointers);
+
+    fclose(fp);
+}
+
+void WritePNGFile(const char *file_name, const int &width, const int &height, std::vector<Point> &pixels) {
+    FILE *fp = fopen(file_name, "wb");
+    if (!fp) {
+        printf("Failed to open input file!");
+    }
+
+    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png) {
+        printf("Failed to create PNG read struct!");
+    }
+
+    png_infop info = png_create_info_struct(png);
+    if (!png) {
+        printf("Failed to create PNG info struct!");
+    }
+
+    if (setjmp(png_jmpbuf(png))) {
+        printf("Failed to set jmp!");
+    }
+
+    png_init_io(png, fp);
+
+    png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(png, info);
+
+    int row_bytes = width * 4;
+    png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+    int i = 0;
+    for (int y = 0; y < height; ++y) {
+        row_pointers[y] = (png_byte*)malloc(sizeof(png_byte) * row_bytes);
+        for (int x = 0; x < row_bytes; x+=4) {
+            row_pointers[y][x] = static_cast<uint8_t>(pixels[i].r);
+            row_pointers[y][x + 1] = static_cast<uint8_t>(pixels[i].g);
+            row_pointers[y][x + 2] = static_cast<uint8_t>(pixels[i].b);
+            row_pointers[y][x + 3] = static_cast<uint8_t>(pixels[i].a);
+            ++i;
+        }
+    }
+
+    png_write_image(png, row_pointers);
+    png_write_end(png, NULL);
+
+    for (int y = 0; y < height; ++y) {
+        free(row_pointers[y]);
+    }
+    free(row_pointers);
+
+    fclose(fp);
 }
 
 int main() {
-    const float kBandwidth = 2.0f;
-    std::vector<std::vector<float>> points = {
-        {10.91079038931762f,8.3894120169044477f},
-        {9.8750016454811416f,9.9092509004598295f},
-        {7.8481223001749516f,10.431748303674949f},
-        {8.5341229316176186f,9.5590856089969289f},
-        {10.383168456491791f,9.6187908570774621f},
-        {8.1106159523273558f,9.7747176075388005f},
-        {10.021194678890739f,9.5387796220292351f},
-        {9.3770585195414959f,9.7085399085745756f},
-        {7.6701703352949329f,9.6031523057064874f},
-        {10.943082872936237f,11.762073488528063f},
-        {9.2473082328068106f,10.902105550317518f},
-        {9.5473972897412729f,11.361701761466367f},
-        {7.8333436673622323f,10.363033995676176f},
-        {10.870459222776201f,9.213348127988457f},
-        {8.2285133843786014f,10.467911020064905f},
-        {12.482990276816189f,9.4212281474469677f},
-        {6.5572296581531369f,11.059353487844673f},
-        {7.2642592211498576f,9.9842567369139612f},
-        {4.8017215916997493f,7.5579129268206504f},
-        {6.8612486478820385f,7.8370069734131782f},
-        {13.627244186857192f,10.948300307681397f},
-        {13.655256501255671f,9.9249837167692654f},
-        {9.6060906991873658f,10.291987945224598f},
-        {12.435657157664703f,8.8134392580786756f},
-        {10.072065604999597f,9.1605715886878656f},
-        {8.3067030281298777f,10.441164603848748f},
-        {8.772436599131483f,10.845790913201405f},
-        {9.8414161582677995f,9.8483072024049196f},
-        {15.111691841743767f,12.489897865895333f},
-        {10.277424100451077f,9.8565701101092902f},
-        {10.134807602975544f,8.8927749442282966f},
-        {8.4265860927835678f,11.300233449798775f},
-        {9.191199876775725f,9.9898699491718599f},
-        {5.933268578018577f,10.21740003776546f},
-        {9.6660554561100884f,10.688149455362304f},
-        {5.7620912159378284f,10.12453435639654f},
-        {5.224273745954072f,9.9849255904770313f},
-        {10.268685374305592f,10.316054753347371f},
-        {10.923767076101779f,10.933515119668936f},
-        {8.9357996776517705f,9.181397457544719f},
-        {2.9782144270032109f,3.8354704347019952f},
-        {4.9174420096569609f,2.6743399911354335f},
-        {3.0245572560941096f,4.80750921258515f},
-        {3.0192261574192036f,4.0418118812507169f},
-        {4.1315215453218732f,2.5206046528572816f},
-        {0.41134584239056782f,3.655696596939725f},
-        {5.2664435674092225f,5.5948820412037197f},
-        {4.6235409897637085f,1.3759190611881271f},
-        {5.6786434200947413f,2.7579731226577313f},
-        {3.9054627121390175f,2.1416250788315363f},
-        {8.0853526460883955f,2.5883371297676727f},
-        {6.8520355834556366f,3.6103190528792766f},
-        {4.2308466631394683f,3.5633771154938372f},
-        {6.0429053248443729f,2.3588868528912594f},
-        {4.2007728899791053f,2.3823879459798203f},
-        {4.2840378930654133f,7.0511425527350866f},
-        {3.8206408839932244f,4.6073850522736173f},
-        {5.4176851106148423f,3.4363391644029351f},
-        {8.2114630301315117f,3.5706098853491399f},
-        {6.5430955441931129f,-0.15007118536956821f},
-        {9.2172488607385894f,2.4019367504963922f},
-        {6.6730381024092011f,3.3076125390184363f},
-        {4.043040860929537f,4.8498363880848245f},
-        {3.7041032664462255f,2.2526297941030902f},
-        {4.9081622710571251f,3.8703906812050439f},
-        {5.656217904432566f,2.2435522745351482f},
-        {5.0917970663533181f,3.5095001337758487f},
-        {6.334045597831155f,3.517609974216283f},
-        {6.8205875674927334f,3.871837205598184f},
-        {7.2094404370342788f,2.8531108870521447f},
-        {2.0997237752780311f,2.2560279923847917f},
-        {4.7202055872439743f,2.6207007161418723f},
-        {6.2219865739446796f,4.6651911155018073f},
-        {5.0769925338297881f,2.3590399274401812f},
-        {3.2630277690380556f,0.65206989910121349f},
-        {3.6392194745531983f,2.0504866855077974f},
-        {7.2501132055579918f,2.6331909348456235f},
-        {4.2869377402538857f,0.74184103396503032f},
-        {4.4891766334584409f,1.8473897844375247f},
-        {6.2234763142026619f,2.226009921680304f},
-        {2.7326843843717614f,4.02671123644833f},
-        {6.7041261547308046f,1.2413786866869945f},
-        {6.4067309223606088f,6.4308164268410692f},
-        {3.0821624446670679f,3.6035317581130513f},
-        {3.7194311239776887f,5.345215168143298f},
-        {6.190401932612164f,6.9225942411420576f},
-        {8.1018832467977369f,4.2838830625944286f},
-        {2.6667381509229711f,1.2512486723265959f},
-        {5.1562537071314836f,2.9578251206128776f},
-        {6.8322086640419437f,3.0047411942450042f},
-        {-1.5236684825741538f,6.8709391759421514f},
-        {-6.2780454543447775f,5.0545207505005338f},
-        {-4.1300898667418302f,3.3089677763715279f},
-        {-2.298773883120611f,2.5243375533828245f},
-        {-0.18637298645602085f,5.059834391378498f},
-        {-5.1840778445536886f,5.3276147704699222f},
-        {-5.2606186558919212f,6.3733369937801498f},
-        {-4.0679106911345349f,4.5645019898631807f},
-        {-4.8563984442990948f,3.9437116901867326f},
-        {-5.169024045849862f,7.1996507954789211f},
-        {-2.8187170159076471f,6.7754752644632017f},
-        {-3.013197129388995f,5.3073726666286722f},
-        {-1.8402582226879556f,2.4730162158653011f},
-        {-3.8060164949652995f,3.0993836417365723f},
-        {-1.3538731975579088f,4.6000878698600136f},
-        {-5.4228296068901809f,5.5406320643563971f},
-        {-3.5718995489738825f,6.3905298035588247f},
-        {-4.0379782733195757f,4.7056809900741836f},
-        {-1.110354346282433f,4.8094055369659765f},
-        {-3.8378779004609926f,6.0290987530782898f},
-        {-6.5503857799488543f,5.5118092525106581f},
-        {-5.8163449709681689f,7.8139376678657921f},
-        {-4.6268949267968766f,8.9798801775265158f},
-        {-3.2307793551051933f,3.2955805817816426f},
-        {-4.3335692243804544f,5.5933643385669578f},
-        {-3.2828968288374156f,6.5901857967844855f},
-        {-7.6468921093719153f,7.527347420982772f},
-        {-6.4618228471303887f,5.6294483598572249f},
-        {-6.3682164249984439f,7.083861848873501f},
-        {-4.28475872927197f,3.8425763273570248f},
-        {-2.2962665903547554f,7.2885769990473017f},
-        {1.1012781986923459f,6.5487961272094948f},
-        {-5.9279427268249059f,8.6550877749077486f},
-        {-3.9546023112993969f,5.7336401880655785f},
-        {-3.1608765392801774f,4.2674094149250283f}
-    };
+    const float kBandwidth = 10.0f;
+    const float kEpsilon = 0.1f;
+    const int kMaxIterations = 100;
+    const std::string kInputFileName = "input.png";
+    const std::string kOutputFileName = "output.png";
+    int width = 0;
+    int height = 0;
+    std::vector<Point> points;
 
-    printf("Original points\n");
-    for (int i = 0; i < points.size(); ++i) {
-        printf("[%d] = %f, %f\n", i, points[i][0], points[i][1]);
-    }
-
-    MeanShift(kBandwidth, points);
-
-    printf("Shifted points\n");
-    for (int i = 0; i < points.size(); ++i) {
-        printf("[%d] = %f, %f\n", i, points[i][0], points[i][1]);
-    }
+    ReadPNGFile(kInputFileName.c_str(), width, height, points);
+    MeanShift(kBandwidth, kEpsilon, kMaxIterations, points);
+    WritePNGFile(kOutputFileName.c_str(), width, height, points);
 
     return 0;
 }
