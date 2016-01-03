@@ -1,6 +1,16 @@
 #include <algorithm>
 #include <stack>
 
+void PrintGrid(const std::vector<int> &kGrid, const int kN) {
+    for (int i = 0; i < kGrid.size(); ++i) {
+        if ((i % kN) == 0) {
+            printf("\n");
+        }
+        printf("%d", kGrid[i]);
+    }
+    printf("\n");
+}
+
 bool IsValidHorizontally(const std::vector<int> &kGrid, const int kN, const int kRow, const int kColumn, const int kValue) {
     bool is_valid = true;
     for (int column = 0; column < kN; ++column) {
@@ -56,37 +66,69 @@ bool IsValid(const std::vector<int> &kGrid, const int kN, const int kId, const i
            IsValidInBoxes(kGrid, kN, kRow, kColumn, kValue);
 }
 
-bool Solve(const int kN, const int kId, std::vector<int> &grid) {
-    if (grid[kId] != 0) {
-        if (IsValid(grid, kN, kId, grid[kId])) {
-            if (kId == kN * kN - 1 ) {
-                return true;
-            }
-            return Solve(kN, kId + 1, grid);
-        } else {
-            return false;
+int GetEmptyCell(const std::vector<int> &kGrid) {
+    int empty_cell = -1;
+    for (int i = 0; i < kGrid.size(); ++i) {
+        if (kGrid[i] == 0) {
+            empty_cell = i;
+            break;
+        }
+    }
+    return empty_cell;
+}
+
+bool Solve(const int kN, std::vector<int> &grid) {
+    std::stack<int> steps;
+
+    int id = GetEmptyCell(grid);
+    for (int value = 1; value <= kN; ++value) {
+        if (IsValid(grid, kN, id, value)) {
+            grid[id] = value;
+            steps.push(id);
+            break;
         }
     }
 
-    for (int i = 1; i <= kN; ++i) {
-        if (IsValid(grid, kN, kId, i)) {
-            grid[kId] = i;
-            if (kId == kN * kN - 1 ) {
-                return true;
+    while ((id = GetEmptyCell(grid)) != -1) {
+        // Try to fill an empty cell
+        for (int value = 1; value <= kN; ++value) {
+            if (IsValid(grid, kN, id, value)) {
+                grid[id] = value;
+                steps.push(id);
+                break;
             }
-            if (Solve(kN, kId + 1, grid)) {
-                return true;
+        }
+
+        // The cell was not filled
+        if (grid[id] == 0) {
+            int last_id = id;
+            while (grid[last_id] == 0) {
+                if (!steps.empty()) {
+                    // Backtrack to the latest filled cell
+                    last_id = steps.top();
+                    steps.pop();
+
+                    // Try to find new value for the latest filled cell
+                    int last_value = grid[last_id];
+                    grid[last_id] = 0;
+                    for (int value = last_value + 1; value <= kN; ++value) {
+                        if (IsValid(grid, kN, last_id, value)) {
+                            grid[last_id] = value;
+                            steps.push(last_id);
+                            break;
+                        }
+                    }
+                } else {
+                    return false;
+                }
             }
         }
     }
-
-    grid[kId] = 0;
-    return false;
+    return true;
 }
 
 int main() {
     const int kN = 9;
-
     const std::vector<int> kSolution {
             5, 3, 4, 6, 7, 8, 9, 1, 2,
             6, 7, 2, 1, 9, 5, 3, 4, 8,
@@ -110,7 +152,7 @@ int main() {
             0, 0, 0, 0, 8, 0, 0, 7, 9
     };
 
-    Solve(kN, 0, grid);
+    Solve(kN, grid);
 
     if (grid != kSolution) {
         printf("Wrong solution!");
