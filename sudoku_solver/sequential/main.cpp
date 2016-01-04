@@ -128,7 +128,7 @@ bool Solve(const int kN, std::vector<int> &grid) {
 }
 
 int main() {
-    const int kN = 9;
+    const int kN = 16;
     const std::vector<int> kSolution {
             7, 14, 6, 9, 8, 5, 1, 12, 3, 11, 2, 16, 4, 10, 13, 15,
             12, 8, 13, 5, 7, 15, 14, 3, 4, 6, 9, 10, 11, 1, 16, 2,
