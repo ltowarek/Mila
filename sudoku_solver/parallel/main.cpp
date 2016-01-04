@@ -150,18 +150,63 @@ int main() {
         return error;
     }
 
-    const std::string kernel_name = "SudokuSolver";
+    std::string kernel_name = "SudokuSolverFirstSteps";
     cl_kernel kernel = clCreateKernel(program, kernel_name.data(), &error);
     if (error) {
         printf("Failed to create the kernel\n");
         return error;
     }
 
-    cl_mem input_grids_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids[0]), grids.data(), &error);
+    cl_mem original_grid_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grid.size() * sizeof(grid[0]), grid.data(), &error);
+    if (error) {
+        printf("Failed to create the original grid buffer\n");
+        return error;
+    }
+
+    cl_mem input_grids_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, grids.size() * sizeof(grids[0]), nullptr, &error);
     if (error) {
         printf("Failed to create the input grids buffer\n");
         return error;
     }
+
+    std::vector<size_t> global_work_size = {kNumberOfGrids};
+
+    error = clSetKernelArg(kernel, 0, sizeof(original_grid_buffer), &original_grid_buffer);
+    if (error) {
+        printf("Failed to set the original_grid_buffer as a kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 1, sizeof(input_grids_buffer), &input_grids_buffer);
+    if (error) {
+        printf("Failed to set the input_grids_buffer as a kernel argument\n");
+        return error;
+    }
+
+    error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
+    if (error) {
+        printf("Failed to enqueue the kernel\n");
+        return error;
+    }
+
+    error = clEnqueueReadBuffer(queue, input_grids_buffer, CL_TRUE, 0, grids.size() * sizeof(grids[0]), grids.data(), 0, nullptr, nullptr);
+    if (error) {
+        printf("Failed to read the input_grids_buffer\n");
+        return error;
+    }
+
+    kernel_name = "SudokuSolver";
+    kernel = clCreateKernel(program, kernel_name.data(), &error);
+    if (error) {
+        printf("Failed to create the kernel\n");
+        return error;
+    }
+
+//    cl_mem input_grids_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids[0]), grids.data(), &error);
+//    if (error) {
+//        printf("Failed to create the input grids buffer\n");
+//        return error;
+//    }
 
     cl_mem output_grid_buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, grid.size() * sizeof(grid[0]), nullptr, &error);
     if (error) {
@@ -174,8 +219,6 @@ int main() {
         printf("Failed to create the is_solved buffer\n");
         return error;
     }
-
-    std::vector<size_t> global_work_size = {kNumberOfGrids};
 
     error = clSetKernelArg(kernel, 0, sizeof(input_grids_buffer), &input_grids_buffer);
     if (error) {

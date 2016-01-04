@@ -92,14 +92,38 @@ int GetEmptyCell(int *kGrid, int kSize) {
     return empty_cell;
 }
 
-kernel void SudokuSolver(constant int *kGrids, int kNumberOfGrids, global int *solved_grid, global int *is_solved) {
-    stack steps;
-    steps.top = -1;
+kernel void SudokuSolverFirstSteps(constant int *kGrid, int *grids) {
+    int tid = get_global_id(0);
+    int size = get_global_size(0);
 
+    int grid[kN * kN];
+    for (int i = 0; i < kN * kN; ++i) {
+        grid[i] = kGrid[i];
+    }
+
+    for (int i = 0; i < size; ++i) {
+        int id = GetEmptyCell(grid, kN);
+        for (int value = tid + 1; value <= kN; ++value) {
+            if (IsValid(grid, kN, id, value)) {
+                grid[id] = value;
+                break;
+            }
+        }
+    }
+
+    for (int i = 0; i < kN * kN; ++i) {
+        grids[i] = grid[i];
+    }
+}
+
+kernel void SudokuSolver(constant int *kGrids, int kNumberOfGrids, global int *solved_grid, global int *is_solved) {
     int grid[kN * kN];
     for (int i = 0; i < kN * kN; ++i) {
         grid[i] = kGrids[i];
     }
+
+    stack steps;
+    steps.top = -1;
 
     int id = GetEmptyCell(grid, kN);
     for (int value = 1; value <= kN; ++value) {
