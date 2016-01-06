@@ -1,13 +1,18 @@
+#include <cmath>
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <CL/cl.h>
 
-void FindEmptyCells(const std::vector<int> &kInputGrid, std::vector<int> &output_grid) {
-    for (int i = 0; i < kInputGrid.size(); ++i) {
-        if (kInputGrid[i] == 0) {
-            output_grid.push_back(i);
+void PrintGrids(const std::vector<int> &kGrids, const int kNumberOfGrids, const int kN) {
+    for (int i = 0; i < kNumberOfGrids; ++i) {
+        for (int j = 0; j < kN * kN; ++j) {
+            if ((j % kN) == 0) {
+                printf("\n");
+            }
+            printf("%d", kGrids[i * kN * kN + j]);
         }
+        printf("\n");
     }
 }
 
@@ -36,15 +41,19 @@ int main() {
             0, 0, 2, 5, 4, 0, 0, 0, 0
     };
 
-    const int kNumberOfGrids = 1;
-    std::vector<int> grids(kNumberOfGrids * kN * kN);
+    const int kNumberOfFilledFields = 2;
+    const int kGridSize = kN * kN;
+    const unsigned int kNumberOfPossibleGrids = static_cast<unsigned int>(pow(static_cast<double>(kN), static_cast<double>(kNumberOfFilledFields)));
 
-    std::vector<int> empty_cells;
-    FindEmptyCells(grid, empty_cells);
-    int number_of_empty_cells = empty_cells.size();
+    std::vector<int> grids(kNumberOfPossibleGrids * kGridSize);
+    for (int i = 0; i < grid.size(); ++i) {
+        grids[i] = grid[i];
+    }
+
+    std::vector<int> empty_cells(kNumberOfPossibleGrids * kGridSize);
+    std::vector<int> empty_cells_numbers(kNumberOfPossibleGrids);
 
     cl_int is_solved = 0;
-
     cl_int error = 0;
     cl_uint number_of_platforms;
 
@@ -161,139 +170,132 @@ int main() {
         return error;
     }
 
-    std::string kernel_name = "SudokuSolverFirstSteps";
+    std::string kernel_name = "SudokuSolverBFS";
     cl_kernel kernel = clCreateKernel(program, kernel_name.data(), &error);
     if (error) {
         printf("Failed to create the kernel\n");
         return error;
     }
 
-    cl_mem empty_cells_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells[0]), empty_cells.data(), &error);
+    cl_mem old_grids_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids[0]), grids.data(), &error);
     if (error) {
-        printf("Failed to create the empty cells buffer\n");
+        printf("Failed to create old_grids_buffer\n");
         return error;
     }
 
-    cl_mem original_grid_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grid.size() * sizeof(grid[0]), grid.data(), &error);
+    int number_of_old_grids = 1;
+
+    cl_mem number_of_old_grids_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(number_of_old_grids), &number_of_old_grids, &error);
     if (error) {
-        printf("Failed to create the original grid buffer\n");
+        printf("Failed to create number_of_old_grids_buffer\n");
         return error;
     }
 
-    cl_mem input_grids_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, grids.size() * sizeof(grids[0]), nullptr, &error);
+    cl_mem new_grids_buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, grids.size() * sizeof(grids[0]), nullptr, &error);
     if (error) {
-        printf("Failed to create the input grids buffer\n");
+        printf("Failed to create new_grids_buffer\n");
         return error;
     }
 
-    std::vector<size_t> global_work_size = {kNumberOfGrids};
+    int number_of_new_grids = 0;
 
-    error = clSetKernelArg(kernel, 0, sizeof(original_grid_buffer), &original_grid_buffer);
+    cl_mem number_of_new_grids_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(number_of_new_grids), &number_of_new_grids, &error);
     if (error) {
-        printf("Failed to set the original_grid_buffer as a kernel argument\n");
+        printf("Failed to create number_of_new_grids_buffer\n");
         return error;
     }
 
-    error = clSetKernelArg(kernel, 1, sizeof(empty_cells_buffer), &empty_cells_buffer);
+    cl_mem empty_cells_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells[0]), empty_cells.data(), &error);
     if (error) {
-        printf("Failed to set the empty_cells_buffer as a kernel argument\n");
+        printf("Failed to create empty_cells_buffer\n");
         return error;
     }
 
-    error = clSetKernelArg(kernel, 2, sizeof(number_of_empty_cells), &number_of_empty_cells);
+    cl_mem empty_cells_numbers_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, empty_cells_numbers.size() * sizeof(empty_cells_numbers[0]), empty_cells_numbers.data(), &error);
     if (error) {
-        printf("Failed to set the number_of_empty_cells as a kernel argument\n");
+        printf("Failed to create empty_cells_numbers_buffer\n");
         return error;
     }
 
-    error = clSetKernelArg(kernel, 3, sizeof(input_grids_buffer), &input_grids_buffer);
+    std::vector<size_t> global_work_size = {5};
+
+    for (int i = 0; i < kNumberOfFilledFields; ++i) {
+        error = clSetKernelArg(kernel, 0, sizeof(old_grids_buffer), &old_grids_buffer);
+        if (error) {
+            printf("Failed to set old_grids_buffer as kernel argument\n");
+            return error;
+        }
+
+        error = clSetKernelArg(kernel, 1, sizeof(number_of_old_grids_buffer), &number_of_old_grids_buffer);
+        if (error) {
+            printf("Failed to set number_of_old_grids_buffer as kernel argument\n");
+            return error;
+        }
+
+        error = clSetKernelArg(kernel, 2, sizeof(new_grids_buffer), &new_grids_buffer);
+        if (error) {
+            printf("Failed to set new_grids_buffer as kernel argument\n");
+            return error;
+        }
+
+        error = clSetKernelArg(kernel, 3, sizeof(number_of_new_grids_buffer), &number_of_new_grids_buffer);
+        if (error) {
+            printf("Failed to set number_of_new_grids_buffer as kernel argument\n");
+            return error;
+        }
+
+        error = clSetKernelArg(kernel, 4, sizeof(empty_cells_buffer), &empty_cells_buffer);
+        if (error) {
+            printf("Failed to set empty_cells_buffer as kernel argument\n");
+            return error;
+        }
+
+        error = clSetKernelArg(kernel, 5, sizeof(empty_cells_numbers_buffer), &empty_cells_numbers_buffer);
+        if (error) {
+            printf("Failed to set empty_cells_numbers_buffer as kernel argument\n");
+            return error;
+        }
+
+        error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
+        if (error) {
+            printf("Failed to enqueue kernel\n");
+            return error;
+        }
+
+        error = clEnqueueCopyBuffer(queue, new_grids_buffer, old_grids_buffer, 0, 0, grids.size() * sizeof(grids[0]), 0, nullptr, nullptr);
+        if (error) {
+            printf("Failed to copy new_grids_buffer to old_grids_buffer\n");
+            return error;
+        }
+
+        error = clEnqueueCopyBuffer(queue, number_of_new_grids_buffer, number_of_old_grids_buffer, 0, 0, sizeof(number_of_new_grids), 0, nullptr, nullptr);
+        if (error) {
+            printf("Failed to copy number_of_new_grids_buffer to number_of_old_grids_buffer\n");
+            return error;
+        }
+    }
+
+    error = clEnqueueReadBuffer(queue, new_grids_buffer, CL_TRUE, 0, grids.size() * sizeof(grids[0]), grids.data(), 0, nullptr, nullptr);
     if (error) {
-        printf("Failed to set the input_grids_buffer as a kernel argument\n");
+        printf("Failed to read new_grids_buffer\n");
         return error;
     }
 
-    error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
+    error = clEnqueueReadBuffer(queue, number_of_new_grids_buffer, CL_TRUE, 0, sizeof(number_of_new_grids), &number_of_new_grids, 0, nullptr, nullptr);
     if (error) {
-        printf("Failed to enqueue the kernel\n");
+        printf("Failed to read number_of_new_grids_buffer\n");
         return error;
     }
 
-    error = clEnqueueReadBuffer(queue, input_grids_buffer, CL_TRUE, 0, grids.size() * sizeof(grids[0]), grids.data(), 0, nullptr, nullptr);
+    error = clEnqueueReadBuffer(queue, empty_cells_buffer, CL_TRUE, 0, empty_cells.size() * sizeof(empty_cells[0]), empty_cells.data(), 0, nullptr, nullptr);
     if (error) {
-        printf("Failed to read the input_grids_buffer\n");
+        printf("Failed to read empty_cells_buffer\n");
         return error;
     }
 
-    kernel_name = "SudokuSolver";
-    kernel = clCreateKernel(program, kernel_name.data(), &error);
+    error = clEnqueueReadBuffer(queue, empty_cells_numbers_buffer, CL_TRUE, 0, empty_cells_numbers.size() * sizeof(empty_cells_numbers[0]), empty_cells_numbers.data(), 0, nullptr, nullptr);
     if (error) {
-        printf("Failed to create the kernel\n");
-        return error;
-    }
-
-    cl_mem output_grid_buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, grid.size() * sizeof(grid[0]), nullptr, &error);
-    if (error) {
-        printf("Failed to create the output grid buffer\n");
-        return error;
-    }
-
-    cl_mem is_solved_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved, &error);
-    if (error) {
-        printf("Failed to create the is_solved buffer\n");
-        return error;
-    }
-
-    error = clSetKernelArg(kernel, 0, sizeof(input_grids_buffer), &input_grids_buffer);
-    if (error) {
-        printf("Failed to set the input_grids_buffer as a kernel argument\n");
-        return error;
-    }
-
-    error = clSetKernelArg(kernel, 1, sizeof(kNumberOfGrids), &kNumberOfGrids);
-    if (error) {
-        printf("Failed to set the kNumberOfGrids as a kernel argument\n");
-        return error;
-    }
-
-    error = clSetKernelArg(kernel, 2, sizeof(empty_cells_buffer), &empty_cells_buffer);
-    if (error) {
-        printf("Failed to set the empty_cells_buffer as a kernel argument\n");
-        return error;
-    }
-
-    error = clSetKernelArg(kernel, 3, sizeof(number_of_empty_cells), &number_of_empty_cells);
-    if (error) {
-        printf("Failed to set the number_of_empty_cells as a kernel argument\n");
-        return error;
-    }
-
-    error = clSetKernelArg(kernel, 4, sizeof(output_grid_buffer), &output_grid_buffer);
-    if (error) {
-        printf("Failed to set the output_grid_buffer as a kernel argument\n");
-        return error;
-    }
-
-    error = clSetKernelArg(kernel, 5, sizeof(is_solved_buffer), &is_solved_buffer);
-    if (error) {
-        printf("Failed to set the is_solved_buffer as a kernel argument\n");
-        return error;
-    }
-
-    error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to enqueue the kernel\n");
-        return error;
-    }
-
-    error = clEnqueueReadBuffer(queue, output_grid_buffer, CL_TRUE, 0, grid.size() * sizeof(grid[0]), grid.data(), 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to read the output_grid_buffer\n");
-        return error;
-    }
-
-    error = clEnqueueReadBuffer(queue, is_solved_buffer, CL_TRUE, 0, sizeof(is_solved), &is_solved, 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to read the is_solved_buffer\n");
+        printf("Failed to read empty_cells_numbers_buffer\n");
         return error;
     }
 
@@ -303,9 +305,14 @@ int main() {
         return error;
     }
 
-    clReleaseMemObject(input_grids_buffer);
-    clReleaseMemObject(output_grid_buffer);
-    clReleaseMemObject(is_solved_buffer);
+    PrintGrids(grids, number_of_new_grids, kN);
+
+    clReleaseMemObject(old_grids_buffer);
+    clReleaseMemObject(number_of_old_grids_buffer);
+    clReleaseMemObject(new_grids_buffer);
+    clReleaseMemObject(number_of_new_grids_buffer);
+    clReleaseMemObject(empty_cells_buffer);
+    clReleaseMemObject(empty_cells_numbers_buffer);
     clReleaseKernel(kernel);
     clReleaseProgram(program);
     clReleaseCommandQueue(queue);

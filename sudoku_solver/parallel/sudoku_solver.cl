@@ -63,29 +63,43 @@ int GetNextEmptyCell(constant int *kEmptyCells, int kSize, int current_empty_cel
     return next_empty_cell;
 }
 
-kernel void SudokuSolverFirstSteps(constant int *kGrid, constant int *kEmptyCells, int kNumberOfEmptyCells, int *grids) {
+kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_grids, global int *new_grids, global int *number_of_new_grids, global int *empty_cells, global int *numbers_of_empty_cells) {
     int tid = get_global_id(0);
-    int size = get_global_size(0);
-    int current_empty_cell = -1;
+    int number_of_threads = get_global_size(0);
+    int current_old_grid = tid;
 
-    int grid[kN * kN];
-    for (int i = 0; i < kN * kN; ++i) {
-        grid[i] = kGrid[i];
-    }
+    // Iterate over all old grids
+    while (current_old_grid < *number_of_old_grids) {
+        // Get next board
+        int grid[kN * kN];
+        for (int i = 0; i < kN * kN; ++i) {
+            grid[i] = kOldGrids[current_old_grid * kN * kN + i];
+        }
 
-    for (int i = 0; i < size; ++i) {
-        int id = GetNextEmptyCell(kEmptyCells, kNumberOfEmptyCells, current_empty_cell);
-        for (int value = tid + 1; value <= kN; ++value) {
-            if (IsValid(grid, kN, id, value)) {
-                grid[id] = value;
-                current_empty_cell++;
+        for (int i = 0; i < kN * kN; ++i) {
+            // Find first empty cell
+            if (grid[i] == 0) {
+                // Fill this cell with all valid values
+                for (int value = 1; value <= kN; ++value) {
+                    if (IsValid(grid, kN, i, value)) {
+                        grid[i] = value;
+                        int next_new_grid = atomic_inc(number_of_new_grids);
+                        int number_of_empty_cells = 0;
+                        for (int j = 0; j < kN * kN; ++j) {
+                            new_grids[next_new_grid * kN * kN + j] = grid[j];
+                            if (grid[j] == 0) {
+                                empty_cells[next_new_grid * kN * kN + number_of_empty_cells] = j;
+                                number_of_empty_cells++;
+                            }
+                        }
+                        numbers_of_empty_cells[next_new_grid] = number_of_empty_cells;
+                    }
+                }
                 break;
             }
         }
-    }
 
-    for (int i = 0; i < kN * kN; ++i) {
-        grids[i] = grid[i];
+        current_old_grid += number_of_threads;
     }
 }
 
