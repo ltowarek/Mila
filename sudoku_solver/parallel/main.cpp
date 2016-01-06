@@ -3,34 +3,45 @@
 #include <sstream>
 #include <CL/cl.h>
 
+void FindEmptyCells(const std::vector<int> &kInputGrid, std::vector<int> &output_grid) {
+    for (int i = 0; i < kInputGrid.size(); ++i) {
+        if (kInputGrid[i] == 0) {
+            output_grid.push_back(i);
+        }
+    }
+}
+
 int main() {
     const int kN = 9;
     const std::vector<int> kSolution {
-            5, 3, 4, 6, 7, 8, 9, 1, 2,
-            6, 7, 2, 1, 9, 5, 3, 4, 8,
-            1, 9, 8, 3, 4, 2, 5, 6, 7,
-            8, 5, 9, 7, 6, 1, 4, 2, 3,
-            4, 2, 6, 8, 5, 3, 7, 9, 1,
-            7, 1, 3, 9, 2, 4, 8, 5, 6,
-            9, 6, 1, 5, 3, 7, 2, 8, 4,
-            2, 8, 7, 4, 1, 9, 6, 3, 5,
-            3, 4, 5, 2, 8, 6, 1, 7, 9
+            9, 5, 4, 1, 3, 7, 6, 8, 2,
+            2, 7, 3, 6, 8, 4, 1, 9, 5,
+            1, 6, 8, 2, 9, 5, 7, 3, 4,
+            4, 9, 5, 7, 2, 8, 3, 6, 1,
+            6, 8, 1, 4, 5, 3, 2, 7, 9,
+            3, 2, 7, 9, 6, 1, 5, 4, 8,
+            7, 4, 9, 3, 1, 2, 8, 5, 6,
+            5, 1, 6, 8, 7, 9, 4, 2, 3,
+            8, 3, 2, 5, 4, 6, 9, 1, 7
     };
     std::vector<int> grid {
-            5, 3, 0, 0, 7, 0, 0, 0, 0,
-            6, 0, 0, 1, 9, 5, 0, 0, 0,
-            0, 9, 8, 0, 0, 0, 0, 6, 0,
-            8, 0, 0, 0, 6, 0, 0, 0, 3,
-            4, 0, 0, 8, 0, 3, 0, 0, 1,
-            7, 0, 0, 0, 2, 0, 0, 0, 6,
-            0, 6, 0, 0, 0, 0, 2, 8, 0,
-            0, 0, 0, 4, 1, 9, 0, 0, 5,
-            0, 0, 0, 0, 8, 0, 0, 7, 9
+            0, 0, 0, 0, 3, 7, 6, 0, 0,
+            0, 0, 0, 6, 0, 0, 0, 9, 0,
+            0, 0, 8, 0, 0, 0, 0, 0, 4,
+            0, 9, 0, 0, 0, 0, 0, 0, 1,
+            6, 0, 0, 0, 0, 0, 0, 0, 9,
+            3, 0, 0, 0, 0, 0, 0, 4, 0,
+            7, 0, 0, 0, 0, 0, 8, 0, 0,
+            0, 1, 0, 0, 0, 9, 0, 0, 0,
+            0, 0, 2, 5, 4, 0, 0, 0, 0
     };
 
     const int kNumberOfGrids = 1;
     std::vector<int> grids(kNumberOfGrids * kN * kN);
-    grids = grid;
+
+    std::vector<int> empty_cells;
+    FindEmptyCells(grid, empty_cells);
+    int number_of_empty_cells = empty_cells.size();
 
     cl_int is_solved = 0;
 
@@ -157,6 +168,12 @@ int main() {
         return error;
     }
 
+    cl_mem empty_cells_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells[0]), empty_cells.data(), &error);
+    if (error) {
+        printf("Failed to create the empty cells buffer\n");
+        return error;
+    }
+
     cl_mem original_grid_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grid.size() * sizeof(grid[0]), grid.data(), &error);
     if (error) {
         printf("Failed to create the original grid buffer\n");
@@ -177,7 +194,19 @@ int main() {
         return error;
     }
 
-    error = clSetKernelArg(kernel, 1, sizeof(input_grids_buffer), &input_grids_buffer);
+    error = clSetKernelArg(kernel, 1, sizeof(empty_cells_buffer), &empty_cells_buffer);
+    if (error) {
+        printf("Failed to set the empty_cells_buffer as a kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 2, sizeof(number_of_empty_cells), &number_of_empty_cells);
+    if (error) {
+        printf("Failed to set the number_of_empty_cells as a kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 3, sizeof(input_grids_buffer), &input_grids_buffer);
     if (error) {
         printf("Failed to set the input_grids_buffer as a kernel argument\n");
         return error;
@@ -201,12 +230,6 @@ int main() {
         printf("Failed to create the kernel\n");
         return error;
     }
-
-//    cl_mem input_grids_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids[0]), grids.data(), &error);
-//    if (error) {
-//        printf("Failed to create the input grids buffer\n");
-//        return error;
-//    }
 
     cl_mem output_grid_buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, grid.size() * sizeof(grid[0]), nullptr, &error);
     if (error) {
@@ -232,13 +255,25 @@ int main() {
         return error;
     }
 
-    error = clSetKernelArg(kernel, 2, sizeof(output_grid_buffer), &output_grid_buffer);
+    error = clSetKernelArg(kernel, 2, sizeof(empty_cells_buffer), &empty_cells_buffer);
+    if (error) {
+        printf("Failed to set the empty_cells_buffer as a kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 3, sizeof(number_of_empty_cells), &number_of_empty_cells);
+    if (error) {
+        printf("Failed to set the number_of_empty_cells as a kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 4, sizeof(output_grid_buffer), &output_grid_buffer);
     if (error) {
         printf("Failed to set the output_grid_buffer as a kernel argument\n");
         return error;
     }
 
-    error = clSetKernelArg(kernel, 3, sizeof(is_solved_buffer), &is_solved_buffer);
+    error = clSetKernelArg(kernel, 5, sizeof(is_solved_buffer), &is_solved_buffer);
     if (error) {
         printf("Failed to set the is_solved_buffer as a kernel argument\n");
         return error;

@@ -1,31 +1,5 @@
 // kN passed as a build option
 
-typedef struct _stack {
-    int array[kN * kN];
-    int top;
-} stack;
-
-bool empty(stack *s) {
-    if (s->top == -1) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-void push(stack *s, int v) {
-    s->top++;
-    s->array[s->top] = v;
-}
-
-void pop(stack *s) {
-    s->top--;
-}
-
-int top(stack *s) {
-    return s->array[s->top];
-}
-
 bool IsValidHorizontally(int *kGrid, int kSize, int kRow, int kColumn, int kValue) {
     bool is_valid = true;
     for (int column = 0; column < kSize; ++column) {
@@ -81,20 +55,18 @@ bool IsValid(int *kGrid, int kSize, int kId, int kValue) {
            IsValidInBoxes(kGrid, kSize, kRow, kColumn, kValue);
 }
 
-int GetEmptyCell(int *kGrid, int kSize) {
-    int empty_cell = -1;
-    for (int i = 0; i < kSize; ++i) {
-        if (kGrid[i] == 0) {
-            empty_cell = i;
-            break;
-        }
+int GetNextEmptyCell(constant int *kEmptyCells, int kSize, int current_empty_cell) {
+    int next_empty_cell = -1;
+    if (current_empty_cell + 1 < kSize) {
+        next_empty_cell = kEmptyCells[current_empty_cell + 1];
     }
-    return empty_cell;
+    return next_empty_cell;
 }
 
-kernel void SudokuSolverFirstSteps(constant int *kGrid, int *grids) {
+kernel void SudokuSolverFirstSteps(constant int *kGrid, constant int *kEmptyCells, int kNumberOfEmptyCells, int *grids) {
     int tid = get_global_id(0);
     int size = get_global_size(0);
+    int current_empty_cell = -1;
 
     int grid[kN * kN];
     for (int i = 0; i < kN * kN; ++i) {
@@ -102,10 +74,11 @@ kernel void SudokuSolverFirstSteps(constant int *kGrid, int *grids) {
     }
 
     for (int i = 0; i < size; ++i) {
-        int id = GetEmptyCell(grid, kN);
+        int id = GetNextEmptyCell(kEmptyCells, kNumberOfEmptyCells, current_empty_cell);
         for (int value = tid + 1; value <= kN; ++value) {
             if (IsValid(grid, kN, id, value)) {
                 grid[id] = value;
+                current_empty_cell++;
                 break;
             }
         }
@@ -116,30 +89,36 @@ kernel void SudokuSolverFirstSteps(constant int *kGrid, int *grids) {
     }
 }
 
-kernel void SudokuSolver(constant int *kGrids, int kNumberOfGrids, global int *solved_grid, global int *is_solved) {
+kernel void SudokuSolver(constant int *kGrids, int kNumberOfGrids, constant int *kEmptyCells, int kNumberOfEmptyCells, global int *solved_grid, global int *is_solved) {
+    int tid = get_global_id(0);
+
     int grid[kN * kN];
     for (int i = 0; i < kN * kN; ++i) {
-        grid[i] = kGrids[i];
+        grid[i] = kGrids[tid * kN *kN + i];
     }
 
-    stack steps;
-    steps.top = -1;
+    int current_empty_cell = -1;
 
-    int id = GetEmptyCell(grid, kN);
+    int id = GetNextEmptyCell(kEmptyCells, kNumberOfEmptyCells, current_empty_cell);
     for (int value = 1; value <= kN; ++value) {
         if (IsValid(grid, kN, id, value)) {
             grid[id] = value;
-            push(&steps, id);
+            current_empty_cell++;
             break;
         }
     }
 
-    while ((id = GetEmptyCell(grid, kN * kN)) != -1) {
+    while ((id = GetNextEmptyCell(kEmptyCells, kNumberOfEmptyCells, current_empty_cell)) != -1) {
+        // Another work item solved grid
+        if (is_solved == 1) {
+            return;
+        }
+
         // Try to fill an empty cell
         for (int value = 1; value <= kN; ++value) {
             if (IsValid(grid, kN, id, value)) {
                 grid[id] = value;
-                push(&steps, id);
+                current_empty_cell++;
                 break;
             }
         }
@@ -148,10 +127,10 @@ kernel void SudokuSolver(constant int *kGrids, int kNumberOfGrids, global int *s
         if (grid[id] == 0) {
             int last_id = id;
             while (grid[last_id] == 0) {
-                if (!empty(&steps)) {
+                if (current_empty_cell >= 0) {
                     // Backtrack to the latest filled cell
-                    last_id = top(&steps);
-                    pop(&steps);
+                    last_id = kEmptyCells[current_empty_cell];
+                    current_empty_cell--;
 
                     // Try to find new value for the latest filled cell
                     int last_value = grid[last_id];
@@ -159,7 +138,7 @@ kernel void SudokuSolver(constant int *kGrids, int kNumberOfGrids, global int *s
                     for (int value = last_value + 1; value <= kN; ++value) {
                         if (IsValid(grid, kN, last_id, value)) {
                             grid[last_id] = value;
-                            push(&steps, last_id);
+                            current_empty_cell++;
                             break;
                         }
                     }
