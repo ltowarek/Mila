@@ -275,13 +275,13 @@ int main() {
         }
     }
 
-    error = clEnqueueReadBuffer(queue, new_grids_buffer, CL_TRUE, 0, grids.size() * sizeof(grids[0]), grids.data(), 0, nullptr, nullptr);
+    error = clEnqueueReadBuffer(queue, old_grids_buffer, CL_TRUE, 0, grids.size() * sizeof(grids[0]), grids.data(), 0, nullptr, nullptr);
     if (error) {
         printf("Failed to read new_grids_buffer\n");
         return error;
     }
 
-    error = clEnqueueReadBuffer(queue, number_of_new_grids_buffer, CL_TRUE, 0, sizeof(number_of_new_grids), &number_of_new_grids, 0, nullptr, nullptr);
+    error = clEnqueueReadBuffer(queue, number_of_old_grids_buffer, CL_TRUE, 0, sizeof(number_of_old_grids), &number_of_old_grids, 0, nullptr, nullptr);
     if (error) {
         printf("Failed to read number_of_new_grids_buffer\n");
         return error;
@@ -299,13 +299,84 @@ int main() {
         return error;
     }
 
+    kernel_name = "SudokuSolverDFS";
+    kernel = clCreateKernel(program, kernel_name.data(), &error);
+    if (error) {
+        printf("Failed to create the kernel\n");
+        return error;
+    }
+
+    cl_mem output_grid_buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, grid.size() * sizeof(grid[0]), nullptr, &error);
+    if (error) {
+        printf("Failed to create output_grid_buffer\n");
+        return error;
+    }
+
+    cl_mem is_solved_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved, &error);
+    if (error) {
+        printf("Failed to create is_solved_buffer\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 0, sizeof(old_grids_buffer), &old_grids_buffer);
+    if (error) {
+        printf("Failed to set old_grids_buffer as kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 1, sizeof(number_of_old_grids_buffer), &number_of_old_grids_buffer);
+    if (error) {
+        printf("Failed to set number_of_old_grids_buffer as kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 2, sizeof(empty_cells_buffer), &empty_cells_buffer);
+    if (error) {
+        printf("Failed to set empty_cells_buffer as kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 3, sizeof(empty_cells_numbers_buffer), &empty_cells_numbers_buffer);
+    if (error) {
+        printf("Failed to set empty_cells_numbers_buffer as kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 4, sizeof(output_grid_buffer), &output_grid_buffer);
+    if (error) {
+        printf("Failed to set the output_grid_buffer as a kernel argument\n");
+        return error;
+    }
+
+    error = clSetKernelArg(kernel, 5, sizeof(is_solved_buffer), &is_solved_buffer);
+    if (error) {
+        printf("Failed to set the is_solved_buffer as a kernel argument\n");
+        return error;
+    }
+
+    error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
+    if (error) {
+        printf("Failed to enqueue the kernel\n");
+        return error;
+    }
+
+    error = clEnqueueReadBuffer(queue, output_grid_buffer, CL_TRUE, 0, grid.size() * sizeof(grid[0]), grid.data(), 0, nullptr, nullptr);
+    if (error) {
+        printf("Failed to read the output_grid_buffer\n");
+        return error;
+    }
+
+    error = clEnqueueReadBuffer(queue, is_solved_buffer, CL_TRUE, 0, sizeof(is_solved), &is_solved, 0, nullptr, nullptr);
+    if (error) {
+        printf("Failed to read the is_solved_buffer\n");
+        return error;
+    }
+
     error = clFinish(queue);
     if (error) {
         printf("Failed to wait for results\n");
         return error;
     }
-
-    PrintGrids(grids, number_of_new_grids, kN);
 
     clReleaseMemObject(old_grids_buffer);
     clReleaseMemObject(number_of_old_grids_buffer);
@@ -313,15 +384,25 @@ int main() {
     clReleaseMemObject(number_of_new_grids_buffer);
     clReleaseMemObject(empty_cells_buffer);
     clReleaseMemObject(empty_cells_numbers_buffer);
+    clReleaseMemObject(output_grid_buffer);
+    clReleaseMemObject(is_solved_buffer);
     clReleaseKernel(kernel);
     clReleaseProgram(program);
     clReleaseCommandQueue(queue);
     clReleaseContext(context);
 
-    if (grid != kSolution) {
-        printf("Wrong solution!");
+    PrintGrids(grid, 1, kN);
+
+    if (is_solved) {
+        printf("Sudoku solved successfully\n");
+
+        if (grid != kSolution) {
+            printf("Wrong solution!");
+        } else {
+            printf("Correct solution!\n");
+        }
     } else {
-        printf("Correct solution!");
+        printf("Failed to solve sudoku!\n");
     }
 
     return 0;
