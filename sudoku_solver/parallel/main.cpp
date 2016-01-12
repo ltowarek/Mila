@@ -275,30 +275,6 @@ int main() {
         }
     }
 
-    error = clEnqueueReadBuffer(queue, old_grids_buffer, CL_TRUE, 0, grids.size() * sizeof(grids[0]), grids.data(), 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to read new_grids_buffer\n");
-        return error;
-    }
-
-    error = clEnqueueReadBuffer(queue, number_of_old_grids_buffer, CL_TRUE, 0, sizeof(number_of_old_grids), &number_of_old_grids, 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to read number_of_new_grids_buffer\n");
-        return error;
-    }
-
-    error = clEnqueueReadBuffer(queue, empty_cells_buffer, CL_TRUE, 0, empty_cells.size() * sizeof(empty_cells[0]), empty_cells.data(), 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to read empty_cells_buffer\n");
-        return error;
-    }
-
-    error = clEnqueueReadBuffer(queue, empty_cells_numbers_buffer, CL_TRUE, 0, empty_cells_numbers.size() * sizeof(empty_cells_numbers[0]), empty_cells_numbers.data(), 0, nullptr, nullptr);
-    if (error) {
-        printf("Failed to read empty_cells_numbers_buffer\n");
-        return error;
-    }
-
     kernel_name = "SudokuSolverDFS";
     kernel = clCreateKernel(program, kernel_name.data(), &error);
     if (error) {
