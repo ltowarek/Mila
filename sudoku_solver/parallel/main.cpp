@@ -51,7 +51,15 @@ int main() {
     }
 
     std::vector<int> empty_cells(kNumberOfPossibleGrids * kGridSize);
+    int number_of_empty_cells = 0;
+    for (int i = 0; i < grid.size(); ++i) {
+        if (grid[i] == 0) {
+            empty_cells[number_of_empty_cells] = i;
+            number_of_empty_cells++;
+        }
+    }
     std::vector<int> empty_cells_numbers(kNumberOfPossibleGrids);
+    empty_cells_numbers[0] = number_of_empty_cells;
 
     cl_int is_solved = 0;
     cl_int error = 0;
