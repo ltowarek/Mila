@@ -41,7 +41,7 @@ int main() {
             0, 0, 2, 5, 4, 0, 0, 0, 0
     };
 
-    const int kNumberOfFilledFields = 2;
+    const int kNumberOfFilledFields = 6;
     const int kGridSize = kN * kN;
     const unsigned int kNumberOfPossibleGrids = static_cast<unsigned int>(pow(static_cast<double>(kN), static_cast<double>(kNumberOfFilledFields)));
 
@@ -225,7 +225,7 @@ int main() {
         return error;
     }
 
-    std::vector<size_t> global_work_size = {5};
+    std::vector<size_t> global_work_size = {256};
 
     for (int i = 0; i < kNumberOfFilledFields; ++i) {
         error = clSetKernelArg(kernel, 0, sizeof(old_grids_buffer), &old_grids_buffer);
@@ -338,7 +338,9 @@ int main() {
         return error;
     }
 
-    error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
+    cl_event enqueue_nd_range_kernel_event;
+
+    error = clEnqueueNDRangeKernel(queue, kernel, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, &enqueue_nd_range_kernel_event);
     if (error) {
         printf("Failed to enqueue the kernel\n");
         return error;
@@ -361,6 +363,24 @@ int main() {
         printf("Failed to wait for results\n");
         return error;
     }
+
+    cl_ulong enqueue_nd_range_kernel_event_start;
+    error = clGetEventProfilingInfo(enqueue_nd_range_kernel_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &enqueue_nd_range_kernel_event_start, nullptr);
+    if (error) {
+        printf("Failed to get enqueue_nd_range_kernel_event start profiling info\n");
+        return error;
+    }
+
+    cl_ulong enqueue_nd_range_kernel_event_end;
+    error = clGetEventProfilingInfo(enqueue_nd_range_kernel_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &enqueue_nd_range_kernel_event_end, nullptr);
+    if (error) {
+        printf("Failed to get enqueue_nd_range_kernel_event end profiling info\n");
+        return error;
+    }
+
+    cl_ulong enqueue_nd_range_kernel_event_duration = enqueue_nd_range_kernel_event_end - enqueue_nd_range_kernel_event_start;
+
+    printf("DFS kernel duration: %d\n", enqueue_nd_range_kernel_event_duration);
 
     clReleaseMemObject(old_grids_buffer);
     clReleaseMemObject(number_of_old_grids_buffer);
