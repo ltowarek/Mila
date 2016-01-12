@@ -124,15 +124,15 @@ kernel void SudokuSolverDFS(constant int *kGrids, global int *number_of_grids, c
         int grid[kN * kN];
         int empty_cells[kN * kN];
         for (int i = 0; i < kN * kN; ++i) {
-            grid[i] = kGrids[current_grid * kN *kN + i];
-            empty_cells[i] = kEmptyCells[current_grid * kN *kN + i];
+            grid[i] = kGrids[current_grid * kN * kN + i];
+            empty_cells[i] = kEmptyCells[current_grid * kN * kN + i];
         }
 
         int current_empty_cell = 0;
         int number_of_empty_cells = kNumbersOfEmptyCells[current_grid];
 
         while ((current_empty_cell >= 0) && (current_empty_cell < number_of_empty_cells)) {
-            int id = kEmptyCells[current_empty_cell];
+            int id = empty_cells[current_empty_cell];
             grid[id]++;
             if (IsValid(grid, kN, id)) {
                 current_empty_cell++;
