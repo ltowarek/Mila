@@ -6,7 +6,7 @@
 #include <CL/cl.h>
 #include <fstream>
 
-#include <glenn/png/png.h>
+#include <png.h>
 
 void ReadPNGFile(const char *file_name, int &width, int &height, std::vector<cl_float4> &pixels) {
     FILE *fp = fopen(file_name, "rb");

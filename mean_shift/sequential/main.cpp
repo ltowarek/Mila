@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <glenn/png/png.h>
+#include "png.h"
 
 const float kPI = 3.14159265358979323846f;
 

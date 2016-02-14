@@ -1,0 +1,12 @@
+[submodule "mean_shift/deps/zlib"]
+	path = mean_shift/deps/zlib
+	url = https://github.com/madler/zlib
+[submodule "mean_shift/deps/png"]
+	path = mean_shift/deps/png
+	url = https://github.com/glennrp/libpng
+[submodule "nbody/deps/GLFW"]
+	path = nbody/deps/GLFW
+	url = https://github.com/glfw/glfw
+[submodule "ocl2json/deps/json11"]
+	path = ocl2json/deps/json11
+	url = https://github.com/dropbox/json11
