@@ -9,22 +9,13 @@ before_install:
     - sudo apt-get update -qq
     - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION}; fi
     - if [ "$CXX" = "g++" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
+    - wget --no-check-certificate http://cmake.org/files/v3.4/cmake-3.4.3.tar.gz && tar xf cmake-3.4.3.tar.gz
+    - cd cmake-3.4.3 && ./configure && make && sudo make install && cd ..
 install:
-    - wget http://apt.biicode.com/install.sh && chmod +x install.sh && ./install.sh
-    - bii --version
-    - bii setup:cpp
+    - git clone --recursive https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
     - sudo apt-get install fglrx opencl-headers xorg-dev libglu1-mesa-dev
+    - gcc --version
+    - cmake --version
 script:
-    - bii init -L
-    - bii find --update
-    - bii cpp:configure -DCMAKE_CXX_COMPILER=$(which $CXX)
-    - bii cpp:build
-deploy:
-    provider: biicode
-    user: ltowarek
-    password:
-        secure: HzjuUX2VmgUlLROCARUcH0u4r5TxQFuVdVV/Qto9zOHNlrXjH5MNLZ5WJLj6BriO5eHehz0O+cNp2xzFY9vn6JivJ+HjQlO4ctSrKvpqNu+uC85T9g3jvogEOuoWN6/mz9bh2bBIwxICnRb1CNxlvJb8JcjZz7UXwKZ02yCuBLA/TGM3IpRPtydmQwL34IseWJwMAsY6mLZGgVsLjij++JXVm/Nf2YthtqizAyGZPQivTvj5280DnC6YXRTBk8jXNTYDb0Gx7eTiPvHfLxRCn+9RSY+9YoyN9SJ39rCs7saFeJxN+N6rzeUbBhoQvgwXYPboojiMc9UP1qU6MGo+rqKEpNFyz3FRDD0NqksoDNDlonRervUD9BnDikUDztrO15Yi8uCYrkdCmR4DdQfPqUh/9exau4YnoTWIrX/K+oMdoJlhR/hFC9alIw3KiezWmSbcCW7o0IZImnVsXSW3q1RKl2sPUZsUuhmTHE8CKrnZSpDZq3v/hPwBmZ9FrEogisMRa2ZuaC7jJXmwXDeGSKX+vrgvREJXbiEnyE3Jw1URda3dSWyZdugNYBbwZqm+BeLMM0sBsCzEX0wgD+s2QWAX7QG4Ms3QmnpEPmPqzFy7T8IYdMJzprmYeUEMufE3MvHhQwiX3iWWtDs9apC9JZlvEgDW6MYrT3W1BbRMiy0=
-    on:
-        repo: ltowarek/Mila
-        all_branches: true
-    skip_cleanup: true
+    - cmake . -DCMAKE_CXX_COMPILER=$(which $CXX)
+    - make

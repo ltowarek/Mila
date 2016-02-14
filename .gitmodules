@@ -1,0 +1,7 @@
+[submodule "ocl2json/deps/json11"]
+	path = ocl2json/deps/json11
+	url = https://github.com/dropbox/json11
+[submodule "nbody/deps/GLFW"]
+	path = nbody/deps/GLFW
+	url = https://github.com/glfw/glfw
+	branch = latest

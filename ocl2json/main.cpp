@@ -3,7 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <CL/cl.h>
-#include "lasote/json11/json11.hpp"
+#include "json11.hpp"
 
 std::string Join(std::vector<std::string> strings, std::string separator) {
     std::string output = "";
