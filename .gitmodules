@@ -1,9 +1,3 @@
-[submodule "mean_shift/deps/zlib"]
-	path = mean_shift/deps/zlib
-	url = https://github.com/madler/zlib
-[submodule "mean_shift/deps/png"]
-	path = mean_shift/deps/png
-	url = https://github.com/glennrp/libpng
 [submodule "nbody/deps/GLFW"]
 	path = nbody/deps/GLFW
 	url = https://github.com/glfw/glfw
