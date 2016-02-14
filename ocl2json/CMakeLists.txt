@@ -3,7 +3,7 @@ project(ocl2json)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_subdirectory(deps/json11)
+add_subdirectory(deps/json11 EXCLUDE_FROM_ALL)
 set(JSON11_INCLUDE_DIR deps/json11)
 set(JSON11_LIBRARIES json11)
 
