@@ -5,3 +5,6 @@
 	path = nbody/deps/GLFW
 	url = https://github.com/glfw/glfw
 	branch = latest
+[submodule "mean_shift/deps/lodepng"]
+	path = mean_shift/deps/lodepng
+	url = https://github.com/lvandeve/lodepng

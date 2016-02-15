@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(mean_shift)
 
-find_package(PNG REQUIRED)
+set(LODEPNG_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/deps/lodepng)
 
 add_subdirectory(parallel)
 add_subdirectory(sequential)

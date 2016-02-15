@@ -6,142 +6,47 @@
 #include <CL/cl.h>
 #include <fstream>
 
-#include <png.h>
+#include "lodepng.h"
 
 void ReadPNGFile(const char *file_name, int &width, int &height, std::vector<cl_float4> &pixels) {
-    FILE *fp = fopen(file_name, "rb");
-    if (!fp) {
-        printf("Failed to open input file!");
+    std::vector<unsigned char> image;
+
+    unsigned int w;
+    unsigned int h;
+    unsigned int error = lodepng::decode(image, w, h, file_name);
+    if (error) {
+        printf("Failed to read input file: %s", lodepng_error_text(error));
     }
+    width = static_cast<int>(w);
+    height = static_cast<int>(h);
 
-    png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png) {
-        printf("Failed to create PNG read struct!");
+    for (int channel = 0; channel < image.size(); channel+=4) {
+        cl_float4 p = {
+                static_cast<float>(image[channel]),
+                static_cast<float>(image[channel + 1]),
+                static_cast<float>(image[channel + 2]),
+                static_cast<float>(image[channel + 3])
+        };
+        pixels.push_back(p);
     }
-
-    png_infop info = png_create_info_struct(png);
-    if (!png) {
-        printf("Failed to create PNG info struct!");
-    }
-
-    if (setjmp(png_jmpbuf(png))) {
-        printf("Failed to set jmp!");
-    }
-
-    png_init_io(png, fp);
-
-    png_read_info(png, info);
-
-    width = png_get_image_width(png, info);
-    height = png_get_image_height(png, info);
-    png_byte color_type = png_get_color_type(png, info);
-    png_byte bit_depth = png_get_bit_depth(png, info);
-
-    // Read any color_type into 8bit depth, RGBA format.
-    // See http://www.libpng.org/pub/png/libpng-manual.txt
-
-    if(bit_depth == 16)
-        png_set_strip_16(png);
-
-    if(color_type == PNG_COLOR_TYPE_PALETTE)
-        png_set_palette_to_rgb(png);
-
-    // PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
-    if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-        png_set_expand_gray_1_2_4_to_8(png);
-
-    if(png_get_valid(png, info, PNG_INFO_tRNS))
-        png_set_tRNS_to_alpha(png);
-
-    // These color_type don't have an alpha channel then fill it with 0xff.
-    if(color_type == PNG_COLOR_TYPE_RGB ||
-       color_type == PNG_COLOR_TYPE_GRAY ||
-       color_type == PNG_COLOR_TYPE_PALETTE)
-        png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
-
-    if(color_type == PNG_COLOR_TYPE_GRAY ||
-       color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-        png_set_gray_to_rgb(png);
-
-    png_read_update_info(png, info);
-
-    int row_bytes = png_get_rowbytes(png, info);
-    png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
-    for (int y = 0; y < height; ++y) {
-        row_pointers[y] = (png_byte*)malloc(sizeof(png_byte) * row_bytes);
-    }
-
-    png_read_image(png, row_pointers);
-
-    pixels.resize(static_cast<unsigned int>(height * width));
-    int i = 0;
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < row_bytes; x+=4) {
-            cl_float4 p = {
-                    static_cast<float>(row_pointers[y][x]),
-                    static_cast<float>(row_pointers[y][x + 1]),
-                    static_cast<float>(row_pointers[y][x + 2]),
-                    static_cast<float>(row_pointers[y][x + 3])
-            };
-            pixels[i] = p;
-            ++i;
-        }
-        free(row_pointers[y]);
-    }
-    free(row_pointers);
-
-    fclose(fp);
 }
 
 void WritePNGFile(const char *file_name, const int &width, const int &height, std::vector<cl_float4> &pixels) {
-    FILE *fp = fopen(file_name, "wb");
-    if (!fp) {
-        printf("Failed to open input file!");
+    std::vector<unsigned char> image;
+
+    for (int pixel = 0; pixel < pixels.size(); ++pixel) {
+        image.push_back(static_cast<unsigned char>(pixels[pixel].s[0]));
+        image.push_back(static_cast<unsigned char>(pixels[pixel].s[1]));
+        image.push_back(static_cast<unsigned char>(pixels[pixel].s[2]));
+        image.push_back(static_cast<unsigned char>(pixels[pixel].s[3]));
     }
 
-    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png) {
-        printf("Failed to create PNG read struct!");
+    unsigned int error = lodepng::encode(file_name, image, static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+    if (error) {
+        printf("Failed to save output file: %s", lodepng_error_text(error));
     }
-
-    png_infop info = png_create_info_struct(png);
-    if (!png) {
-        printf("Failed to create PNG info struct!");
-    }
-
-    if (setjmp(png_jmpbuf(png))) {
-        printf("Failed to set jmp!");
-    }
-
-    png_init_io(png, fp);
-
-    png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-    png_write_info(png, info);
-
-    int row_bytes = width * 4;
-    png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
-    int i = 0;
-    for (int y = 0; y < height; ++y) {
-        row_pointers[y] = (png_byte*)malloc(sizeof(png_byte) * row_bytes);
-        for (int x = 0; x < row_bytes; x+=4) {
-            row_pointers[y][x] = static_cast<uint8_t>(pixels[i].s[0]);
-            row_pointers[y][x + 1] = static_cast<uint8_t>(pixels[i].s[1]);
-            row_pointers[y][x + 2] = static_cast<uint8_t>(pixels[i].s[2]);
-            row_pointers[y][x + 3] = static_cast<uint8_t>(pixels[i].s[3]);
-            ++i;
-        }
-    }
-
-    png_write_image(png, row_pointers);
-    png_write_end(png, NULL);
-
-    for (int y = 0; y < height; ++y) {
-        free(row_pointers[y]);
-    }
-    free(row_pointers);
-
-    fclose(fp);
 }
+
 int main() {
     const float kBandwidth = 10.0f;
     const float kEpsilon = 0.1f;
@@ -297,7 +202,7 @@ int main() {
         return error;
     }
 
-    std::vector<size_t> global_work_size = {kNumberOfPoints};
+    std::vector<size_t> global_work_size = {static_cast<size_t>(kNumberOfPoints)};
 
     float difference_distance = 0.0f;
     int iteration = 0;

@@ -7,6 +7,6 @@ find_package(OpenCL REQUIRED)
 
 file(COPY mean_shift.cl DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories(${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIR})
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${OpenCL_LIBRARIES})
+include_directories(${LODEPNG_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIR})
+add_executable(${PROJECT_NAME} main.cpp ${LODEPNG_INCLUDE_DIRS}/lodepng.cpp)
+target_link_libraries(${PROJECT_NAME} ${OpenCL_LIBRARIES})
