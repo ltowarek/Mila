@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(Mila)
 
+add_subdirectory(test)
 add_subdirectory(bbp)
 add_subdirectory(mean_shift)
 add_subdirectory(nbody)
