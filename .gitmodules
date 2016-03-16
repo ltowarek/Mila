@@ -8,6 +8,6 @@
 [submodule "mean_shift/deps/lodepng"]
 	path = mean_shift/deps/lodepng
 	url = https://github.com/lvandeve/lodepng
-[submodule "test/deps/googletest"]
-	path = test/deps/googletest
+[submodule "deps/googletest"]
+	path = deps/googletest
 	url = https://github.com/google/googletest
