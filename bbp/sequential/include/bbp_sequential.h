@@ -7,6 +7,7 @@ namespace mila {
             class BBP {
             public:
                 float Run();
+                float Series(size_t j, size_t d);  // Compute sum_k 16^(d-k)/(8*k*j)
             };
         };  // sequential
     };  // bbp
