@@ -4,6 +4,33 @@ float mila::bbp::sequential::BBP::Run() {
     return 0.0f;
 }
 
+float mila::bbp::sequential::BBP::Series(size_t j, size_t d) {
+    auto sum = 0.0f;
+
+    for (size_t k = 0; k < d; ++k) {
+        auto ak = 8.0f * k + j;
+        auto p = d - k;
+        auto t = ModularExponentiation(16.0f, p, ak);
+        sum += t / ak;
+        sum -= truncf(sum);
+    }
+
+    for (size_t k = d; k <= d + 100; ++k) {
+        auto ak = 8.0f * k + j;
+        auto p = static_cast<float>(d) - static_cast<float>(k);
+        auto t = powf(16.0f, p) / ak;
+
+        if (t < 1e-5) {
+            break;
+        }
+
+        sum += t;
+        sum -= truncf(sum);
+    }
+
+    return sum;
+}
+
 float mila::bbp::sequential::BBP::ModularExponentiation(float b, size_t e, float m) {
     if (m == 1.0f) {
         return 0.0f;
