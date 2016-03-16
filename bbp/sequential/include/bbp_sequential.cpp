@@ -75,3 +75,7 @@ mila::bbp::sequential::BBP::BBP(double precision): precision_(precision) {
 mila::bbp::sequential::BBP::BBP(): precision_(1e-5) {
 
 }
+
+double mila::bbp::sequential::BBP::precision() const {
+    return precision_;
+}

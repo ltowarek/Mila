@@ -21,9 +21,7 @@ namespace mila {
                 float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
 
-                double precision() const {
-                    return precision_;
-                }
+                double precision() const;
             private:
                 const double precision_;
             };
