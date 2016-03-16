@@ -1,6 +1,7 @@
 #ifndef MILA_BBP_SEQUENTIAL_H_
 #define MILA_BBP_SEQUENTIAL_H_
 
+#include <cmath>
 #include <cstddef>
 #include <vector>
 
@@ -13,6 +14,7 @@ namespace mila {
             class BBP {
             public:
                 float Run();
+                float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
             };
         };  // sequential

@@ -19,3 +19,16 @@ TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {
     EXPECT_EQ(bbp.LargestPowerOfTwoLessOrEqual(1000), 10);
     EXPECT_EQ(bbp.LargestPowerOfTwoLessOrEqual(33554432), 26);
 }
+
+TEST(BBPSequentialTest, BinaryModularExponentiation) {
+    mila::bbp::sequential::BBP bbp;
+    EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0, 0.0f), 1.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0, 1.0f), 0.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(16.0f, 0, 1.0f), 0.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(16.0f, 1, 1.0f), 0.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(16.0f, 5, 1.0f), 0.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(16.0f, 16, 16.0f), 0.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(16.0f, 2, 7.0f), 4.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(5.0f, 3, 13.0f), 8.0f);
+    EXPECT_EQ(bbp.ModularExponentiation(8.5f, 2, 3.25f), 0.75f);
+}
