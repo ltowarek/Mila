@@ -1,6 +1,17 @@
 #include "gtest/gtest.h"
 #include "bbp_sequential.h"
 
+
+TEST(BBPSequentialTest, DefaultConstructor) {
+    mila::bbp::sequential::BBP bbp;
+    EXPECT_EQ(bbp.precision(), 1e-5);
+}
+
+TEST(BBPSequentialTest, Constructor) {
+    mila::bbp::sequential::BBP bbp(1e-7);
+    EXPECT_EQ(bbp.precision(), 1e-7);
+}
+
 TEST(BBPSequentialTest, Run) {
     mila::bbp::sequential::BBP bbp;
     EXPECT_EQ(bbp.Run(), 0.0f);

@@ -20,7 +20,7 @@ float mila::bbp::sequential::BBP::Series(size_t j, size_t d) {
         auto p = static_cast<float>(d) - static_cast<float>(k);
         auto t = powf(16.0f, p) / ak;
 
-        if (t < 1e-5) {
+        if (t < precision_) {
             break;
         }
 
@@ -66,4 +66,12 @@ size_t mila::bbp::sequential::BBP::LargestPowerOfTwoLessOrEqual(size_t n) {
         }
     }
     return i;
+}
+
+mila::bbp::sequential::BBP::BBP(double precision): precision_(precision) {
+
+}
+
+mila::bbp::sequential::BBP::BBP(): precision_(1e-5) {
+
 }

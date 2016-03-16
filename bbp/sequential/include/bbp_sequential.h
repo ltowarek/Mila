@@ -13,10 +13,19 @@ namespace mila {
                                                        1048576, 2097152, 4194304, 8388608, 16777216, 33554432};
             class BBP {
             public:
+                BBP();
+                BBP(double precision);
+
                 float Run();
                 float Series(size_t j, size_t d);  // Compute sum_k 16^(d-k)/(8*k*j)
                 float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
+
+                double precision() const {
+                    return precision_;
+                }
+            private:
+                const double precision_;
             };
         };  // sequential
     };  // bbp
