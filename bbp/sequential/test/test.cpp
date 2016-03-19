@@ -23,11 +23,11 @@ TEST(BBPSequentialTest, ComputeDigits) {
     EXPECT_NEAR(bbp.ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5);
 }
 
-TEST(BBPSequentialTest, Run) {
+TEST(BBPSequentialTest, ComputeDigit) {
     mila::bbp::sequential::BBP bbp;
-    EXPECT_NEAR(bbp.Run(0), 0.141587316989899f, 1e-5);
-    EXPECT_NEAR(bbp.Run(1), 0.265479207038879f, 1e-5);
-    EXPECT_NEAR(bbp.Run(100000), 0.7426779270172f, 1e-5);
+    EXPECT_NEAR(bbp.ComputeDigit(0), 0.141587316989899f, 1e-5);
+    EXPECT_NEAR(bbp.ComputeDigit(1), 0.265479207038879f, 1e-5);
+    EXPECT_NEAR(bbp.ComputeDigit(100000), 0.7426779270172f, 1e-5);
 }
 
 TEST(BBPSequentialTest, ConvertFractionToHex) {

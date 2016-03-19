@@ -17,7 +17,7 @@ namespace mila {
                 BBP();
                 BBP(double precision);
 
-                float Run(size_t position);
+                float ComputeDigit(size_t position);
                 float Series(size_t j, size_t d);  // Compute sum_k 16^(d-k)/(8*k*j)
                 float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
