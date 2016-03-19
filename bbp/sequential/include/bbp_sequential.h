@@ -22,6 +22,7 @@ namespace mila {
                 float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
                 std::string ConvertFractionToHex(float x, size_t number_of_digits);
+                std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
 
                 double precision() const;
             private:

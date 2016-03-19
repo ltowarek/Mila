@@ -12,6 +12,17 @@ TEST(BBPSequentialTest, Constructor) {
     EXPECT_EQ(bbp.precision(), 1e-7);
 }
 
+TEST(BBPSequentialTest, ComputeDigits) {
+    mila::bbp::sequential::BBP bbp;
+    EXPECT_EQ(bbp.ComputeDigits(0, 0).size(), 0);
+    EXPECT_EQ(bbp.ComputeDigits(1, 0).size(), 1);
+    ASSERT_EQ(bbp.ComputeDigits(2, 0).size(), 2);
+    EXPECT_NEAR(bbp.ComputeDigits(2, 0)[0], 0.141587316989899f, 1e-5);
+    EXPECT_NEAR(bbp.ComputeDigits(2, 0)[1], 0.265479207038879f, 1e-5);
+    ASSERT_EQ(bbp.ComputeDigits(1, 1).size(), 1);
+    EXPECT_NEAR(bbp.ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5);
+}
+
 TEST(BBPSequentialTest, Run) {
     mila::bbp::sequential::BBP bbp;
     EXPECT_NEAR(bbp.Run(0), 0.141587316989899f, 1e-5);

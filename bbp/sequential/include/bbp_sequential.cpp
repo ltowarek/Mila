@@ -98,3 +98,11 @@ std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float x, size_t num
 
     return output;
 }
+
+std::vector<float> mila::bbp::sequential::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {
+    std::vector<float> digits(number_of_digits, 0.0f);
+    for (size_t i = 0; i < number_of_digits; ++i) {
+        digits[i] = Run(starting_position + i);
+    }
+    return digits;
+}
