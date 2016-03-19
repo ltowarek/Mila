@@ -18,6 +18,25 @@ TEST(BBPSequentialTest, Run) {
     EXPECT_NEAR(bbp.Run(1), 0.265479207038879f, 1e-5);
     EXPECT_NEAR(bbp.Run(100000), 0.7426779270172f, 1e-5);
 }
+
+TEST(BBPSequentialTest, ConvertFractionToHex) {
+    mila::bbp::sequential::BBP bbp;
+    EXPECT_EQ(bbp.ConvertFractionToHex(0.141587316989899f, 6), "243F11");
+    EXPECT_EQ(bbp.ConvertFractionToHex(0.265479207038879f, 6), "43F672");
+    EXPECT_EQ(bbp.ConvertFractionToHex(0.7426779270172f, 6), "BE2024");
+    EXPECT_EQ(bbp.ConvertFractionToHex(0.0f, 0), "");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.0f, 1), "0");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.0f, 2), "00");
+    EXPECT_EQ(bbp.ConvertFractionToHex(2.0f, 1), "0");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.1f, 1), "1");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.2f, 1), "3");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.3f, 1), "4");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.4f, 1), "6");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.5f, 1), "8");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.6f, 1), "9");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.7f, 1), "B");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.8f, 1), "C");
+    EXPECT_EQ(bbp.ConvertFractionToHex(1.9f, 1), "E");
 }
 
 TEST(BBPSequentialTest, Series) {

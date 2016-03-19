@@ -85,3 +85,16 @@ mila::bbp::sequential::BBP::BBP(): precision_(1e-5) {
 double mila::bbp::sequential::BBP::precision() const {
     return precision_;
 }
+
+std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float x, size_t number_of_digits) {
+    const std::string kHex = "0123456789ABCDEF";
+    std::string output = std::string(number_of_digits, '-');
+    float value = fabsf(x);
+
+    for (size_t i = 0; i < number_of_digits; ++i) {
+        value = 16.0f * (value - floorf(value));
+        output[i] = kHex[static_cast<size_t>(value)];
+    }
+
+    return output;
+}

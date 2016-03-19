@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstddef>
 #include <vector>
+#include <string>
 
 namespace mila {
     namespace bbp {
@@ -20,6 +21,7 @@ namespace mila {
                 float Series(size_t j, size_t d);  // Compute sum_k 16^(d-k)/(8*k*j)
                 float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
+                std::string ConvertFractionToHex(float x, size_t number_of_digits);
 
                 double precision() const;
             private:
