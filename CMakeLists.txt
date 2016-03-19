@@ -6,9 +6,10 @@ set(GTEST_INCLUDE_DIRS ${GTEST_ROOT}/include ${GTEST_ROOT})
 set(GTEST_LIBRARIES gtest gtest_main)
 add_subdirectory(${GTEST_ROOT} EXCLUDE_FROM_ALL)
 
+enable_testing()
+
 add_subdirectory(bbp)
 add_subdirectory(mean_shift)
 add_subdirectory(nbody)
 add_subdirectory(sudoku_solver)
 add_subdirectory(ocl2json)
-
