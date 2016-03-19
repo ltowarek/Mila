@@ -7,6 +7,7 @@ set(GTEST_LIBRARIES gtest gtest_main)
 add_subdirectory(${GTEST_ROOT} EXCLUDE_FROM_ALL)
 
 enable_testing()
+configure_file(CTestCustom.cmake ${CMAKE_BINARY_DIR})
 
 add_subdirectory(bbp)
 add_subdirectory(mean_shift)
