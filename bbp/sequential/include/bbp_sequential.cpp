@@ -1,7 +1,13 @@
 #include "bbp_sequential.h"
 
-float mila::bbp::sequential::BBP::Run() {
-    return 0.0f;
+float mila::bbp::sequential::BBP::Run(size_t position) {
+    float series_1 = Series(1, position);
+    float series_2 = Series(4, position);
+    float series_3 = Series(5, position);
+    float series_4 = Series(6, position);
+    float result = 4.0f * series_1 - 2 * series_2 - series_3 - series_4;  // BBP formula
+    result = result - truncf(result) + 1.0f;
+    return result;
 }
 
 float mila::bbp::sequential::BBP::Series(size_t j, size_t d) {

@@ -14,7 +14,10 @@ TEST(BBPSequentialTest, Constructor) {
 
 TEST(BBPSequentialTest, Run) {
     mila::bbp::sequential::BBP bbp;
-    EXPECT_EQ(bbp.Run(), 0.0f);
+    EXPECT_NEAR(bbp.Run(0), 0.141587316989899f, 1e-5);
+    EXPECT_NEAR(bbp.Run(1), 0.265479207038879f, 1e-5);
+    EXPECT_NEAR(bbp.Run(100000), 0.7426779270172f, 1e-5);
+}
 }
 
 TEST(BBPSequentialTest, Series) {
