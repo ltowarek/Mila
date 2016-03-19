@@ -19,10 +19,10 @@ TEST(BBPSequentialTest, Run) {
 
 TEST(BBPSequentialTest, Series) {
     mila::bbp::sequential::BBP bbp;
-    EXPECT_NEAR(bbp.Series(1, 100000), 0.298238158, 1e-5);
-    EXPECT_NEAR(bbp.Series(4, 100000), 0.8211689, 1e-5);
-    EXPECT_NEAR(bbp.Series(5, 100000), 0.147965193, 1e-5);
-    EXPECT_NEAR(bbp.Series(6, 100000), 0.659971654, 1e-5);
+    EXPECT_NEAR(bbp.Series(1, 100000), 0.298238158f, 1e-5);
+    EXPECT_NEAR(bbp.Series(4, 100000), 0.8211689f, 1e-5);
+    EXPECT_NEAR(bbp.Series(5, 100000), 0.147965193f, 1e-5);
+    EXPECT_NEAR(bbp.Series(6, 100000), 0.659971654f, 1e-5);
 }
 
 TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {
