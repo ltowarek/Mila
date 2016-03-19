@@ -19,3 +19,4 @@ install:
 script:
     - cmake . -DCMAKE_CXX_COMPILER=$(which $CXX)
     - make
+    - ctest -V
