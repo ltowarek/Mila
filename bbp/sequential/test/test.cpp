@@ -50,6 +50,14 @@ TEST(BBPSequentialTest, ConvertFractionToHex) {
     EXPECT_EQ(bbp.ConvertFractionToHex(1.9f, 1), "E");
 }
 
+TEST(BBPSequentialTest, ConvertFractionsToHex) {
+    mila::bbp::sequential::BBP bbp;
+    std::vector<float> fractions = {0.141587316989899f, 0.265479207038879f};
+    ASSERT_EQ(bbp.ConvertFractionsToHex(fractions, 6).size(), fractions.size());
+    EXPECT_EQ(bbp.ConvertFractionsToHex(fractions, 6)[0], "243F11");
+    EXPECT_EQ(bbp.ConvertFractionsToHex(fractions, 6)[1], "43F672");
+}
+
 TEST(BBPSequentialTest, Series) {
     mila::bbp::sequential::BBP bbp;
     EXPECT_NEAR(bbp.Series(1, 100000), 0.298238158f, 1e-5);

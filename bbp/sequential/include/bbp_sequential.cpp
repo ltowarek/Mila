@@ -86,23 +86,30 @@ double mila::bbp::sequential::BBP::precision() const {
     return precision_;
 }
 
-std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float x, size_t number_of_digits) {
+std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float number, size_t number_of_digits) {
     const std::string kHex = "0123456789ABCDEF";
-    std::string output = std::string(number_of_digits, '-');
-    float value = fabsf(x);
-
+    std::string digit = std::string(number_of_digits, '-');
+    float value = fabsf(number);
     for (size_t i = 0; i < number_of_digits; ++i) {
         value = 16.0f * (value - floorf(value));
-        output[i] = kHex[static_cast<size_t>(value)];
+        digit[i] = kHex[static_cast<size_t>(value)];
     }
-
-    return output;
+    return digit;
 }
 
 std::vector<float> mila::bbp::sequential::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {
     std::vector<float> digits(number_of_digits, 0.0f);
-    for (size_t i = 0; i < number_of_digits; ++i) {
+    for (size_t i = 0; i < digits.size(); ++i) {
         digits[i] = ComputeDigit(starting_position + i);
+    }
+    return digits;
+}
+
+std::vector<std::string> mila::bbp::sequential::BBP::ConvertFractionsToHex(std::vector<float> numbers,
+                                                                           size_t number_of_digits) {
+    std::vector<std::string> digits(numbers.size(), "-");
+    for (size_t i = 0; i < digits.size(); ++i) {
+        digits[i] = ConvertFractionToHex(numbers[i], number_of_digits);
     }
     return digits;
 }

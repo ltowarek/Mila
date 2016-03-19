@@ -21,7 +21,8 @@ namespace mila {
                 float Series(size_t j, size_t d);  // Compute sum_k 16^(d-k)/(8*k*j)
                 float ModularExponentiation(float b, size_t e, float m);  // Compute b^e mod m
                 size_t LargestPowerOfTwoLessOrEqual(size_t n);
-                std::string ConvertFractionToHex(float x, size_t number_of_digits);
+                std::string ConvertFractionToHex(float number, size_t number_of_digits);
+                std::vector<std::string> ConvertFractionsToHex(std::vector<float> numbers, size_t number_of_digits);
                 std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
 
                 double precision() const;
