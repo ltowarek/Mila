@@ -1,6 +1,6 @@
 #include "bbp_sequential.h"
 
-float mila::bbp::sequential::BBP::ComputeDigit(size_t position) {
+float mila::bbp::sequential::BBP::ComputeDigit(size_t position) const {
     auto series_1 = Series(1, position);
     auto series_2 = Series(4, position);
     auto series_3 = Series(5, position);
@@ -10,7 +10,7 @@ float mila::bbp::sequential::BBP::ComputeDigit(size_t position) {
     return result;
 }
 
-float mila::bbp::sequential::BBP::Series(size_t j, size_t d) {
+float mila::bbp::sequential::BBP::Series(size_t j, size_t d) const {
     auto sum = 0.0f;
 
     for (size_t k = 0; k < d; ++k) {
@@ -37,7 +37,7 @@ float mila::bbp::sequential::BBP::Series(size_t j, size_t d) {
     return sum;
 }
 
-float mila::bbp::sequential::BBP::ModularExponentiation(float b, size_t e, float m) {
+float mila::bbp::sequential::BBP::ModularExponentiation(float b, size_t e, float m) const {
     if (m == 1.0f) {
         return 0.0f;
     }
@@ -64,7 +64,7 @@ float mila::bbp::sequential::BBP::ModularExponentiation(float b, size_t e, float
     return c;
 }
 
-size_t mila::bbp::sequential::BBP::LargestPowerOfTwoLessOrEqual(size_t n) {
+size_t mila::bbp::sequential::BBP::LargestPowerOfTwoLessOrEqual(size_t n) const {
     auto i = size_t{0};
     for (i = 0; i < kPowersOfTwo.size(); ++i) {
         if (kPowersOfTwo[i] > n) {
@@ -86,7 +86,7 @@ double mila::bbp::sequential::BBP::precision() const {
     return precision_;
 }
 
-std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float number, size_t number_of_digits) {
+std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float number, size_t number_of_digits) const {
     const auto kHex = std::string("0123456789ABCDEF");
     auto digit = std::string(number_of_digits, '-');
     auto value = fabsf(number);
@@ -97,7 +97,7 @@ std::string mila::bbp::sequential::BBP::ConvertFractionToHex(float number, size_
     return digit;
 }
 
-std::vector<float> mila::bbp::sequential::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {
+std::vector<float> mila::bbp::sequential::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) const {
     auto digits = std::vector<float>(number_of_digits, 0.0f);
     for (size_t i = 0; i < digits.size(); ++i) {
         digits[i] = ComputeDigit(starting_position + i);
@@ -106,7 +106,7 @@ std::vector<float> mila::bbp::sequential::BBP::ComputeDigits(size_t number_of_di
 }
 
 std::vector<std::string> mila::bbp::sequential::BBP::ConvertFractionsToHex(std::vector<float> numbers,
-                                                                           size_t number_of_digits) {
+                                                                           size_t number_of_digits) const {
     auto digits = std::vector<std::string>(numbers.size(), "-");
     for (size_t i = 0; i < digits.size(); ++i) {
         digits[i] = ConvertFractionToHex(numbers[i], number_of_digits);
@@ -114,7 +114,7 @@ std::vector<std::string> mila::bbp::sequential::BBP::ConvertFractionsToHex(std::
     return digits;
 }
 
-std::string mila::bbp::sequential::BBP::Run(size_t number_of_digits, size_t starting_position) {
+std::string mila::bbp::sequential::BBP::Run(size_t number_of_digits, size_t starting_position) const {
     auto digits = ComputeDigits(number_of_digits, starting_position);
     auto hex_digits = ConvertFractionsToHex(digits, 1);
     auto output = std::string("");
