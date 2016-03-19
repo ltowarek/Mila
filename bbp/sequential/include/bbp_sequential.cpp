@@ -113,3 +113,13 @@ std::vector<std::string> mila::bbp::sequential::BBP::ConvertFractionsToHex(std::
     }
     return digits;
 }
+
+std::string mila::bbp::sequential::BBP::Run(size_t number_of_digits, size_t starting_position) {
+    std::vector<float> digits = ComputeDigits(number_of_digits, starting_position);
+    std::vector<std::string> hex_digits = ConvertFractionsToHex(digits, 1);
+    std::string output = "";
+    for (auto digit : hex_digits) {
+        output += digit[0];
+    }
+    return output;
+}

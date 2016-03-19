@@ -24,6 +24,7 @@ namespace mila {
                 std::string ConvertFractionToHex(float number, size_t number_of_digits);
                 std::vector<std::string> ConvertFractionsToHex(std::vector<float> numbers, size_t number_of_digits);
                 std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
+                std::string Run(size_t number_of_digits, size_t starting_position);
 
                 double precision() const;
             private:
