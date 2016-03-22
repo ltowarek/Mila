@@ -1,23 +1,13 @@
 #include "bbp_parallel.h"
 
-mila::bbp::parallel::BBP::BBP() : BBP(nullptr, nullptr, nullptr, nullptr, 1e-5f)
-{
+mila::bbp::parallel::BBP::BBP() : BBP(1e-5f) {
 }
 
-mila::bbp::parallel::BBP::BBP(float precision) : BBP(nullptr, nullptr, nullptr, nullptr, precision) {
-
-}
-
-mila::bbp::parallel::BBP::BBP(cl_platform_id platform,
-                              cl_device_id device,
-                              cl_context context,
-                              cl_command_queue queue,
-                              float precision) : platform_(platform),
-                                                 device_(device),
-                                                 context_(context),
-                                                 queue_(queue),
-                                                 precision_(precision)
-{
+mila::bbp::parallel::BBP::BBP(float precision) : platform_(nullptr),
+                                                 device_(nullptr),
+                                                 context_(nullptr),
+                                                 queue_(nullptr),
+                                                 precision_(precision) {
 }
 
 float mila::bbp::parallel::BBP::precision() const {
@@ -94,7 +84,8 @@ void mila::bbp::parallel::BBP::Initialize() {
 
   printf("Device name: %s\n", device_name.data());
 
-  const auto properties = std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform_), 0};
+  const auto properties =
+      std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform_), 0};
 
   context_ = clCreateContext(properties.data(), devices.size(), devices.data(), nullptr, nullptr, &error);
   if (error) {

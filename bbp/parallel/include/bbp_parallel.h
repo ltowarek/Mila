@@ -13,7 +13,6 @@ class BBP {
  public:
   BBP();
   BBP(float precision);
-  BBP(cl_platform_id platform, cl_device_id device, cl_context context, cl_command_queue queue, float precision);
 
   void Initialize();
 
