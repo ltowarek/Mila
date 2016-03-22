@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
-#include <cmath>
+#include "bbp_parallel.h"
 
-TEST(BBPParallelTest, FloatPrecision) {
-  EXPECT_EQ(static_cast<size_t>(powf(8 * 100 + 6, 2)), 649636);
-  EXPECT_EQ(static_cast<size_t>(powf(8 * 1000 + 6, 2)), 64096036);
+TEST(BBPParallelTest, DefaultConstructor) {
+  mila::bbp::parallel::BBP bbp;
+  EXPECT_EQ(bbp.precision(), 1e-5);
 }
+
