@@ -1,6 +1,9 @@
 #ifndef MILA_BBP_PARALLEL_H_
 #define MILA_BBP_PARALLEL_H_
 
+#include <cstdio>
+#include <vector>
+
 #include <CL/cl.h>
 
 namespace mila {

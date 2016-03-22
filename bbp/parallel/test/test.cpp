@@ -37,8 +37,8 @@ TEST(BBPParallelTest, FullConstructor) {
 TEST(BBPParallelTest, Initialize) {
   mila::bbp::parallel::BBP bbp;
   bbp.Initialize();
-  EXPECT_EQ(bbp.platform(), nullptr);
-  EXPECT_EQ(bbp.device(), nullptr);
-  EXPECT_EQ(bbp.context(), nullptr);
-  EXPECT_EQ(bbp.queue(), nullptr);
+  EXPECT_NE(bbp.platform(), nullptr);
+  EXPECT_NE(bbp.device(), nullptr);
+  EXPECT_NE(bbp.context(), nullptr);
+  EXPECT_NE(bbp.queue(), nullptr);
 }
