@@ -19,6 +19,12 @@ TEST(BBPParallelTest, PrecisionConstructor) {
   EXPECT_EQ(bbp.queue(), nullptr);
 }
 
+TEST(BBPParallelTest, Destructor) {
+  // TODO: Add mock objects to this test.
+  // Currently GMock cannot be used because the latest builds of GTest do not work on MinGW and FindOpenCL module does not support Cygwin.
+  mila::bbp::parallel::BBP bbp;
+}
+
 TEST(BBPParallelTest, Initialize) {
   mila::bbp::parallel::BBP bbp;
   bbp.Initialize();

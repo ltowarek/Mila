@@ -13,6 +13,7 @@ class BBP {
  public:
   BBP();
   BBP(float precision);
+  ~BBP();
 
   void Initialize();
 

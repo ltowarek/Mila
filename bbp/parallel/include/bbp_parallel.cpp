@@ -100,3 +100,8 @@ void mila::bbp::parallel::BBP::Initialize() {
   }
 
 }
+
+mila::bbp::parallel::BBP::~BBP() {
+  clReleaseCommandQueue(queue_);
+  clReleaseContext(context_);
+}
