@@ -8,12 +8,12 @@ TEST(BBPSequentialTest, FloatPrecision) {
 
 TEST(BBPSequentialTest, DefaultConstructor) {
   mila::bbp::sequential::BBP bbp;
-  EXPECT_EQ(bbp.precision(), 1e-5);
+  EXPECT_EQ(bbp.precision(), 1e-5f);
 }
 
 TEST(BBPSequentialTest, Constructor) {
-  mila::bbp::sequential::BBP bbp(1e-7);
-  EXPECT_EQ(bbp.precision(), 1e-7);
+  mila::bbp::sequential::BBP bbp(1e-7f);
+  EXPECT_EQ(bbp.precision(), 1e-7f);
 }
 
 TEST(BBPSequentialTest, Run) {

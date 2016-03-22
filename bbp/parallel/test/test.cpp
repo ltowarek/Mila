@@ -3,6 +3,6 @@
 
 TEST(BBPParallelTest, DefaultConstructor) {
   mila::bbp::parallel::BBP bbp;
-  EXPECT_EQ(bbp.precision(), 1e-5);
+  EXPECT_EQ(bbp.precision(), 1e-5f);
 }
 

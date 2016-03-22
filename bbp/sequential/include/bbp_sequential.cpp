@@ -74,15 +74,15 @@ size_t mila::bbp::sequential::BBP::LargestPowerOfTwoLessOrEqual(size_t n) const 
   return i;
 }
 
-mila::bbp::sequential::BBP::BBP(double precision) : precision_(precision) {
+mila::bbp::sequential::BBP::BBP(float precision) : precision_(precision) {
 
 }
 
-mila::bbp::sequential::BBP::BBP() : precision_(1e-5) {
+mila::bbp::sequential::BBP::BBP() : precision_(1e-5f) {
 
 }
 
-double mila::bbp::sequential::BBP::precision() const {
+float mila::bbp::sequential::BBP::precision() const {
   return precision_;
 }
 

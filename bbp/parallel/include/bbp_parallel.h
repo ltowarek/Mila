@@ -8,9 +8,9 @@ class BBP {
  public:
   BBP();
 
-  double precision() const;
+  float precision() const;
  private:
-  const double precision_;
+  const float precision_;
 };
 };  // sequential
 };  // bbp

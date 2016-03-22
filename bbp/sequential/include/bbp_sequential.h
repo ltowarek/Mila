@@ -15,7 +15,7 @@ const std::vector<size_t> kPowersOfTwo = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
 class BBP {
  public:
   BBP();
-  BBP(double precision);
+  BBP(float precision);
 
   float ComputeDigit(size_t position) const;
   float Series(size_t j, size_t d) const;  // Compute sum_k 16^(d-k)/(8*k*j)
@@ -26,9 +26,9 @@ class BBP {
   std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) const;
   std::string Run(size_t number_of_digits, size_t starting_position) const;
 
-  double precision() const;
+  float precision() const;
  private:
-  const double precision_;
+  const float precision_;
 };
 };  // sequential
 };  // bbp
