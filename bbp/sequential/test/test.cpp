@@ -39,17 +39,17 @@ TEST(BBPSequentialTest, ComputeDigits) {
   EXPECT_EQ(bbp.ComputeDigits(0, 0).size(), 0);
   EXPECT_EQ(bbp.ComputeDigits(1, 0).size(), 1);
   ASSERT_EQ(bbp.ComputeDigits(2, 0).size(), 2);
-  EXPECT_NEAR(bbp.ComputeDigits(2, 0)[0], 0.141587316989899f, 1e-5);
-  EXPECT_NEAR(bbp.ComputeDigits(2, 0)[1], 0.265479207038879f, 1e-5);
+  EXPECT_NEAR(bbp.ComputeDigits(2, 0)[0], 0.141587316989899f, 1e-5f);
+  EXPECT_NEAR(bbp.ComputeDigits(2, 0)[1], 0.265479207038879f, 1e-5f);
   ASSERT_EQ(bbp.ComputeDigits(1, 1).size(), 1);
-  EXPECT_NEAR(bbp.ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5);
+  EXPECT_NEAR(bbp.ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5f);
 }
 
 TEST(BBPSequentialTest, ComputeDigit) {
   mila::bbp::sequential::BBP bbp;
-  EXPECT_NEAR(bbp.ComputeDigit(0), 0.141587316989899f, 1e-5);
-  EXPECT_NEAR(bbp.ComputeDigit(1), 0.265479207038879f, 1e-5);
-  EXPECT_NEAR(bbp.ComputeDigit(1000), 1.7962465286254883f, 1e-5);
+  EXPECT_NEAR(bbp.ComputeDigit(0), 0.141587316989899f, 1e-5f);
+  EXPECT_NEAR(bbp.ComputeDigit(1), 0.265479207038879f, 1e-5f);
+  EXPECT_NEAR(bbp.ComputeDigit(1000), 1.7962465286254883f, 1e-5f);
 }
 
 TEST(BBPSequentialTest, ConvertFractionToHex) {
@@ -82,10 +82,10 @@ TEST(BBPSequentialTest, ConvertFractionsToHex) {
 
 TEST(BBPSequentialTest, Series) {
   mila::bbp::sequential::BBP bbp;
-  EXPECT_NEAR(bbp.Series(1, 1000), 0.93149524927139282f, 1e-5);
-  EXPECT_NEAR(bbp.Series(4, 1000), 0.36730793118476868f, 1e-5);
-  EXPECT_NEAR(bbp.Series(5, 1000), 0.70736938714981079f, 1e-5);
-  EXPECT_NEAR(bbp.Series(6, 1000), 0.48774918913841248f, 1e-5);
+  EXPECT_NEAR(bbp.Series(1, 1000), 0.93149524927139282f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(4, 1000), 0.36730793118476868f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(5, 1000), 0.70736938714981079f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(6, 1000), 0.48774918913841248f, 1e-5f);
 }
 
 TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {
