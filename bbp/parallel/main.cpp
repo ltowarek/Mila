@@ -24,6 +24,8 @@ int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
   auto bbp = mila::bbp::parallel::BBP(config.platform_id, config.device_id);
   std::string output = bbp.Run(config.number_of_digits, config.starting_position);
+  printf("Platform: %s\n", bbp.platform().getName().c_str());
+  printf("Device: %s\n", bbp.device().getName().c_str());
   printf("Number of Digits: %d\n", config.number_of_digits);
   printf("Starting Position: %d\n", config.starting_position);
   printf("PI in hex: %s\n", output.c_str());
