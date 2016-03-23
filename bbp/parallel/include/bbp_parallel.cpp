@@ -3,112 +3,54 @@
 mila::bbp::parallel::BBP::BBP() : BBP(1e-5f) {
 }
 
-mila::bbp::parallel::BBP::BBP(float precision) : platform_(nullptr),
-                                                 device_(nullptr),
-                                                 context_(nullptr),
-                                                 queue_(nullptr),
-                                                 kernel_(nullptr),
-                                                 precision_(precision) {
+mila::bbp::parallel::BBP::BBP(float precision) : precision_(precision) {
+}
+
+mila::bbp::parallel::BBP::~BBP() {
 }
 
 float mila::bbp::parallel::BBP::precision() const {
   return precision_;
 }
 
-cl_platform_id mila::bbp::parallel::BBP::platform() const {
+clpp::Platform mila::bbp::parallel::BBP::platform() const {
   return platform_;
 }
 
-cl_device_id mila::bbp::parallel::BBP::device() const {
+clpp::Device mila::bbp::parallel::BBP::device() const {
   return device_;
 }
 
-cl_context mila::bbp::parallel::BBP::context() const {
+clpp::Context mila::bbp::parallel::BBP::context() const {
   return context_;
 }
 
-cl_command_queue mila::bbp::parallel::BBP::queue() const {
+clpp::Queue mila::bbp::parallel::BBP::queue() const {
   return queue_;
 }
 
-void mila::bbp::parallel::BBP::Initialize() {
-  auto error = cl_int{0};
-  const auto platforms = GetPlatforms();
-  const auto platform_id = size_t{0};
-  platform_ = platforms.at(platform_id);
-
-  auto devices = GetDevices(platform_);
-  const auto device_id = size_t{0};
-  device_ = devices.at(device_id);
-  devices.clear();
-  devices.push_back(device_);
-
-  context_ = CreateContext(platform_, devices);
-  queue_ = CreateQueue(context_, device_);
-
-  const auto source_file_name = "bbp.cl";
-  const auto kernel_name = std::string("bbp");
-  kernel_ = CreateKernel(context_, source_file_name, kernel_name);
-}
-
-mila::bbp::parallel::BBP::~BBP() {
-  clReleaseCommandQueue(queue_);
-  clReleaseContext(context_);
-}
-
-cl_kernel mila::bbp::parallel::BBP::kernel() const {
+clpp::Kernel mila::bbp::parallel::BBP::kernel() const {
   return kernel_;
 }
 
-cl_kernel mila::bbp::parallel::BBP::CreateKernel(const cl_context& context, const std::string& kernel_file, const std::string& kernel_name) const {
-  auto source_program = ReadFile(kernel_file);
-  auto program = CreateProgram(context, source_program);
-  BuildProgram(program);
+void mila::bbp::parallel::BBP::Initialize() {
+  const auto platforms = clpp::Platform::get();
+  const auto platform_id = size_t{0};
+  platform_ = platforms.at(platform_id);
 
-  auto error = cl_int{0};
-  auto kernel = clCreateKernel(program, kernel_name.data(), &error);
-  if (error) {
-    printf("Failed to create the kernel\n");
-  }
+  const auto devices = platform_.getAllDevices();
+  const auto device_id = size_t{0};
+  device_ = devices.at(device_id);
 
-  return kernel;
-}
+  context_ = clpp::Context(device_);
+  queue_ = clpp::Queue(context_, device_);
 
-void mila::bbp::parallel::BBP::BuildProgram(const cl_program& program) const {
-  auto error = cl_int{0};
-  const auto options = std::string("");
-  error = clBuildProgram(program, 1, &device_, options.data(), nullptr, nullptr);
-  if (error) {
-    printf("Failed to build the program\n");
-
-    if (error == CL_BUILD_PROGRAM_FAILURE) {
-      auto build_log_length = size_t{0};
-      error = clGetProgramBuildInfo(program, device_, CL_PROGRAM_BUILD_LOG, 0, nullptr, &build_log_length);
-      if (error) {
-        printf("Failed to get build log length\n");
-      }
-
-      auto build_log = std::vector<char>(build_log_length);
-      error = clGetProgramBuildInfo(program,
-                                    device_, CL_PROGRAM_BUILD_LOG, build_log_length, build_log.data(), nullptr);
-      if (error) {
-        printf("Failed to get build log\n");
-      }
-
-      printf("%s\n", build_log.data());
-    }
-  }
-}
-
-cl_program mila::bbp::parallel::BBP::CreateProgram(const cl_context& context, const std::string& program_source) const {
-  auto error = cl_int{0};
-  const auto source_program_size = program_source.size();
-  const char* strings = program_source.data();
-  cl_program program = clCreateProgramWithSource(context, 1, &strings, &source_program_size, &error);
-  if (error) {
-    printf("Failed to create the source program\n");
-  }
-  return program;
+  const auto source_file_name = "bbp.cl";
+  const auto kernel_name = std::string("bbp");
+  auto source_file = ReadFile(source_file_name);
+  auto program = clpp::Program(context_, source_file);
+  program.build(device_);
+  kernel_ = clpp::Kernel(program, kernel_name.c_str());
 }
 
 std::string mila::bbp::parallel::BBP::ReadFile(const std::string &file) const {
@@ -117,126 +59,19 @@ std::string mila::bbp::parallel::BBP::ReadFile(const std::string &file) const {
   return content;
 }
 
-std::vector<cl_platform_id> mila::bbp::parallel::BBP::GetPlatforms() const {
-  auto error = cl_int{0};
-
-  auto number_of_platforms = cl_uint{0};
-  error = clGetPlatformIDs(0, nullptr, &number_of_platforms);
-  if (error) {
-    printf("Failed to get number of available platforms\n");
-  }
-
-  auto platforms = std::vector<cl_platform_id>(number_of_platforms);
-  error = clGetPlatformIDs(number_of_platforms, platforms.data(), nullptr);
-  if (error) {
-    printf("Failed to get platform ids\n");
-  }
-
-  return platforms;
-}
-
-std::vector<cl_device_id> mila::bbp::parallel::BBP::GetDevices(const cl_platform_id& platform) const {
-  auto error = cl_int{0};
-  auto number_of_devices = cl_uint{0};
-  const auto device_type = cl_device_type{CL_DEVICE_TYPE_ALL};
-  error = clGetDeviceIDs(platform, device_type, 0, nullptr, &number_of_devices);
-  if (error) {
-    printf("Failed to get number of available devices\n");
-  }
-
-  auto devices = std::vector<cl_device_id>(number_of_devices);
-
-  error = clGetDeviceIDs(platform, device_type, number_of_devices, devices.data(), nullptr);
-  if (error) {
-    printf("Failed to get device ids\n");
-  }
-
-  return devices;
-}
-
-cl_context mila::bbp::parallel::BBP::CreateContext(const cl_platform_id& platform, const std::vector<cl_device_id>& devices) const {
-  auto error = cl_int{0};
-  const auto properties =
-      std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform), 0};
-
-  auto context = clCreateContext(properties.data(), devices.size(), devices.data(), nullptr, nullptr, &error);
-  if (error) {
-    printf("Failed to create the context\n");
-  }
-
-  return context;
-}
-
-cl_command_queue mila::bbp::parallel::BBP::CreateQueue(const cl_context& context, const cl_device_id& device) const {
-  auto error = cl_int{0};
-  auto queue_properties = cl_command_queue_properties{CL_QUEUE_PROFILING_ENABLE};
-
-  auto queue = clCreateCommandQueue(context, device, queue_properties, &error);
-  if (error) {
-    printf("Failed to create the command queue\n");
-  }
-
-  return queue;
-}
-
-std::string mila::bbp::parallel::BBP::GetDeviceName(const cl_device_id& device) const {
-  auto error = cl_int{0};
-  auto device_name_length = size_t{0};
-  error = clGetDeviceInfo(device_, CL_DEVICE_NAME, 0, nullptr, &device_name_length);
-  if (error) {
-    printf("Failed to get device name size\n");
-  }
-
-  auto device_name = std::vector<char>(device_name_length);
-
-  error = clGetDeviceInfo(device_, CL_DEVICE_NAME, device_name_length, device_name.data(), nullptr);
-  if (error) {
-    printf("Failed to get device name\n");
-  }
-
-  auto output = std::string(device_name.data());
-  return output;
-}
-
 std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {
   Initialize();
-
-  auto error = cl_int{0};
   auto output = std::vector<cl_float>(number_of_digits, 0.0f);
 
   if (number_of_digits == 0) {
     return output;
   }
 
-  auto output_buffer = clCreateBuffer(context_, CL_MEM_WRITE_ONLY, number_of_digits * sizeof(cl_float), nullptr, &error);
-  if (error) {
-    printf("Failed to create the output buffer\n");
-  }
-
-  error = clSetKernelArg(kernel_, 0, sizeof(starting_position), &starting_position);
-  error |= clSetKernelArg(kernel_, 1, sizeof(output_buffer), &output_buffer);
-  if (error) {
-    printf("Failed to set kernel arguments\n");
-  }
-
+  auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
+  kernel_.setArgs(starting_position, output_buffer);
   auto global_work_size = std::vector<size_t>{number_of_digits};
-
-  error = clEnqueueNDRangeKernel(queue_, kernel_, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
-  if (error) {
-    printf("Failed to enqueue the kernel\n");
-  }
-
-  error = clFinish(queue_);
-  if (error) {
-    printf("Failed to wait for results\n");
-  }
-
-  error = clEnqueueReadBuffer(queue_, output_buffer, CL_TRUE, 0, output.size() * sizeof(output.at(0)), output.data(), 0, nullptr, nullptr);
-  if (error) {
-    printf("Failed to read the output buffer\n");
-  }
-
-  clReleaseMemObject(output_buffer);
+  queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
+  queue_.readBuffer(output_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
 
   return output;
 }
