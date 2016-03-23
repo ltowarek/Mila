@@ -8,6 +8,8 @@
 
 #include <CL/cl.h>
 
+#include "bbp_utils.h"
+
 namespace mila {
 namespace bbp {
 namespace parallel {
@@ -18,7 +20,8 @@ class BBP {
   ~BBP();
 
   void Initialize();
-  std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) const;
+  std::string Run(size_t number_of_digits, size_t starting_position);
+  std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
 
   float precision() const;
   cl_platform_id platform() const;

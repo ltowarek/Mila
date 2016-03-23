@@ -198,7 +198,9 @@ std::string mila::bbp::parallel::BBP::GetDeviceName(const cl_device_id& device) 
   return output;
 }
 
-std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) const {
+std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {
+  Initialize();
+
   auto error = cl_int{0};
   auto output = std::vector<cl_float>(number_of_digits, 0.0f);
 
@@ -236,5 +238,15 @@ std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digi
 
   clReleaseMemObject(output_buffer);
 
+  return output;
+}
+
+std::string mila::bbp::parallel::BBP::Run(size_t number_of_digits, size_t starting_position) {
+  auto digits = ComputeDigits(number_of_digits, starting_position);
+  auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
+  auto output = std::string("");
+  for (auto digit : hex_digits) {
+    output += digit[0];
+  }
   return output;
 }
