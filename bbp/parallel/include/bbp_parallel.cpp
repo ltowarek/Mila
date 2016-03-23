@@ -37,7 +37,7 @@ void mila::bbp::parallel::BBP::Initialize() {
   const auto platform_id = size_t{0};
   platform_ = platforms.at(platform_id);
 
-  auto devices = GetDevices();
+  auto devices = GetDevices(platform_);
   const auto device_id = size_t{0};
   device_ = devices.at(device_id);
   devices.clear();
@@ -148,18 +148,18 @@ std::vector<cl_platform_id> mila::bbp::parallel::BBP::GetPlatforms() const {
   return platforms;
 }
 
-std::vector<cl_device_id> mila::bbp::parallel::BBP::GetDevices() const {
+std::vector<cl_device_id> mila::bbp::parallel::BBP::GetDevices(const cl_platform_id& platform) const {
   auto error = cl_int{0};
   auto number_of_devices = cl_uint{0};
   const auto device_type = cl_device_type{CL_DEVICE_TYPE_ALL};
-  error = clGetDeviceIDs(platform_, device_type, 0, nullptr, &number_of_devices);
+  error = clGetDeviceIDs(platform, device_type, 0, nullptr, &number_of_devices);
   if (error) {
     printf("Failed to get number of available devices\n");
   }
 
   auto devices = std::vector<cl_device_id>(number_of_devices);
 
-  error = clGetDeviceIDs(platform_, device_type, number_of_devices, devices.data(), nullptr);
+  error = clGetDeviceIDs(platform, device_type, number_of_devices, devices.data(), nullptr);
   if (error) {
     printf("Failed to get device ids\n");
   }

@@ -31,7 +31,7 @@ class BBP {
   void BuildProgram(const cl_program& program) const;
   std::string ReadFile(const std::string& file) const;
   std::vector<cl_platform_id> GetPlatforms() const;
-  std::vector<cl_device_id> GetDevices() const;
+  std::vector<cl_device_id> GetDevices(const cl_platform_id& platform) const;
   cl_context CreateContext(const cl_platform_id& platform, const std::vector<cl_device_id>& devices) const;
   cl_command_queue CreateQueue(const cl_context& context, const cl_device_id& device) const;
 
