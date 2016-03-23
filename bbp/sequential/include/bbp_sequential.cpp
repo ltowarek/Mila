@@ -94,7 +94,7 @@ std::vector<float> mila::bbp::sequential::BBP::ComputeDigits(size_t number_of_di
   return digits;
 }
 
-std::string mila::bbp::sequential::BBP::Run(size_t number_of_digits, size_t starting_position) const {
+std::string mila::bbp::sequential::BBP::Run(size_t number_of_digits, size_t starting_position) {
   auto digits = ComputeDigits(number_of_digits, starting_position);
   auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
   auto output = std::string("");

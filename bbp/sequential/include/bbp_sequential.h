@@ -24,7 +24,7 @@ class BBP {
   float ModularExponentiation(float b, size_t e, float m) const;  // Compute b^e mod m
   size_t LargestPowerOfTwoLessOrEqual(size_t n) const;
   std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) const;
-  std::string Run(size_t number_of_digits, size_t starting_position) const;
+  virtual std::string Run(size_t number_of_digits, size_t starting_position);
 
   float precision() const;
  private:
