@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <CL/cl.h>
+#include "clpp.h"
 
 #include "bbp_utils.h"
 
