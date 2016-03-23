@@ -26,6 +26,11 @@ class BBP {
   cl_command_queue queue() const;
   cl_kernel kernel() const;
  private:
+  cl_kernel CreateKernel(const std::string &kernel_file, const std::string &kernel_name) const;
+  cl_program CreateProgram(const std::string& program_source) const;
+  void BuildProgram(const cl_program& program) const;
+  std::string ReadFile(const std::string &file) const;
+
   const float precision_;
   cl_platform_id platform_;
   cl_device_id device_;

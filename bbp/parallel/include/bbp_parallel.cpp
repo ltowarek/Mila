@@ -99,19 +99,37 @@ void mila::bbp::parallel::BBP::Initialize() {
   }
 
   const auto source_file_name = "bbp.cl";
-  std::ifstream in(source_file_name);
-  auto source_program = std::vector<char>((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
-  source_program.push_back('\0');
+  const auto kernel_name = std::string("bbp");
+  kernel_ = CreateKernel(source_file_name, kernel_name);
+}
 
-  const auto source_program_size = source_program.size();
-  const char* strings = source_program.data();
-  cl_program program = clCreateProgramWithSource(context_, 1, &strings, &source_program_size, &error);
+mila::bbp::parallel::BBP::~BBP() {
+  clReleaseCommandQueue(queue_);
+  clReleaseContext(context_);
+}
+
+cl_kernel mila::bbp::parallel::BBP::kernel() const {
+  return kernel_;
+}
+
+cl_kernel mila::bbp::parallel::BBP::CreateKernel(const std::string &kernel_file, const std::string &kernel_name) const {
+  auto source_program = ReadFile(kernel_file);
+  auto program = CreateProgram(source_program);
+  BuildProgram(program);
+
+  auto error = cl_int{0};
+  auto kernel = clCreateKernel(program, kernel_name.data(), &error);
   if (error) {
-    printf("Failed to create the source program\n");
+    printf("Failed to create the kernel\n");
   }
 
+  return kernel;
+}
+
+void mila::bbp::parallel::BBP::BuildProgram(const cl_program& program) const {
+  auto error = cl_int{0};
   const auto options = std::string("");
-  error = clBuildProgram(program, devices.size(), devices.data(), options.data(), nullptr, nullptr);
+  error = clBuildProgram(program, 1, &device_, options.data(), nullptr, nullptr);
   if (error) {
     printf("Failed to build the program\n");
 
@@ -123,7 +141,8 @@ void mila::bbp::parallel::BBP::Initialize() {
       }
 
       auto build_log = std::vector<char>(build_log_length);
-      error = clGetProgramBuildInfo(program, device_, CL_PROGRAM_BUILD_LOG, build_log_length, build_log.data(), nullptr);
+      error = clGetProgramBuildInfo(program,
+                                    device_, CL_PROGRAM_BUILD_LOG, build_log_length, build_log.data(), nullptr);
       if (error) {
         printf("Failed to get build log\n");
       }
@@ -131,19 +150,21 @@ void mila::bbp::parallel::BBP::Initialize() {
       printf("%s\n", build_log.data());
     }
   }
+}
 
-  const auto kernel_name = std::string("bbp");
-  kernel_ = clCreateKernel(program, kernel_name.data(), &error);
+cl_program mila::bbp::parallel::BBP::CreateProgram(const std::string &program_source) const {
+  auto error = cl_int{0};
+  const auto source_program_size = program_source.size();
+  const char* strings = program_source.data();
+  cl_program program = clCreateProgramWithSource(context_, 1, &strings, &source_program_size, &error);
   if (error) {
-    printf("Failed to create the kernel\n");
+    printf("Failed to create the source program\n");
   }
+  return program;
 }
 
-mila::bbp::parallel::BBP::~BBP() {
-  clReleaseCommandQueue(queue_);
-  clReleaseContext(context_);
-}
-
-cl_kernel mila::bbp::parallel::BBP::kernel() const {
-  return kernel_;
+std::string mila::bbp::parallel::BBP::ReadFile(const std::string &file) const {
+  std::ifstream in(file);
+  auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+  return content;
 }
