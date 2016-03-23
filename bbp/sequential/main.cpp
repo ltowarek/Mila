@@ -8,7 +8,7 @@ struct parameters {
   size_t starting_position;
 };
 
-parameters ParseCommandLine(int argc, char** argv) {
+parameters ParseCommandLine(int argc, char **argv) {
   auto config = parameters{0};
   // TODO: Verify input and add help message
   config.number_of_digits = static_cast<size_t>(atoi(argv[1]));
@@ -16,7 +16,7 @@ parameters ParseCommandLine(int argc, char** argv) {
   return config;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
   auto bbp = mila::bbp::sequential::BBP();
   std::string output = bbp.Run(config.number_of_digits, config.starting_position);
