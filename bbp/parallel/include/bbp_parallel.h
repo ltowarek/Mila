@@ -26,8 +26,8 @@ class BBP {
   cl_command_queue queue() const;
   cl_kernel kernel() const;
  private:
-  cl_kernel CreateKernel(const std::string& kernel_file, const std::string& kernel_name) const;
-  cl_program CreateProgram(const std::string& program_source) const;
+  cl_kernel CreateKernel(const cl_context& context, const std::string& kernel_file, const std::string& kernel_name) const;
+  cl_program CreateProgram(const cl_context& context, const std::string& program_source) const;
   void BuildProgram(const cl_program& program) const;
   std::string ReadFile(const std::string& file) const;
   std::vector<cl_platform_id> GetPlatforms() const;

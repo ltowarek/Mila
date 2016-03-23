@@ -61,7 +61,7 @@ void mila::bbp::parallel::BBP::Initialize() {
 
   const auto source_file_name = "bbp.cl";
   const auto kernel_name = std::string("bbp");
-  kernel_ = CreateKernel(source_file_name, kernel_name);
+  kernel_ = CreateKernel(context_, source_file_name, kernel_name);
 }
 
 mila::bbp::parallel::BBP::~BBP() {
@@ -73,9 +73,9 @@ cl_kernel mila::bbp::parallel::BBP::kernel() const {
   return kernel_;
 }
 
-cl_kernel mila::bbp::parallel::BBP::CreateKernel(const std::string& kernel_file, const std::string& kernel_name) const {
+cl_kernel mila::bbp::parallel::BBP::CreateKernel(const cl_context& context, const std::string& kernel_file, const std::string& kernel_name) const {
   auto source_program = ReadFile(kernel_file);
-  auto program = CreateProgram(source_program);
+  auto program = CreateProgram(context, source_program);
   BuildProgram(program);
 
   auto error = cl_int{0};
@@ -113,11 +113,11 @@ void mila::bbp::parallel::BBP::BuildProgram(const cl_program& program) const {
   }
 }
 
-cl_program mila::bbp::parallel::BBP::CreateProgram(const std::string& program_source) const {
+cl_program mila::bbp::parallel::BBP::CreateProgram(const cl_context& context, const std::string& program_source) const {
   auto error = cl_int{0};
   const auto source_program_size = program_source.size();
   const char* strings = program_source.data();
-  cl_program program = clCreateProgramWithSource(context_, 1, &strings, &source_program_size, &error);
+  cl_program program = clCreateProgramWithSource(context, 1, &strings, &source_program_size, &error);
   if (error) {
     printf("Failed to create the source program\n");
   }
