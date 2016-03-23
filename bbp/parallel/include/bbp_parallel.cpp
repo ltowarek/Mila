@@ -37,20 +37,7 @@ void mila::bbp::parallel::BBP::Initialize() {
   const auto platform_id = size_t{0};
   platform_ = platforms.at(platform_id);
 
-  auto number_of_devices = cl_uint{0};
-  const auto device_type = cl_device_type{CL_DEVICE_TYPE_ALL};
-  error = clGetDeviceIDs(platform_, device_type, 0, nullptr, &number_of_devices);
-  if (error) {
-    printf("Failed to get number of available devices\n");
-  }
-
-  auto devices = std::vector<cl_device_id>(number_of_devices);
-
-  error = clGetDeviceIDs(platform_, device_type, number_of_devices, devices.data(), nullptr);
-  if (error) {
-    printf("Failed to get device ids\n");
-  }
-
+  auto devices = GetDevices();
   const auto device_id = size_t{0};
   device_ = devices.at(device_id);
   devices.clear();
@@ -69,13 +56,7 @@ void mila::bbp::parallel::BBP::Initialize() {
     printf("Failed to get device name\n");
   }
 
-  const auto properties =
-      std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform_), 0};
-
-  context_ = clCreateContext(properties.data(), devices.size(), devices.data(), nullptr, nullptr, &error);
-  if (error) {
-    printf("Failed to create the context\n");
-  }
+  context_ = CreateContext(devices);
 
   auto queue_properties = cl_command_queue_properties{CL_QUEUE_PROFILING_ENABLE};
 
@@ -98,7 +79,7 @@ cl_kernel mila::bbp::parallel::BBP::kernel() const {
   return kernel_;
 }
 
-cl_kernel mila::bbp::parallel::BBP::CreateKernel(const std::string &kernel_file, const std::string &kernel_name) const {
+cl_kernel mila::bbp::parallel::BBP::CreateKernel(const std::string& kernel_file, const std::string& kernel_name) const {
   auto source_program = ReadFile(kernel_file);
   auto program = CreateProgram(source_program);
   BuildProgram(program);
@@ -138,7 +119,7 @@ void mila::bbp::parallel::BBP::BuildProgram(const cl_program& program) const {
   }
 }
 
-cl_program mila::bbp::parallel::BBP::CreateProgram(const std::string &program_source) const {
+cl_program mila::bbp::parallel::BBP::CreateProgram(const std::string& program_source) const {
   auto error = cl_int{0};
   const auto source_program_size = program_source.size();
   const char* strings = program_source.data();
@@ -171,4 +152,36 @@ std::vector<cl_platform_id> mila::bbp::parallel::BBP::GetPlatforms() const {
   }
 
   return platforms;
+}
+
+std::vector<cl_device_id> mila::bbp::parallel::BBP::GetDevices() const {
+  auto error = cl_int{0};
+  auto number_of_devices = cl_uint{0};
+  const auto device_type = cl_device_type{CL_DEVICE_TYPE_ALL};
+  error = clGetDeviceIDs(platform_, device_type, 0, nullptr, &number_of_devices);
+  if (error) {
+    printf("Failed to get number of available devices\n");
+  }
+
+  auto devices = std::vector<cl_device_id>(number_of_devices);
+
+  error = clGetDeviceIDs(platform_, device_type, number_of_devices, devices.data(), nullptr);
+  if (error) {
+    printf("Failed to get device ids\n");
+  }
+
+  return devices;
+}
+
+cl_context mila::bbp::parallel::BBP::CreateContext(const std::vector<cl_device_id>& devices) const {
+  auto error = cl_int{0};
+  const auto properties =
+      std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform_), 0};
+
+  auto context = clCreateContext(properties.data(), devices.size(), devices.data(), nullptr, nullptr, &error);
+  if (error) {
+    printf("Failed to create the context\n");
+  }
+
+  return context;
 }
