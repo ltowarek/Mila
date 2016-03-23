@@ -52,34 +52,6 @@ TEST(BBPSequentialTest, ComputeDigit) {
   EXPECT_NEAR(bbp.ComputeDigit(1000), 1.7962465286254883f, 1e-5f);
 }
 
-TEST(BBPSequentialTest, ConvertFractionToHex) {
-  mila::bbp::sequential::BBP bbp;
-  EXPECT_EQ(bbp.ConvertFractionToHex(0.141587316989899f, 6), "243F11");
-  EXPECT_EQ(bbp.ConvertFractionToHex(0.265479207038879f, 6), "43F672");
-  EXPECT_EQ(bbp.ConvertFractionToHex(0.7426779270172f, 6), "BE2024");
-  EXPECT_EQ(bbp.ConvertFractionToHex(0.0f, 0), "");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.0f, 1), "0");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.0f, 2), "00");
-  EXPECT_EQ(bbp.ConvertFractionToHex(2.0f, 1), "0");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.1f, 1), "1");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.2f, 1), "3");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.3f, 1), "4");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.4f, 1), "6");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.5f, 1), "8");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.6f, 1), "9");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.7f, 1), "B");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.8f, 1), "C");
-  EXPECT_EQ(bbp.ConvertFractionToHex(1.9f, 1), "E");
-}
-
-TEST(BBPSequentialTest, ConvertFractionsToHex) {
-  mila::bbp::sequential::BBP bbp;
-  std::vector<float> fractions = {0.141587316989899f, 0.265479207038879f};
-  ASSERT_EQ(bbp.ConvertFractionsToHex(fractions, 6).size(), fractions.size());
-  EXPECT_EQ(bbp.ConvertFractionsToHex(fractions, 6)[0], "243F11");
-  EXPECT_EQ(bbp.ConvertFractionsToHex(fractions, 6)[1], "43F672");
-}
-
 TEST(BBPSequentialTest, Series) {
   mila::bbp::sequential::BBP bbp;
   EXPECT_NEAR(bbp.Series(1, 1000), 0.93149524927139282f, 1e-5f);

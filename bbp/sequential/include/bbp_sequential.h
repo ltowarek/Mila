@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include "bbp_utils.h"
+
 namespace mila {
 namespace bbp {
 namespace sequential {
@@ -21,8 +23,6 @@ class BBP {
   float Series(size_t j, size_t d) const;  // Compute sum_k 16^(d-k)/(8*k*j)
   float ModularExponentiation(float b, size_t e, float m) const;  // Compute b^e mod m
   size_t LargestPowerOfTwoLessOrEqual(size_t n) const;
-  std::string ConvertFractionToHex(float number, size_t number_of_digits) const;
-  std::vector<std::string> ConvertFractionsToHex(std::vector<float> numbers, size_t number_of_digits) const;
   std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) const;
   std::string Run(size_t number_of_digits, size_t starting_position) const;
 
