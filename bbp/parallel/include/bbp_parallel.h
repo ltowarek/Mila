@@ -20,8 +20,8 @@ class BBP {
   BBP(size_t platform_id, size_t device_id);
   ~BBP();
 
-  void Initialize();
-  std::string Run(size_t number_of_digits, size_t starting_position);
+  virtual void Initialize();
+  virtual std::string Run(size_t number_of_digits, size_t starting_position);
   std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
 
   float precision() const;
@@ -44,7 +44,7 @@ class BBP {
   clpp::Queue queue_;
   clpp::Kernel kernel_;
 };
-};  // sequential
+};  // parallel
 };  // bbp
 }  // mila
 

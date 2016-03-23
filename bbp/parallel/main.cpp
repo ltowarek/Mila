@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include "bbp_parallel.h"
+#include "bbp_parallel_profiler.h"
 
 struct parameters {
   size_t number_of_digits;
@@ -22,8 +22,10 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
-  auto bbp = mila::bbp::parallel::BBP(config.platform_id, config.device_id);
+  auto bbp = mila::bbp::parallel::BBPProfiler(config.platform_id, config.device_id);
   std::string output = bbp.Run(config.number_of_digits, config.starting_position);
+  auto duration = bbp.results().at(bbp.main_result());
+  printf("Duration [us]: %lld\n", duration);
   printf("Platform: %s\n", bbp.platform().getName().c_str());
   printf("Device: %s\n", bbp.device().getName().c_str());
   printf("Number of Digits: %d\n", config.number_of_digits);
