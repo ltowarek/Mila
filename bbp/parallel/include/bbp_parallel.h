@@ -33,6 +33,7 @@ class BBP {
   std::vector<cl_platform_id> GetPlatforms() const;
   std::vector<cl_device_id> GetDevices() const;
   cl_context CreateContext(const std::vector<cl_device_id>& devices) const;
+  cl_command_queue CreateQueue(const cl_context& context, const cl_device_id& device) const;
 
   const float precision_;
   cl_platform_id platform_;

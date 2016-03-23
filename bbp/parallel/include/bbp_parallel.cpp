@@ -57,13 +57,7 @@ void mila::bbp::parallel::BBP::Initialize() {
   }
 
   context_ = CreateContext(devices);
-
-  auto queue_properties = cl_command_queue_properties{CL_QUEUE_PROFILING_ENABLE};
-
-  queue_ = clCreateCommandQueue(context_, device_, queue_properties, &error);
-  if (error) {
-    printf("Failed to create the command queue\n");
-  }
+  queue_ = CreateQueue(context_, device_);
 
   const auto source_file_name = "bbp.cl";
   const auto kernel_name = std::string("bbp");
@@ -184,4 +178,16 @@ cl_context mila::bbp::parallel::BBP::CreateContext(const std::vector<cl_device_i
   }
 
   return context;
+}
+
+cl_command_queue mila::bbp::parallel::BBP::CreateQueue(const cl_context& context, const cl_device_id& device) const {
+  auto error = cl_int{0};
+  auto queue_properties = cl_command_queue_properties{CL_QUEUE_PROFILING_ENABLE};
+
+  auto queue = clCreateCommandQueue(context, device, queue_properties, &error);
+  if (error) {
+    printf("Failed to create the command queue\n");
+  }
+
+  return queue;
 }
