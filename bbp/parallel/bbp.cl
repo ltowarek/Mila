@@ -52,7 +52,7 @@ float Series(float j, float d) {
         sum -= convert_int(sum);
     }
 
-    for (float k = d; k <= d + 100; ++k) {
+    for (int k = d; k <= d + 100; ++k) {
         float ak = 8.0f * k + j;
         float t = pow(16.0f, d - k) / ak;
 
