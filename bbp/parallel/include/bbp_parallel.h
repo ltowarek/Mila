@@ -30,6 +30,7 @@ class BBP {
   cl_program CreateProgram(const std::string& program_source) const;
   void BuildProgram(const cl_program& program) const;
   std::string ReadFile(const std::string &file) const;
+  std::vector<cl_platform_id> GetPlatforms() const;
 
   const float precision_;
   cl_platform_id platform_;

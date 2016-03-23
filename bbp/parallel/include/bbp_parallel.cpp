@@ -33,21 +33,7 @@ cl_command_queue mila::bbp::parallel::BBP::queue() const {
 
 void mila::bbp::parallel::BBP::Initialize() {
   auto error = cl_int{0};
-
-  auto number_of_platforms = cl_uint{0};
-
-  error = clGetPlatformIDs(0, nullptr, &number_of_platforms);
-  if (error) {
-    printf("Failed to get number of available platforms\n");
-  }
-
-  auto platforms = std::vector<cl_platform_id>(number_of_platforms);
-
-  error = clGetPlatformIDs(number_of_platforms, platforms.data(), nullptr);
-  if (error) {
-    printf("Failed to get platform ids\n");
-  }
-
+  const auto platforms = GetPlatforms();
   const auto platform_id = size_t{0};
   platform_ = platforms.at(platform_id);
 
@@ -167,4 +153,22 @@ std::string mila::bbp::parallel::BBP::ReadFile(const std::string &file) const {
   std::ifstream in(file);
   auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   return content;
+}
+
+std::vector<cl_platform_id> mila::bbp::parallel::BBP::GetPlatforms() const {
+  auto error = cl_int{0};
+
+  auto number_of_platforms = cl_uint{0};
+  error = clGetPlatformIDs(0, nullptr, &number_of_platforms);
+  if (error) {
+    printf("Failed to get number of available platforms\n");
+  }
+
+  auto platforms = std::vector<cl_platform_id>(number_of_platforms);
+  error = clGetPlatformIDs(number_of_platforms, platforms.data(), nullptr);
+  if (error) {
+    printf("Failed to get platform ids\n");
+  }
+
+  return platforms;
 }
