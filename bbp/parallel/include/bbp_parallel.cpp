@@ -56,7 +56,7 @@ void mila::bbp::parallel::BBP::Initialize() {
     printf("Failed to get device name\n");
   }
 
-  context_ = CreateContext(devices);
+  context_ = CreateContext(platform_, devices);
   queue_ = CreateQueue(context_, device_);
 
   const auto source_file_name = "bbp.cl";
@@ -167,10 +167,10 @@ std::vector<cl_device_id> mila::bbp::parallel::BBP::GetDevices() const {
   return devices;
 }
 
-cl_context mila::bbp::parallel::BBP::CreateContext(const std::vector<cl_device_id>& devices) const {
+cl_context mila::bbp::parallel::BBP::CreateContext(const cl_platform_id& platform, const std::vector<cl_device_id>& devices) const {
   auto error = cl_int{0};
   const auto properties =
-      std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform_), 0};
+      std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform), 0};
 
   auto context = clCreateContext(properties.data(), devices.size(), devices.data(), nullptr, nullptr, &error);
   if (error) {
