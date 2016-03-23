@@ -4,11 +4,30 @@
 TEST(BBPParallelTest, DefaultConstructor) {
   mila::bbp::parallel::BBP bbp;
   EXPECT_EQ(bbp.precision(), 1e-5f);
+  EXPECT_EQ(bbp.platform_id(), 0);
+  EXPECT_EQ(bbp.device_id(), 0);
 }
 
 TEST(BBPParallelTest, PrecisionConstructor) {
   mila::bbp::parallel::BBP bbp(1e-7f);
   EXPECT_EQ(bbp.precision(), 1e-7f);
+  EXPECT_EQ(bbp.platform_id(), 0);
+  EXPECT_EQ(bbp.device_id(), 0);
+}
+
+TEST(BBPParallelTest, DeviceTypeConstructor) {
+  mila::bbp::parallel::BBP bbp_0_0(0, 0);
+  EXPECT_EQ(bbp_0_0.platform_id(), 0);
+  EXPECT_EQ(bbp_0_0.device_id(), 0);
+  EXPECT_EQ(bbp_0_0.precision(), 1e-5f);
+  mila::bbp::parallel::BBP bbp_1_0(1, 0);
+  EXPECT_EQ(bbp_1_0.platform_id(), 1);
+  EXPECT_EQ(bbp_1_0.device_id(), 0);
+  EXPECT_EQ(bbp_1_0.precision(), 1e-5f);
+  mila::bbp::parallel::BBP bbp_0_1(0, 1);
+  EXPECT_EQ(bbp_0_1.platform_id(), 0);
+  EXPECT_EQ(bbp_0_1.device_id(), 1);
+  EXPECT_EQ(bbp_0_1.precision(), 1e-5f);
 }
 
 TEST(BBPParallelTest, ComputeDigits) {
@@ -20,6 +39,19 @@ TEST(BBPParallelTest, ComputeDigits) {
   EXPECT_NEAR(bbp.ComputeDigits(2, 0)[1], 0.265479207038879f, 1e-5f);
   ASSERT_EQ(bbp.ComputeDigits(1, 1).size(), 1);
   EXPECT_NEAR(bbp.ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5f);
+}
+
+TEST(BBPParallelTest, ExecutionDevice) {
+  auto platforms = clpp::Platform::get();
+  for (size_t platform = 0; platform < platforms.size(); ++ platform) {
+    auto devices = platforms[platform].getAllDevices();
+    for (size_t device = 0; device < devices.size(); ++device) {
+      mila::bbp::parallel::BBP bbp(platform, device);
+      bbp.Run(0, 0);
+      EXPECT_EQ(platforms[platform], bbp.platform());
+      EXPECT_EQ(devices[device], bbp.device());
+    }
+  }
 }
 
 TEST(BBPParallelTest, Run) {

@@ -17,6 +17,7 @@ class BBP {
  public:
   BBP();
   BBP(float precision);
+  BBP(size_t platform_id, size_t device_id);
   ~BBP();
 
   void Initialize();
@@ -24,6 +25,8 @@ class BBP {
   std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
 
   float precision() const;
+  size_t platform_id() const;
+  size_t device_id() const;
   clpp::Platform platform() const;
   clpp::Device device() const;
   clpp::Context context() const;
@@ -33,6 +36,8 @@ class BBP {
   std::string ReadFile(const std::string &file) const;
 
   const float precision_;
+  size_t platform_id_;
+  size_t device_id_;
   clpp::Platform platform_;
   clpp::Device device_;
   clpp::Context context_;

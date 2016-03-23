@@ -1,9 +1,14 @@
 #include "bbp_parallel.h"
 
-mila::bbp::parallel::BBP::BBP() : BBP(1e-5f) {
+mila::bbp::parallel::BBP::BBP() : precision_(1e-5f), platform_id_(0), device_id_(0) {
 }
 
-mila::bbp::parallel::BBP::BBP(float precision) : precision_(precision) {
+mila::bbp::parallel::BBP::BBP(float precision) : precision_(precision), platform_id_(0), device_id_(0) {
+}
+
+mila::bbp::parallel::BBP::BBP(size_t platform_id, size_t device_id) : precision_(1e-5f),
+                                                                      platform_id_(platform_id),
+                                                                      device_id_(device_id) {
 }
 
 mila::bbp::parallel::BBP::~BBP() {
@@ -11,6 +16,14 @@ mila::bbp::parallel::BBP::~BBP() {
 
 float mila::bbp::parallel::BBP::precision() const {
   return precision_;
+}
+
+size_t mila::bbp::parallel::BBP::platform_id() const {
+  return platform_id_;
+}
+
+size_t mila::bbp::parallel::BBP::device_id() const {
+  return device_id_;
 }
 
 clpp::Platform mila::bbp::parallel::BBP::platform() const {
@@ -35,12 +48,10 @@ clpp::Kernel mila::bbp::parallel::BBP::kernel() const {
 
 void mila::bbp::parallel::BBP::Initialize() {
   const auto platforms = clpp::Platform::get();
-  const auto platform_id = size_t{0};
-  platform_ = platforms.at(platform_id);
+  platform_ = platforms.at(platform_id_);
 
   const auto devices = platform_.getAllDevices();
-  const auto device_id = size_t{0};
-  device_ = devices.at(device_id);
+  device_ = devices.at(device_id_);
 
   context_ = clpp::Context(device_);
   queue_ = clpp::Queue(context_, device_);
@@ -49,7 +60,12 @@ void mila::bbp::parallel::BBP::Initialize() {
   const auto kernel_name = std::string("bbp");
   auto source_file = ReadFile(source_file_name);
   auto program = clpp::Program(context_, source_file);
-  program.build(device_);
+
+  try {
+    program.build(device_);
+  } catch(const clpp::Error& error) {
+    printf("%s\n", program.getBuildLog(device_).c_str());
+  }
   kernel_ = clpp::Kernel(program, kernel_name.c_str());
 }
 
