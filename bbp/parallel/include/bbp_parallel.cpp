@@ -7,6 +7,7 @@ mila::bbp::parallel::BBP::BBP(float precision) : platform_(nullptr),
                                                  device_(nullptr),
                                                  context_(nullptr),
                                                  queue_(nullptr),
+                                                 kernel_(nullptr),
                                                  precision_(precision) {
 }
 
@@ -82,8 +83,6 @@ void mila::bbp::parallel::BBP::Initialize() {
     printf("Failed to get device name\n");
   }
 
-  printf("Device name: %s\n", device_name.data());
-
   const auto properties =
       std::vector<cl_context_properties>{CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platform_), 0};
 
@@ -99,9 +98,52 @@ void mila::bbp::parallel::BBP::Initialize() {
     printf("Failed to create the command queue\n");
   }
 
+  const auto source_file_name = "bbp.cl";
+  std::ifstream in(source_file_name);
+  auto source_program = std::vector<char>((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+  source_program.push_back('\0');
+
+  const auto source_program_size = source_program.size();
+  const char* strings = source_program.data();
+  cl_program program = clCreateProgramWithSource(context_, 1, &strings, &source_program_size, &error);
+  if (error) {
+    printf("Failed to create the source program\n");
+  }
+
+  const auto options = std::string("");
+  error = clBuildProgram(program, devices.size(), devices.data(), options.data(), nullptr, nullptr);
+  if (error) {
+    printf("Failed to build the program\n");
+
+    if (error == CL_BUILD_PROGRAM_FAILURE) {
+      auto build_log_length = size_t{0};
+      error = clGetProgramBuildInfo(program, device_, CL_PROGRAM_BUILD_LOG, 0, nullptr, &build_log_length);
+      if (error) {
+        printf("Failed to get build log length\n");
+      }
+
+      auto build_log = std::vector<char>(build_log_length);
+      error = clGetProgramBuildInfo(program, device_, CL_PROGRAM_BUILD_LOG, build_log_length, build_log.data(), nullptr);
+      if (error) {
+        printf("Failed to get build log\n");
+      }
+
+      printf("%s\n", build_log.data());
+    }
+  }
+
+  const auto kernel_name = std::string("bbp");
+  kernel_ = clCreateKernel(program, kernel_name.data(), &error);
+  if (error) {
+    printf("Failed to create the kernel\n");
+  }
 }
 
 mila::bbp::parallel::BBP::~BBP() {
   clReleaseCommandQueue(queue_);
   clReleaseContext(context_);
+}
+
+cl_kernel mila::bbp::parallel::BBP::kernel() const {
+  return kernel_;
 }

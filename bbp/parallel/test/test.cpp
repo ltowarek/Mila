@@ -8,6 +8,7 @@ TEST(BBPParallelTest, DefaultConstructor) {
   EXPECT_EQ(bbp.device(), nullptr);
   EXPECT_EQ(bbp.context(), nullptr);
   EXPECT_EQ(bbp.queue(), nullptr);
+  EXPECT_EQ(bbp.kernel(), nullptr);
 }
 
 TEST(BBPParallelTest, PrecisionConstructor) {
@@ -17,6 +18,7 @@ TEST(BBPParallelTest, PrecisionConstructor) {
   EXPECT_EQ(bbp.device(), nullptr);
   EXPECT_EQ(bbp.context(), nullptr);
   EXPECT_EQ(bbp.queue(), nullptr);
+  EXPECT_EQ(bbp.kernel(), nullptr);
 }
 
 TEST(BBPParallelTest, Destructor) {
@@ -32,4 +34,5 @@ TEST(BBPParallelTest, Initialize) {
   EXPECT_NE(bbp.device(), nullptr);
   EXPECT_NE(bbp.context(), nullptr);
   EXPECT_NE(bbp.queue(), nullptr);
+  EXPECT_NE(bbp.kernel(), nullptr);
 }
