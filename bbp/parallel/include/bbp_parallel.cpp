@@ -43,19 +43,6 @@ void mila::bbp::parallel::BBP::Initialize() {
   devices.clear();
   devices.push_back(device_);
 
-  auto device_name_length = size_t{0};
-  error = clGetDeviceInfo(device_, CL_DEVICE_NAME, 0, nullptr, &device_name_length);
-  if (error) {
-    printf("Failed to get device name size\n");
-  }
-
-  auto device_name = std::vector<char>(device_name_length);
-
-  error = clGetDeviceInfo(device_, CL_DEVICE_NAME, device_name_length, device_name.data(), nullptr);
-  if (error) {
-    printf("Failed to get device name\n");
-  }
-
   context_ = CreateContext(platform_, devices);
   queue_ = CreateQueue(context_, device_);
 
@@ -190,4 +177,23 @@ cl_command_queue mila::bbp::parallel::BBP::CreateQueue(const cl_context& context
   }
 
   return queue;
+}
+
+std::string mila::bbp::parallel::BBP::GetDeviceName(const cl_device_id& device) const {
+  auto error = cl_int{0};
+  auto device_name_length = size_t{0};
+  error = clGetDeviceInfo(device_, CL_DEVICE_NAME, 0, nullptr, &device_name_length);
+  if (error) {
+    printf("Failed to get device name size\n");
+  }
+
+  auto device_name = std::vector<char>(device_name_length);
+
+  error = clGetDeviceInfo(device_, CL_DEVICE_NAME, device_name_length, device_name.data(), nullptr);
+  if (error) {
+    printf("Failed to get device name\n");
+  }
+
+  auto output = std::string(device_name.data());
+  return output;
 }
