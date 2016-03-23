@@ -36,3 +36,15 @@ TEST(BBPParallelTest, Initialize) {
   EXPECT_NE(bbp.queue(), nullptr);
   EXPECT_NE(bbp.kernel(), nullptr);
 }
+
+TEST(BBPParallelTest, ComputeDigits) {
+  mila::bbp::parallel::BBP bbp;
+  bbp.Initialize();
+  EXPECT_EQ(bbp.ComputeDigits(0, 0).size(), 0);
+  EXPECT_EQ(bbp.ComputeDigits(1, 0).size(), 1);
+  ASSERT_EQ(bbp.ComputeDigits(2, 0).size(), 2);
+  EXPECT_NEAR(bbp.ComputeDigits(2, 0)[0], 0.141587316989899f, 1e-5f);
+  EXPECT_NEAR(bbp.ComputeDigits(2, 0)[1], 0.265479207038879f, 1e-5f);
+  ASSERT_EQ(bbp.ComputeDigits(1, 1).size(), 1);
+  EXPECT_NEAR(bbp.ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5f);
+}

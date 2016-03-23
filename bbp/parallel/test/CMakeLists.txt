@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(bbp_parallel_test)
 
-file(COPY ${KERNEL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 include_directories(${GTEST_INCLUDE_DIRS} ${BBP_PARALLEL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} test.cpp)

@@ -67,12 +67,13 @@ float Series(const float j, const float d) {
     return sum;
 }
 
-kernel void bbp(global float *results) {
+kernel void bbp(int starting_position, global float *results) {
     const int kTid = get_global_id(0);
-    float s1 = Series(1, kTid);
-    float s2 = Series(4, kTid);
-    float s3 = Series(5, kTid);
-    float s4 = Series(6, kTid);
+    const int position = starting_position + kTid;
+    float s1 = Series(1, position);
+    float s2 = Series(4, position);
+    float s3 = Series(5, position);
+    float s4 = Series(6, position);
     float tmp_result = 4.0f * s1 - 2.0f * s2 - s3 - s4;
     tmp_result = tmp_result - convert_int(tmp_result) + 1.0f;
     results[kTid] = tmp_result;

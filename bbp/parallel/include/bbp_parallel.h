@@ -18,6 +18,7 @@ class BBP {
   ~BBP();
 
   void Initialize();
+  std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) const;
 
   float precision() const;
   cl_platform_id platform() const;

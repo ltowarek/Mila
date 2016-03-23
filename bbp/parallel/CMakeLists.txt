@@ -4,7 +4,7 @@ project(bbp_parallel)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 set(KERNEL_FILE ${PROJECT_SOURCE_DIR}/bbp.cl)
-file(COPY ${KERNEL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIR})

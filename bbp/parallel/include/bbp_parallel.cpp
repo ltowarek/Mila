@@ -197,3 +197,44 @@ std::string mila::bbp::parallel::BBP::GetDeviceName(const cl_device_id& device) 
   auto output = std::string(device_name.data());
   return output;
 }
+
+std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) const {
+  auto error = cl_int{0};
+  auto output = std::vector<cl_float>(number_of_digits, 0.0f);
+
+  if (number_of_digits == 0) {
+    return output;
+  }
+
+  auto output_buffer = clCreateBuffer(context_, CL_MEM_WRITE_ONLY, number_of_digits * sizeof(cl_float), nullptr, &error);
+  if (error) {
+    printf("Failed to create the output buffer\n");
+  }
+
+  error = clSetKernelArg(kernel_, 0, sizeof(starting_position), &starting_position);
+  error |= clSetKernelArg(kernel_, 1, sizeof(output_buffer), &output_buffer);
+  if (error) {
+    printf("Failed to set kernel arguments\n");
+  }
+
+  auto global_work_size = std::vector<size_t>{number_of_digits};
+
+  error = clEnqueueNDRangeKernel(queue_, kernel_, 1, nullptr, global_work_size.data(), nullptr, 0, nullptr, nullptr);
+  if (error) {
+    printf("Failed to enqueue the kernel\n");
+  }
+
+  error = clFinish(queue_);
+  if (error) {
+    printf("Failed to wait for results\n");
+  }
+
+  error = clEnqueueReadBuffer(queue_, output_buffer, CL_TRUE, 0, output.size() * sizeof(output.at(0)), output.data(), 0, nullptr, nullptr);
+  if (error) {
+    printf("Failed to read the output buffer\n");
+  }
+
+  clReleaseMemObject(output_buffer);
+
+  return output;
+}
