@@ -58,7 +58,7 @@ void mila::bbp::parallel::BBP::Initialize() {
 
   const auto source_file_name = "bbp.cl";
   const auto kernel_name = std::string("bbp");
-  auto source_file = ReadFile(source_file_name);
+  auto source_file = mila::bbp::utils::ReadFile(source_file_name);
   auto program = clpp::Program(context_, source_file);
 
   try {
@@ -67,12 +67,6 @@ void mila::bbp::parallel::BBP::Initialize() {
     printf("%s\n", program.getBuildLog(device_).c_str());
   }
   kernel_ = clpp::Kernel(program, kernel_name.c_str());
-}
-
-std::string mila::bbp::parallel::BBP::ReadFile(const std::string &file) const {
-  std::ifstream in(file);
-  auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
-  return content;
 }
 
 std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {

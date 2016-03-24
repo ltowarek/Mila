@@ -33,7 +33,6 @@ class BBP {
   clpp::Queue queue() const;
   clpp::Kernel kernel() const;
  private:
-  std::string ReadFile(const std::string &file) const;
 
   const float precision_;
   size_t platform_id_;
