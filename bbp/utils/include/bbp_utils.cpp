@@ -47,3 +47,15 @@ float mila::bbp::utils::CoefficientOfVariation(const std::vector<float> &values)
   auto coefficient_of_variation = (standard_deviation / mean);
   return coefficient_of_variation;
 }
+
+float mila::bbp::utils::Median(const std::vector<float> &values) {
+  auto tmp_values = values;
+  std::sort(tmp_values.begin(), tmp_values.end());
+  auto median = 0.0f;
+  if (values.size() % 2 == 0) {
+    median = (tmp_values[tmp_values.size() / 2.0f - 1.0f] + tmp_values[tmp_values.size() / 2.0f]) / 2.0f;
+  } else {
+    median = tmp_values[tmp_values.size() / 2];
+  }
+  return median;
+}
