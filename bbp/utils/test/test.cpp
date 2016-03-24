@@ -73,3 +73,9 @@ TEST(BBPUtilsTest, Median) {
   values = {1, 2, 3, 4, 5};
   EXPECT_NEAR(mila::bbp::utils::Median(values), 3.0f, 1e-5);
 }
+
+TEST(BBPUtilsTest, ReadFile) {
+  // TODO: Replace real file with mocked data
+  EXPECT_STREQ(mila::bbp::utils::ReadFile("test.txt").c_str(), "Test file content");
+  EXPECT_STREQ(mila::bbp::utils::ReadFile("fake_file").c_str(), "");
+}
