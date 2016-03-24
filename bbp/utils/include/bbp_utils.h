@@ -17,6 +17,7 @@ std::vector<std::string> ConvertFractionsToHex(const std::vector<float>& numbers
 float Mean(const std::vector<float>& values);
 float Variance(const std::vector<float>& values);
 float StandardDeviation(const std::vector<float>& values);
+float CoefficientOfVariation(const std::vector<float>& values);
 
 };  // utils
 };  // bbp

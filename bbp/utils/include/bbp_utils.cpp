@@ -26,7 +26,7 @@ float mila::bbp::utils::Mean(const std::vector<float> &values) {
   return mean;
 }
 
-float ::mila::bbp::utils::Variance(const std::vector<float> &values) {
+float mila::bbp::utils::Variance(const std::vector<float> &values) {
   float mean = mila::bbp::utils::Mean(values);
   std::vector<float> differences(values.size());
   std::transform(values.begin(), values.end(), differences.begin(), [mean](float x) {return x - mean;});
@@ -39,4 +39,11 @@ float mila::bbp::utils::StandardDeviation(const std::vector<float> &values) {
   float variance = mila::bbp::utils::Variance(values);
   float standard_deviation = std::sqrt(variance);
   return standard_deviation;
+}
+
+float mila::bbp::utils::CoefficientOfVariation(const std::vector<float> &values) {
+  float mean = mila::bbp::utils::Mean(values);
+  float standard_deviation = mila::bbp::utils::StandardDeviation(values);
+  float coefficient_of_variation = (standard_deviation / mean);
+  return coefficient_of_variation;
 }

@@ -53,3 +53,12 @@ TEST(BBPUtilsTest, StandardDeviation) {
   values = {2, 4, 4, 4, 5, 5, 7, 9};
   EXPECT_NEAR(mila::bbp::utils::StandardDeviation(values), 2.13809f, 1e-5);
 }
+
+TEST(BBPUtilsTest, CoefficientOfVariation) {
+  std::vector<float> values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
+  EXPECT_NEAR(mila::bbp::utils::CoefficientOfVariation(values), 0.55048f, 1e-5);
+  values = {10000, 10000, 10000, 10000, 10000};
+  EXPECT_EQ(mila::bbp::utils::CoefficientOfVariation(values), 0);
+  values = {2, 4, 4, 4, 5, 5, 7, 9};
+  EXPECT_NEAR(mila::bbp::utils::CoefficientOfVariation(values), 0.42761f, 1e-5);
+}
