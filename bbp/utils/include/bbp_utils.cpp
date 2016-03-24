@@ -21,29 +21,29 @@ std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(const std::vect
 }
 
 float mila::bbp::utils::Mean(const std::vector<float> &values) {
-  float sum = std::accumulate(values.begin(), values.end(), 0.0f);
-  float mean = sum / values.size();
+  auto sum = std::accumulate(values.begin(), values.end(), 0.0f);
+  auto mean = sum / values.size();
   return mean;
 }
 
 float mila::bbp::utils::Variance(const std::vector<float> &values) {
-  float mean = mila::bbp::utils::Mean(values);
-  std::vector<float> differences(values.size());
+  auto mean = mila::bbp::utils::Mean(values);
+  auto differences = std::vector<float>(values.size());
   std::transform(values.begin(), values.end(), differences.begin(), [mean](float x) {return x - mean;});
-  float square_sum = std::inner_product(differences.begin(), differences.end(), differences.begin(), 0.0f);
-  float variance = square_sum / (values.size() - 1);
+  auto square_sum = std::inner_product(differences.begin(), differences.end(), differences.begin(), 0.0f);
+  auto variance = square_sum / (values.size() - 1);
   return variance;
 }
 
 float mila::bbp::utils::StandardDeviation(const std::vector<float> &values) {
-  float variance = mila::bbp::utils::Variance(values);
-  float standard_deviation = std::sqrt(variance);
+  auto variance = mila::bbp::utils::Variance(values);
+  auto standard_deviation = std::sqrt(variance);
   return standard_deviation;
 }
 
 float mila::bbp::utils::CoefficientOfVariation(const std::vector<float> &values) {
-  float mean = mila::bbp::utils::Mean(values);
-  float standard_deviation = mila::bbp::utils::StandardDeviation(values);
-  float coefficient_of_variation = (standard_deviation / mean);
+  auto mean = mila::bbp::utils::Mean(values);
+  auto standard_deviation = mila::bbp::utils::StandardDeviation(values);
+  auto coefficient_of_variation = (standard_deviation / mean);
   return coefficient_of_variation;
 }
