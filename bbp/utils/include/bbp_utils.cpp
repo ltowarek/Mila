@@ -25,3 +25,18 @@ float mila::bbp::utils::Mean(const std::vector<float> &values) {
   float mean = sum / values.size();
   return mean;
 }
+
+float ::mila::bbp::utils::Variance(const std::vector<float> &values) {
+  float mean = mila::bbp::utils::Mean(values);
+  std::vector<float> differences(values.size());
+  std::transform(values.begin(), values.end(), differences.begin(), [mean](float x) {return x - mean;});
+  float square_sum = std::inner_product(differences.begin(), differences.end(), differences.begin(), 0.0f);
+  float variance = square_sum / (values.size() - 1);
+  return variance;
+}
+
+float mila::bbp::utils::StandardDeviation(const std::vector<float> &values) {
+  float variance = mila::bbp::utils::Variance(values);
+  float standard_deviation = std::sqrt(variance);
+  return standard_deviation;
+}
