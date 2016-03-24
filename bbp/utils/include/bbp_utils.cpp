@@ -11,7 +11,7 @@ std::string mila::bbp::utils::ConvertFractionToHex(float number, size_t number_o
   return digit;
 }
 
-std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(std::vector<float> numbers,
+std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(const std::vector<float>& numbers,
                                                                  size_t number_of_digits) {
   auto digits = std::vector<std::string>(numbers.size(), "-");
   for (size_t i = 0; i < digits.size(); ++i) {
@@ -20,3 +20,8 @@ std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(std::vector<flo
   return digits;
 }
 
+float mila::bbp::utils::Mean(const std::vector<float> &values) {
+  float sum = std::accumulate(values.begin(), values.end(), 0.0f);
+  float mean = sum / values.size();
+  return mean;
+}

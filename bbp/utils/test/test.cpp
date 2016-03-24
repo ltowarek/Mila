@@ -26,3 +26,10 @@ TEST(BBPUtilsTest, ConvertFractionsToHex) {
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[0], "243F11");
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[1], "43F672");
 }
+
+TEST(BBPUtilsTest, Mean) {
+  std::vector<float> values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
+  EXPECT_EQ(mila::bbp::utils::Mean(values), 5.5f);
+  values = {10000, 10000, 10000, 10000, 10000};
+  EXPECT_EQ(mila::bbp::utils::Mean(values), 10000);
+}
