@@ -3,8 +3,13 @@
 #include "bbp_sequential_profiler.h"
 
 TEST(BBPSequentialTest, FloatPrecision) {
-  EXPECT_EQ(static_cast<size_t>(powf(8 * 100 + 6, 2)), 649636);
-  EXPECT_EQ(static_cast<size_t>(powf(8 * 1000 + 6, 2)), 64096036);
+  EXPECT_NEAR(powf(8 * 100 + 6, 2), 649636, 1e-5);
+  EXPECT_NEAR(powf(8 * 1000 + 6, 2), 64096036, 1e-5);
+  EXPECT_NEAR(pow(8 * 10000 + 6, 2), 6400960036, 1e-5);
+  EXPECT_NEAR(pow(8 * 100000 + 6, 2), 640009600036, 1e-5);
+  EXPECT_NEAR(pow(8 * 1000000 + 6, 2), 64000096000036, 1e-5);
+  EXPECT_NEAR(pow(8 * 10000000 + 6, 2), 6400000960000036, 1e-5);
+  EXPECT_NEAR(pow(8 * 100000000 + 6, 2), 640000009600000036, 1e-5);
 }
 
 TEST(BBPSequentialTest, DefaultConstructor) {
