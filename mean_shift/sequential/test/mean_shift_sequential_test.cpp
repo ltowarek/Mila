@@ -47,6 +47,20 @@ TEST(MeanShiftSequentialTest, GaussianKernelComplex) {
   EXPECT_NEAR(mila::meanshift::sequential::GaussianKernel(x, sigma), 0.10593f, 1e-5f);
 }
 
+TEST(MeanShiftSequentialTest, DefaultConstructor) {
+  mila::meanshift::sequential::MeanShift mean_shift;
+  EXPECT_EQ(mean_shift.precision(), 1e-5f);
+  EXPECT_EQ(mean_shift.max_iterations(), 100);
+}
+
+TEST(MeanShiftSequentialTest, Constructor) {
+  float precision = 1e-3;
+  size_t max_iterations = 50;
+  mila::meanshift::sequential::MeanShift mean_shift(precision, max_iterations);
+  EXPECT_EQ(mean_shift.precision(), precision);
+  EXPECT_EQ(mean_shift.max_iterations(), max_iterations);
+}
+
 TEST(MeanShiftSequentialTest, ShiftPointZero) {
   mila::meanshift::sequential::MeanShift mean_shift;
   mila::meanshift::sequential::Point point = {0.0f};
@@ -55,10 +69,10 @@ TEST(MeanShiftSequentialTest, ShiftPointZero) {
 
   mila::meanshift::sequential::Point output = mean_shift.ShiftPoint(point, points, bandwidth);
 
-  EXPECT_NEAR(output.x, 0.0f, 1e-5);
-  EXPECT_NEAR(output.y, 0.0f, 1e-5);
-  EXPECT_NEAR(output.z, 0.0f, 1e-5);
-  EXPECT_NEAR(output.w, 0.0f, 1e-5);
+  EXPECT_NEAR(output.x, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.y, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.z, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.w, 0.0f, 1e-5f);
 }
 
 TEST(MeanShiftSequentialTest, ShiftPointUndefined) {
@@ -69,10 +83,10 @@ TEST(MeanShiftSequentialTest, ShiftPointUndefined) {
 
   mila::meanshift::sequential::Point output = mean_shift.ShiftPoint(point, points, bandwidth);
 
-  EXPECT_NEAR(output.x, 0.0f, 1e-5);
-  EXPECT_NEAR(output.y, 0.0f, 1e-5);
-  EXPECT_NEAR(output.z, 0.0f, 1e-5);
-  EXPECT_NEAR(output.w, 0.0f, 1e-5);
+  EXPECT_NEAR(output.x, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.y, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.z, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.w, 0.0f, 1e-5f);
 }
 
 TEST(MeanShiftSequentialTest, ShiftPointSimple) {
@@ -83,10 +97,10 @@ TEST(MeanShiftSequentialTest, ShiftPointSimple) {
 
   mila::meanshift::sequential::Point output = mean_shift.ShiftPoint(point, points, bandwidth);
 
-  EXPECT_NEAR(output.x, 0.037536f, 1e-5);
-  EXPECT_NEAR(output.y, 0.037536f, 1e-5);
-  EXPECT_NEAR(output.z, 0.0f, 1e-5);
-  EXPECT_NEAR(output.w, 0.0f, 1e-5);
+  EXPECT_NEAR(output.x, 0.037536f, 1e-5f);
+  EXPECT_NEAR(output.y, 0.037536f, 1e-5f);
+  EXPECT_NEAR(output.z, 0.0f, 1e-5f);
+  EXPECT_NEAR(output.w, 0.0f, 1e-5f);
 }
 
 TEST(MeanShiftSequentialTest, ShiftPointComplex) {
@@ -97,8 +111,9 @@ TEST(MeanShiftSequentialTest, ShiftPointComplex) {
 
   mila::meanshift::sequential::Point output = mean_shift.ShiftPoint(point, points, bandwidth);
 
-  EXPECT_NEAR(output.x, 1.50004f, 1e-5);
-  EXPECT_NEAR(output.y, 1.00006f, 1e-5);
-  EXPECT_NEAR(output.z, -9.99998f, 1e-5);
-  EXPECT_NEAR(output.w, 0.0f, 1e-5);
+  EXPECT_NEAR(output.x, 1.50004f, 1e-5f);
+  EXPECT_NEAR(output.y, 1.00006f, 1e-5f);
+  EXPECT_NEAR(output.z, -9.99998f, 1e-5f);
+  EXPECT_NEAR(output.w, 0.0f, 1e-5f);
 }
+

@@ -22,7 +22,16 @@ float GaussianKernel(float x, float sigma);
 
 class MeanShift {
  public:
+  MeanShift();
+  MeanShift(float precision, size_t max_iterations);
+
   Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth);
+
+  float precision() const;
+  size_t max_iterations() const;
+ private:
+  const float precision_;
+  const size_t max_iterations_;
 };
 }  // sequential
 }  // meanshift

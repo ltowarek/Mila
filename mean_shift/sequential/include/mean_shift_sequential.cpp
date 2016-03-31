@@ -12,6 +12,10 @@ float mila::meanshift::sequential::GaussianKernel(float x, float sigma) {
   return output;
 }
 
+mila::meanshift::sequential::MeanShift::MeanShift() : MeanShift(1e-5, 100) {}
+
+mila::meanshift::sequential::MeanShift::MeanShift(float precision, size_t max_iterations) : precision_(precision), max_iterations_(max_iterations) {}
+
 mila::meanshift::sequential::Point mila::meanshift::sequential::MeanShift::ShiftPoint(const mila::meanshift::sequential::Point &point,
                                                                                       const std::vector<mila::meanshift::sequential::Point> &points,
                                                                                       float bandwidth) {
@@ -31,4 +35,12 @@ mila::meanshift::sequential::Point mila::meanshift::sequential::MeanShift::Shift
     shift.z /= scale;
   }
   return shift;
+}
+
+float mila::meanshift::sequential::MeanShift::precision() const {
+  return precision_;
+}
+
+size_t mila::meanshift::sequential::MeanShift::max_iterations() const {
+  return max_iterations_;
 }
