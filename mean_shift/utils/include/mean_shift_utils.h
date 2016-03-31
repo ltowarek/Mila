@@ -1,0 +1,4 @@
+#ifndef MILA_MEAN_SHIFT_UTILS_H_
+#define MILA_MEAN_SHIFT_UTILS_H_
+
+#endif  // MILA_MEAN_SHIFT_UTILS_H_
