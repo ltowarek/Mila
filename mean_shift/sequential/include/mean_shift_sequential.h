@@ -25,7 +25,8 @@ class MeanShift {
   MeanShift();
   MeanShift(float precision, size_t max_iterations);
 
-  Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth);
+  Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth) const;
+  std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) const;
 
   float precision() const;
   size_t max_iterations() const;
