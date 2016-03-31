@@ -6,6 +6,8 @@
 namespace mila {
 namespace meanshift {
 namespace sequential {
+  const float pi = 3.14159265358979323846f;
+
   struct Point {
     float x;
     float y;
@@ -14,6 +16,7 @@ namespace sequential {
   };
 
   float Distance(const Point &point1, const Point &point2);
+  float GaussianKernel(float x, float sigma);
 }  // sequential
 }  // meanshift
 }  // mila
