@@ -510,7 +510,7 @@ TEST(MeanShiftSequentialImageProcessingTest, Constructor) {
   EXPECT_EQ(mean_shift.max_iterations(), 123);
 }
 
-TEST(MeanShiftSequentialImageProcessingTest, Run) {
+TEST(MeanShiftSequentialImageProcessingTest, RunWithoutImage) {
   mila::meanshift::sequential::MeanShiftImageProcessing mean_shift;
 
   std::vector<mila::meanshift::sequential::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
@@ -553,4 +553,89 @@ TEST(MeanShiftSequentialImageProcessingTest, RunWithImage) {
   for (size_t i = 0; i < reference.size(); ++i) {
     EXPECT_EQ(output[i], reference[i]);
   }
+}
+
+TEST(MeanShiftSequentialImageProcessingProfilerTest, DefaultConstructor) {
+  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
+  EXPECT_EQ(mean_shift.precision(), 1e-5f);
+  EXPECT_EQ(mean_shift.max_iterations(), 100);
+  EXPECT_EQ(mean_shift.main_result(), "RunWithImage");
+}
+
+TEST(MeanShiftSequentialImageProcessingProfilerTest, Constructor) {
+  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift(1e-7f, 123);
+  EXPECT_EQ(mean_shift.precision(), 1e-7f);
+  EXPECT_EQ(mean_shift.max_iterations(), 123);
+  EXPECT_EQ(mean_shift.main_result(), "RunWithImage");
+}
+
+TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithoutImage) {
+  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
+
+  std::vector<mila::meanshift::sequential::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
+                                                            {2.0f, 3.0f, 0.0f, 0.0f},
+                                                            {10.0f, 11.0f, 0.0f, 0.0f},
+                                                            {12.0f, 13.0f, 0.0f, 0.0f}
+  };
+  std::vector<mila::meanshift::sequential::Point> expected_points = {{1.0f, 2.0f, 0.0f, 0.0f},
+                                                                     {1.0f, 2.0f, 0.0f, 0.0f},
+                                                                     {11.0f, 12.0f, 0.0f, 0.0f},
+                                                                     {11.0f, 12.0f, 0.0f, 0.0f}
+  };
+  float bandwidth = 3.0f;
+
+  std::vector<mila::meanshift::sequential::Point> output = mean_shift.Run(points, bandwidth);
+
+  for (size_t i = 0; i < points.size(); ++i) {
+    EXPECT_NEAR(output[i].x, expected_points[i].x, 1e-3f);
+    EXPECT_NEAR(output[i].y, expected_points[i].y, 1e-3f);
+    EXPECT_NEAR(output[i].z, expected_points[i].z, 1e-3f);
+    EXPECT_NEAR(output[i].w, expected_points[i].w, 1e-3f);
+  }
+}
+
+TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImage) {
+  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
+  std::string input_file = "test_image.png";
+  std::string output_file = "test_image_output.png";
+  std::string reference_file = "test_image_reference.png";
+  float bandwidth = 25.0f;
+
+  mean_shift.Run(input_file, output_file, bandwidth);
+
+  mila::meanshift::utils::Image output_image(output_file);
+  std::vector<uint8_t> output = output_image.Read();
+
+  mila::meanshift::utils::Image reference_image(reference_file);
+  std::vector<uint8_t> reference = reference_image.Read();
+
+  for (size_t i = 0; i < reference.size(); ++i) {
+    EXPECT_EQ(output[i], reference[i]);
+  }
+}
+
+TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithoutImageWithProfiling) {
+  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
+
+  std::vector<mila::meanshift::sequential::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
+                                                            {2.0f, 3.0f, 0.0f, 0.0f},
+                                                            {10.0f, 11.0f, 0.0f, 0.0f},
+                                                            {12.0f, 13.0f, 0.0f, 0.0f}
+  };
+  float bandwidth = 3.0f;
+
+  EXPECT_EQ(mean_shift.results().count("RunWithoutImage"), 0);
+  mean_shift.Run(points, bandwidth);
+  EXPECT_EQ(mean_shift.results().count("RunWithoutImage"), 1);
+}
+
+TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImageWithProfiling) {
+  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
+  std::string input_file = "test_image.png";
+  std::string output_file = "test_image_output.png";
+  float bandwidth = 25.0f;
+
+  EXPECT_EQ(mean_shift.results().count("RunWithImage"), 0);
+  mean_shift.Run(input_file, output_file, bandwidth);
+  EXPECT_EQ(mean_shift.results().count("RunWithImage"), 1);
 }

@@ -47,7 +47,7 @@ class MeanShiftImageProcessing: public MeanShift {
   MeanShiftImageProcessing();
   MeanShiftImageProcessing(float precision, size_t max_iterations);
 
-  std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override ;
+  virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
 };
 }  // sequential
