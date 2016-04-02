@@ -11,8 +11,22 @@ namespace mila {
 namespace meanshift {
 namespace utils {
 
-std::vector<uint8_t> ReadPNGToVector(const std::string &file_name);
-void WriteVectorToPNG(const std::string &file_name, const std::vector<uint8_t> &data, uint8_t width, uint8_t height);
+class Image {
+ public:
+  Image();
+  Image(const std::string &file_name);
+
+  std::vector<uint8_t> Read();
+  void Write(const std::vector<uint8_t> &data, uint8_t width, uint8_t height);
+
+  size_t width() const;
+  size_t height() const;
+  std::string file_name() const;
+ private:
+  size_t width_;
+  size_t height_;
+  std::string file_name_;
+};
 
 }  // utils
 }  // meanshift
