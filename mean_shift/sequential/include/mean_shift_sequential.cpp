@@ -78,7 +78,7 @@ size_t mila::meanshift::sequential::MeanShift::max_iterations() const {
   return max_iterations_;
 }
 
-std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShift::Run(const std::vector<Point> &points, float bandwidth) const {
+std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShift::Run(const std::vector<Point> &points, float bandwidth) {
   auto difference_distance = 0.0f;
   auto iteration = size_t{0};
 
