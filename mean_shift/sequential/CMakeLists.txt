@@ -11,6 +11,6 @@ add_library(mean_shift_sequential_lib include/mean_shift_sequential.h include/me
 
 add_subdirectory(test)
 
-include_directories(${LODEPNG_INCLUDE_DIRS} ${MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS})
+include_directories(${UTILS_INCLUDE_DIRS} ${LODEPNG_INCLUDE_DIRS} ${MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${LODEPNG_INCLUDE_DIRS}/lodepng.cpp ${MEAN_SHIFT_SEQUENTIAL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${UTILS_LIBRARIES} ${LODEPNG_INCLUDE_DIRS}/lodepng.cpp ${MEAN_SHIFT_SEQUENTIAL_LIBRARIES})
