@@ -17,7 +17,7 @@ class Image {
   Image(const std::string &file_name);
 
   std::vector<uint8_t> Read();
-  void Write(const std::vector<uint8_t> &data, uint8_t width, uint8_t height);
+  void Write(const std::vector<uint8_t> &data, size_t width, size_t height);
 
   size_t width() const;
   size_t height() const;

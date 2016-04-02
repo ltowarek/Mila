@@ -111,3 +111,29 @@ std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::Mea
 
   return shifted_points;
 }
+
+mila::meanshift::sequential::MeanShiftImageProcessing::MeanShiftImageProcessing() : MeanShift() {}
+
+mila::meanshift::sequential::MeanShiftImageProcessing::MeanShiftImageProcessing(float precision, size_t max_iterations) : MeanShift(precision, max_iterations) {}
+
+std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShiftImageProcessing::Run(const std::vector<Point> &points,
+                                                                              float bandwidth) {
+  return MeanShift::Run(points, bandwidth);
+}
+
+void mila::meanshift::sequential::MeanShiftImageProcessing::Run(const std::string &input_file,
+                                                                const std::string &output_file,
+                                                                float bandwidth) {
+  auto input_image = mila::meanshift::utils::Image(input_file);
+  auto output_image = mila::meanshift::utils::Image(output_file);
+
+  auto input_data = input_image.Read();
+  auto input_points = ConvertVectorToPoints(input_data);
+  auto output_points = Run(input_points, bandwidth);
+  for (size_t i = 0; i < output_points.size(); ++i) {
+    output_points[i].w = 255;
+  }
+  auto output_data = ConvertPointsToVector(output_points);
+
+  output_image.Write(output_data, input_image.width(), input_image.height());
+}
