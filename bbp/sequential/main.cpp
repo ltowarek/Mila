@@ -2,7 +2,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <bbp_sequential_profiler.h>
+
+#include "utils.h"
+#include "bbp_sequential_profiler.h"
 
 struct parameters {
   size_t number_of_digits;
@@ -41,11 +43,11 @@ int main(int argc, char **argv) {
   }
 
   printf("Statistics\n");
-  printf("Mean: %f\n", mila::bbp::utils::Mean(results));
-  printf("Median: %f\n", mila::bbp::utils::Median(results));
-  printf("Variance: %f\n", mila::bbp::utils::Variance(results));
-  printf("Standard Deviation: %f\n", mila::bbp::utils::StandardDeviation(results));
-  printf("Coefficient of Variation: %f\n", mila::bbp::utils::CoefficientOfVariation(results));
+  printf("Mean: %f\n", mila::utils::Mean(results));
+  printf("Median: %f\n", mila::utils::Median(results));
+  printf("Variance: %f\n", mila::utils::Variance(results));
+  printf("Standard Deviation: %f\n", mila::utils::StandardDeviation(results));
+  printf("Coefficient of Variation: %f\n", mila::utils::CoefficientOfVariation(results));
 
   return 0;
 }

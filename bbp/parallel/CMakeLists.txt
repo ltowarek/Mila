@@ -16,6 +16,6 @@ target_link_libraries(bbp_parallel_lib ${OpenCL_LIBRARIES})
 
 add_subdirectory(test)
 
-include_directories(${BBP_PARALLEL_INCLUDE_DIRS})
+include_directories(${UTILS_INCLUDE_DIRS} ${BBP_PARALLEL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${BBP_PARALLEL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${UTILS_LIBRARIES} ${BBP_PARALLEL_LIBRARIES})
