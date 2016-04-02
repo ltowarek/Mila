@@ -6,7 +6,7 @@ mila::meanshift::utils::Image::Image(const std::string &file_name): width_(0), h
 
 std::vector<uint8_t> mila::meanshift::utils::Image::Read() {
   auto data = std::vector<uint8_t>();
-  auto error = lodepng::decode(data, width_, height_, file_name_);
+  auto error = lodepng::decode(data, width_, height_, file_name_.c_str());
   // TODO: Throw exception if error
   return data;
 }
@@ -14,7 +14,7 @@ std::vector<uint8_t> mila::meanshift::utils::Image::Read() {
 void mila::meanshift::utils::Image::Write(const std::vector<uint8_t> &data, size_t width, size_t height) {
   width_ = width;
   height_ = height;
-  auto error = lodepng::encode(file_name_, data, width_, height_);
+  auto error = lodepng::encode(file_name_.c_str(), data, width_, height_);
   // TODO: Throw exception if error
 }
 
