@@ -14,12 +14,12 @@ struct parameters {
 };
 
 parameters ParseCommandLine(int argc, char **argv) {
-    auto config = parameters{0};
+    auto config = parameters{};
     // TODO: Verify input and add help message
-    config.input_file = std::string(argv[0]);
-    config.output_file = std::string(argv[1]);
-    config.bandwidth = static_cast<float>(atof(argv[2]));
-    config.number_of_iterations = static_cast<size_t>(atoi(argv[3]));
+    config.input_file = std::string(argv[1]);
+    config.output_file = std::string(argv[2]);
+    config.bandwidth = static_cast<float>(atof(argv[3]));
+    config.number_of_iterations = static_cast<size_t>(atoi(argv[4]));
     return config;
 }
 
