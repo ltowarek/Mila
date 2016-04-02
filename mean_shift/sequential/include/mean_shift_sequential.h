@@ -2,6 +2,7 @@
 #define MILA_MEAN_SHIFT_SEQUENTIAL_H_
 
 #include <cmath>
+#include <cstdint>
 #include <cstddef>
 #include <vector>
 
@@ -16,6 +17,9 @@ struct Point {
   float z;
   float w;
 };
+
+std::vector<Point> ConvertVectorToPoints(const std::vector<uint8_t> &data);
+std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
 
 float Distance(const Point &point1, const Point &point2);
 float GaussianKernel(float x, float sigma);

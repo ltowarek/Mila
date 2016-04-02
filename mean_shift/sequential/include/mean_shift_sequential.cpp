@@ -12,6 +12,39 @@ float mila::meanshift::sequential::GaussianKernel(float x, float sigma) {
   return output;
 }
 
+std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::ConvertVectorToPoints(const std::vector<uint8_t> &data) {
+  auto output = std::vector<Point>();
+
+  if (data.size() % 4 != 0) {
+    // TODO throw exception
+    return output;
+  }
+
+  for (size_t i = 0; i < data.size(); i+=4) {
+    auto point = Point();
+    point.x = static_cast<float>(data[i]);
+    point.y = static_cast<float>(data[i+1]);
+    point.z = static_cast<float>(data[i+2]);
+    point.w = static_cast<float>(data[i+3]);
+    output.push_back(point);
+  }
+
+  return output;
+}
+
+std::vector<uint8_t> mila::meanshift::sequential::ConvertPointsToVector(const std::vector<Point> &data) {
+  auto output = std::vector<uint8_t>();
+
+  for (size_t i = 0; i < data.size(); ++i) {
+    output.push_back(static_cast<uint8_t>(data[i].x));
+    output.push_back(static_cast<uint8_t>(data[i].y));
+    output.push_back(static_cast<uint8_t>(data[i].z));
+    output.push_back(static_cast<uint8_t>(data[i].w));
+  }
+
+  return output;
+}
+
 mila::meanshift::sequential::MeanShift::MeanShift() : MeanShift(1e-5, 100) {}
 
 mila::meanshift::sequential::MeanShift::MeanShift(float precision, size_t max_iterations) : precision_(precision), max_iterations_(max_iterations) {}
