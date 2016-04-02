@@ -17,14 +17,14 @@ class Image {
   Image(const std::string &file_name);
 
   std::vector<uint8_t> Read();
-  void Write(const std::vector<uint8_t> &data, size_t width, size_t height);
+  void Write(const std::vector<uint8_t> &data, uint32_t width, uint32_t height);
 
-  size_t width() const;
-  size_t height() const;
+  uint32_t width() const;
+  uint32_t height() const;
   std::string file_name() const;
  private:
-  size_t width_;
-  size_t height_;
+  uint32_t width_;
+  uint32_t height_;
   std::string file_name_;
 };
 

@@ -12,7 +12,7 @@ std::vector<uint8_t> mila::meanshift::utils::Image::Read() {
   return data;
 }
 
-void mila::meanshift::utils::Image::Write(const std::vector<uint8_t> &data, size_t width, size_t height) {
+void mila::meanshift::utils::Image::Write(const std::vector<uint8_t> &data, uint32_t width, uint32_t height) {
   width_ = width;
   height_ = height;
   const auto tmp_file_name = file_name_.c_str();
@@ -20,11 +20,11 @@ void mila::meanshift::utils::Image::Write(const std::vector<uint8_t> &data, size
   // TODO: Throw exception if error
 }
 
-size_t mila::meanshift::utils::Image::width() const {
+uint32_t mila::meanshift::utils::Image::width() const {
   return width_;
 }
 
-size_t mila::meanshift::utils::Image::height() const {
+uint32_t mila::meanshift::utils::Image::height() const {
   return height_;
 }
 
