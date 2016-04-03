@@ -26,6 +26,23 @@ class MeanShiftProfiler: public MeanShift {
   std::map<std::string, int64_t> results_;
 };
 
+class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
+ public:
+  MeanShiftImageProcessingProfiler();
+  MeanShiftImageProcessingProfiler(size_t platform_id, size_t device_id);
+  MeanShiftImageProcessingProfiler(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+
+  void Initialize() override;
+  virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
+  virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
+
+  std::string main_result() const;
+  std::map<std::string, int64_t> results() const;
+ private:
+  const std::string main_result_;
+  std::map<std::string, int64_t> results_;
+};
+
 }  // parallel
 }  // meanshift
 }  // mila

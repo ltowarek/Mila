@@ -53,6 +53,7 @@ class MeanShiftImageProcessing: public MeanShift {
   virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
   virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
 };
+
 }  // parallel
 }  // meanshift
 }  // mila
