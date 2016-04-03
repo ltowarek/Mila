@@ -47,3 +47,9 @@ TEST(UtilsTest, Median) {
   values = {1, 2, 3, 4, 5};
   EXPECT_NEAR(mila::utils::Median(values), 3.0f, 1e-5);
 }
+
+TEST(UtilsTest, ReadFile) {
+  // TODO: Replace real file with mocked data
+  EXPECT_STREQ(mila::utils::ReadFile("test.txt").c_str(), "Test file content");
+  EXPECT_STREQ(mila::utils::ReadFile("fake_file").c_str(), "");
+}

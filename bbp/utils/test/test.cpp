@@ -26,9 +26,3 @@ TEST(BBPUtilsTest, ConvertFractionsToHex) {
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[0], "243F11");
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[1], "43F672");
 }
-
-TEST(BBPUtilsTest, ReadFile) {
-  // TODO: Replace real file with mocked data
-  EXPECT_STREQ(mila::bbp::utils::ReadFile("test.txt").c_str(), "Test file content");
-  EXPECT_STREQ(mila::bbp::utils::ReadFile("fake_file").c_str(), "");
-}

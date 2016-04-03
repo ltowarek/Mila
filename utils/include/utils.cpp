@@ -39,3 +39,9 @@ float mila::utils::Median(const std::vector<float> &values) {
   }
   return median;
 }
+
+std::string mila::utils::ReadFile(const std::string &file) {
+  std::ifstream in(file);
+  auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+  return content;
+}

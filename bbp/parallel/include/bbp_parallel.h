@@ -9,6 +9,7 @@
 #include "clpp.h"
 
 #include "bbp_utils.h"
+#include "utils.h"
 
 namespace mila {
 namespace bbp {

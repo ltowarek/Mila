@@ -58,7 +58,7 @@ void mila::bbp::parallel::BBP::Initialize() {
 
   const auto source_file_name = "bbp.cl";
   const auto kernel_name = std::string("bbp");
-  auto source_file = mila::bbp::utils::ReadFile(source_file_name);
+  auto source_file = mila::utils::ReadFile(source_file_name);
   auto program = clpp::Program(context_, source_file);
 
   try {
