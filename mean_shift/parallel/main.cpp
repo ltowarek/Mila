@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     printf("Duration [us]: %lld\n", duration);
     printf("Platform: %s\n", mean_shift_initial.platform().getName().c_str());
     printf("Device: %s\n", mean_shift_initial.device().getName().c_str());
-    printf("Input file: %s\n", config.output_file.c_str());
+    printf("Input file: %s\n", config.input_file.c_str());
     printf("Output file: %s\n", config.output_file.c_str());
     printf("Bandwidth: %f\n", config.bandwidth);
 
