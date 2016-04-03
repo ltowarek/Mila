@@ -9,6 +9,9 @@ namespace mila {
 namespace meanshift {
 namespace parallel {
 
+std::vector<cl_float4> ConvertVectorToPoints(const std::vector<uint8_t> &data);
+std::vector<uint8_t> ConvertPointsToVector(const std::vector<cl_float4> &data);
+
 class MeanShift {
  public:
   MeanShift();

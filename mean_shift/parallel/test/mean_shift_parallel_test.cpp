@@ -1,7 +1,44 @@
 #include "gtest/gtest.h"
 #include "mean_shift_parallel.h"
 
-TEST(BBPParallelTest, DefaultConstructor) {
+TEST(MeanShiftPointTest, ConvertVectorToPoints) {
+  std::vector<uint8_t> data = {1, 2, 3, 4, 5, 6, 7, 8};
+  std::vector<cl_float4> expected_output = {{1.0f, 2.0f, 3.0f, 4.0f},
+                                            {5.0f, 6.0f, 7.0f, 8.0f}
+  };
+
+  std::vector<cl_float4> output = mila::meanshift::parallel::ConvertVectorToPoints(data);
+
+  for (size_t i = 0; i < expected_output.size(); ++i) {
+    EXPECT_EQ(output[i].x, expected_output[i].x);
+    EXPECT_EQ(output[i].y, expected_output[i].y);
+    EXPECT_EQ(output[i].z, expected_output[i].z);
+    EXPECT_EQ(output[i].w, expected_output[i].w);
+  }
+}
+
+TEST(MeanShiftPointTest, ConvertVectorToPointsIllegal) {
+  std::vector<uint8_t> data = {1, 2, 3};
+
+  std::vector<cl_float4> output = mila::meanshift::parallel::ConvertVectorToPoints(data);
+
+  EXPECT_EQ(output.size(), 0);
+}
+
+TEST(MeanShiftPointTest, ConvertPointsToVector) {
+  std::vector<cl_float4> data = {{1.0f, 2.0f, 3.0f, 4.0f},
+                                 {5.0f, 6.0f, 7.0f, 8.0f}
+  };
+  std::vector<uint8_t> expected_output = {1, 2, 3, 4, 5, 6, 7, 8};
+
+  std::vector<uint8_t> output = mila::meanshift::parallel::ConvertPointsToVector(data);
+
+  for (size_t i = 0; i < expected_output.size(); ++i) {
+    EXPECT_EQ(output[i], expected_output[i]);
+  }
+}
+
+TEST(MeanShiftParallelTest, DefaultConstructor) {
   mila::meanshift::parallel::MeanShift mean_shift;
   EXPECT_EQ(mean_shift.precision(), 1e-5f);
   EXPECT_EQ(mean_shift.max_iterations(), 100);
