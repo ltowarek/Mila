@@ -137,3 +137,41 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShift::Run(const std::vect
 
   return output;
 }
+
+mila::meanshift::parallel::MeanShiftImageProcessing::MeanShiftImageProcessing(): MeanShift() {
+
+}
+
+mila::meanshift::parallel::MeanShiftImageProcessing::MeanShiftImageProcessing(size_t platform_id, size_t device_id): MeanShift(platform_id, device_id) {
+
+}
+
+mila::meanshift::parallel::MeanShiftImageProcessing::MeanShiftImageProcessing(size_t platform_id,
+                                                                              size_t device_id,
+                                                                              float precision,
+                                                                              size_t max_iterations): MeanShift(platform_id, device_id, precision, max_iterations) {
+
+}
+
+std::vector<cl_float4> mila::meanshift::parallel::MeanShiftImageProcessing::Run(const std::vector<cl_float4> &points,
+                                                                                float bandwidth) {
+  return MeanShift::Run(points, bandwidth);
+}
+
+void mila::meanshift::parallel::MeanShiftImageProcessing::Run(const std::string &input_file,
+                                                              const std::string &output_file,
+                                                              float bandwidth) {
+  auto input_image = mila::meanshift::utils::Image(input_file);
+  auto output_image = mila::meanshift::utils::Image(output_file);
+
+  auto input_data = input_image.Read();
+  auto input_points = ConvertVectorToPoints(input_data);
+  auto output_points = Run(input_points, bandwidth);
+  for (size_t i = 0; i < output_points.size(); ++i) {
+    output_points[i].w = 255;
+  }
+  auto output_data = ConvertPointsToVector(output_points);
+
+  output_image.Write(output_data, input_image.width(), input_image.height());
+
+}

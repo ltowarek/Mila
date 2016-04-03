@@ -4,6 +4,7 @@
 #include <cstddef>
 
 #include "clpp.h"
+#include "mean_shift_utils.h"
 #include "utils.h"
 
 namespace mila {
@@ -43,6 +44,15 @@ class MeanShift {
   clpp::Kernel kernel_;
 };
 
+class MeanShiftImageProcessing: public MeanShift {
+ public:
+  MeanShiftImageProcessing();
+  MeanShiftImageProcessing(size_t platform_id, size_t device_id);
+  MeanShiftImageProcessing(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+
+  virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
+  virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
+};
 }  // parallel
 }  // meanshift
 }  // mila
