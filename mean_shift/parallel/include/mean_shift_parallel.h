@@ -4,6 +4,7 @@
 #include <cstddef>
 
 #include "clpp.h"
+#include "utils.h"
 
 namespace mila {
 namespace meanshift {
@@ -18,16 +19,28 @@ class MeanShift {
   MeanShift(size_t platform_id, size_t device_id);
   MeanShift(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
 
+  virtual void Initialize();
+  virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth);
+
   float precision() const;
   size_t max_iterations() const;
   size_t platform_id() const;
   size_t device_id() const;
-
+  clpp::Platform platform() const;
+  clpp::Device device() const;
+  clpp::Context context() const;
+  clpp::Queue queue() const;
+  clpp::Kernel kernel() const;
  private:
   const float precision_;
   const size_t max_iterations_;
   const size_t platform_id_;
   const size_t device_id_;
+  clpp::Platform platform_;
+  clpp::Device device_;
+  clpp::Context context_;
+  clpp::Queue queue_;
+  clpp::Kernel kernel_;
 };
 
 }  // parallel

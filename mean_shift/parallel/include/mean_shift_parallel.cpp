@@ -63,3 +63,77 @@ size_t mila::meanshift::parallel::MeanShift::platform_id() const {
 size_t mila::meanshift::parallel::MeanShift::device_id() const {
   return device_id_;
 }
+
+clpp::Platform mila::meanshift::parallel::MeanShift::platform() const {
+  return platform_;
+}
+
+clpp::Device mila::meanshift::parallel::MeanShift::device() const {
+  return device_;
+}
+
+clpp::Context mila::meanshift::parallel::MeanShift::context() const {
+  return context_;
+}
+
+clpp::Queue mila::meanshift::parallel::MeanShift::queue() const {
+  return queue_;
+}
+
+clpp::Kernel mila::meanshift::parallel::MeanShift::kernel() const {
+  return kernel_;
+}
+
+void mila::meanshift::parallel::MeanShift::Initialize() {
+  const auto platforms = clpp::Platform::get();
+  platform_ = platforms.at(platform_id_);
+
+  const auto devices = platform_.getAllDevices();
+  device_ = devices.at(device_id_);
+
+  context_ = clpp::Context(device_);
+  queue_ = clpp::Queue(context_, device_);
+
+  const auto source_file_name = "mean_shift.cl";
+  const auto kernel_name = std::string("MeanShift");
+  auto source_file = mila::utils::ReadFile(source_file_name);
+  auto program = clpp::Program(context_, source_file);
+
+  try {
+    program.build(device_);
+  } catch(const clpp::Error& error) {
+    printf("%s\n", program.getBuildLog(device_).c_str());
+  }
+  kernel_ = clpp::Kernel(program, kernel_name.c_str());
+}
+
+std::vector<cl_float4> mila::meanshift::parallel::MeanShift::Run(const std::vector<cl_float4> &points,
+                                                                 float bandwidth) {
+  Initialize();
+
+  auto output = points;
+
+  auto original_points_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
+  auto actual_points_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
+  auto shifted_points_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
+
+  auto distances = std::vector<cl_float>(output.size(), 0.0f);
+  auto distances_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(distances.at(0)));
+
+  auto global_work_size = std::vector<size_t>{output.size()};
+  auto difference_distance = 0.0f;
+  auto iteration = size_t{0};
+
+  do {
+    queue_.enqueueCopyBuffer(shifted_points_buffer, actual_points_buffer, 0, 0, output.size() * sizeof(output.at(0)));
+    kernel_.setArgs(actual_points_buffer, original_points_buffer, output.size(), bandwidth, shifted_points_buffer, distances_buffer);
+    queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
+    queue_.readBuffer(distances_buffer, 0, distances.size() * sizeof(distances.at(0)), distances.data());
+    difference_distance = *std::max_element(distances.begin(), distances.end());
+    ++iteration;
+  } while ((difference_distance > precision_) && (iteration < max_iterations_));
+
+  queue_.readBuffer(shifted_points_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
+
+  return output;
+}
