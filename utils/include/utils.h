@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -15,6 +16,7 @@ float Median(const std::vector<float>& values);
 float Variance(const std::vector<float>& values);
 float StandardDeviation(const std::vector<float>& values);
 float CoefficientOfVariation(const std::vector<float>& values);
+std::string ReadFile(const std::string &file);
 
 };  // utils
 }  // mila

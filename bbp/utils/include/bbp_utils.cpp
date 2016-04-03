@@ -20,9 +20,3 @@ std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(const std::vect
   return digits;
 }
 
-std::string mila::bbp::utils::ReadFile(const std::string &file) {
-  std::ifstream in(file);
-  auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
-  return content;
-}
-

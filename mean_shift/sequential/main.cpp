@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     auto duration = mean_shift_initial.results().at(mean_shift_initial.main_result());
     printf("Initial results\n");
     printf("Duration [us]: %lld\n", duration);
-    printf("Input file: %s\n", config.output_file.c_str());
+    printf("Input file: %s\n", config.input_file.c_str());
     printf("Output file: %s\n", config.output_file.c_str());
     printf("Bandwidth: %f\n", config.bandwidth);
 
