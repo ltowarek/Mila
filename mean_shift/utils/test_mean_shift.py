@@ -5,26 +5,26 @@ import subprocess
 if __name__ == '__main__':
     cases = [
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 5.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 5.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 5.0 0 0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 10.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 10.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 10.0 0 0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 20.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 20.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 20.0 0 0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 40.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 40.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 40.0 0 0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 80.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 80.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 80.0 0 0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 160.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 160.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 160.0 0 0 10',
 
         'mean_shift_sequential.exe test_image_32x24.png test_image_32x24_sequential_output.png 25.0 10',
         'mean_shift_parallel.exe test_image_32x24.png test_image_32x24_parallel_output.png 25.0 0 0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_sequential_output.png 25.0 10',
-        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 25.0 10',
+        'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_parallel_output.png 25.0 0 0 10',
         'mean_shift_sequential.exe test_image_125x94.png test_image_125x94_sequential_output.png 25.0 10',
-        'mean_shift_parallel.exe test_image_125x94.png test_image_125x94_parallel_output.png 25.0 10',
+        'mean_shift_parallel.exe test_image_125x94.png test_image_125x94_parallel_output.png 25.0 0 0 10',
         'mean_shift_sequential.exe test_image_250x188.png test_image_250x188_sequential_output.png 25.0 10',
-        'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_parallel_output.png 25.0 10',
+        'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_parallel_output.png 25.0 0 0 10',
     ]
 
     results = []
