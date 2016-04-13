@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+#include "sudoku_solver_utils.h"
+
 namespace mila {
 namespace sudokusolver {
 namespace sequential {
@@ -16,6 +18,12 @@ class SudokuSolver {
   bool IsValidInBoxes(const std::vector<int>& grid, int n, int row, int column) const;
   bool IsValidMove(const std::vector<int>& grid, int n, int field) const;
   virtual std::vector<int> Run(const std::vector<int>& grid, int n);
+};
+
+class SudokuSolverBasedOnFiles: public SudokuSolver {
+ public:
+  virtual std::vector<int> Run(const std::vector<int>& grid, int n) override;
+  virtual void Run(const std::string& input_file_name, const std::string& output_file_name);
 };
 
 }  // sequential
