@@ -15,6 +15,7 @@ class SudokuSolver {
   bool IsValidVertically(const std::vector<int>& grid, int n, int column) const;
   bool IsValidInBoxes(const std::vector<int>& grid, int n, int row, int column) const;
   bool IsValidMove(const std::vector<int>& grid, int n, int field) const;
+  std::vector<int> Run(const std::vector<int>& grid, int n);
 };
 
 }  // sequential

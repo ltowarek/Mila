@@ -82,3 +82,24 @@ bool mila::sudokusolver::sequential::SudokuSolver::IsValidMove(const std::vector
       IsValidVertically(grid, n, column) &&
       IsValidInBoxes(grid, n, row, column);
 }
+
+std::vector<int> mila::sudokusolver::sequential::SudokuSolver::Run(const std::vector<int> &grid, int n) {
+  auto output = grid;
+  auto empty_cells = FindEmptyCells(output);
+
+  auto current_empty_cell = 0;
+  auto number_of_empty_cells = empty_cells.size();
+
+  while ((current_empty_cell >= 0) && (current_empty_cell < number_of_empty_cells)) {
+    auto id = empty_cells[current_empty_cell];
+    output[id]++;
+    if (IsValidMove(output, n, id)) {
+      current_empty_cell++;
+    } else if (output[id] >= n) {
+      output[id] = 0;
+      current_empty_cell--;
+    }
+  }
+
+  return output;
+}
