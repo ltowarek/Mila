@@ -60,3 +60,28 @@ TEST(SudokuSolverTest, IsValidHorizontallyInvalid) {
   EXPECT_EQ(solver.IsValidHorizontally(input, 9, 2), false);
 }
 
+TEST(SudokuSolverTest, IsValidVericallyValid) {
+  mila::sudokusolver::sequential::SudokuSolver solver;
+  std::vector<int> input = {
+      1, 1, 1, 1, 1, 1, 1, 1, 1,
+      2, 2, 2, 1, 1, 1, 1, 1, 1,
+      3, 3, 3, 1, 1, 1, 1, 1, 1
+  };
+
+  EXPECT_EQ(solver.IsValidVertically(input, 9, 0), true);
+  EXPECT_EQ(solver.IsValidVertically(input, 9, 1), true);
+  EXPECT_EQ(solver.IsValidVertically(input, 9, 2), true);
+}
+
+TEST(SudokuSolverTest, IsValidVericallyInvalid) {
+  mila::sudokusolver::sequential::SudokuSolver solver;
+  std::vector<int> input = {
+      1, 1, 1, 1, 1, 1, 1, 1, 1,
+      2, 2, 2, 1, 1, 1, 2, 2, 2,
+      3, 3, 3, 1, 1, 1, 3, 3, 3
+  };
+
+  EXPECT_EQ(solver.IsValidVertically(input, 9, 3), false);
+  EXPECT_EQ(solver.IsValidVertically(input, 9, 4), false);
+  EXPECT_EQ(solver.IsValidVertically(input, 9, 5), false);
+}

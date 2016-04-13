@@ -28,3 +28,22 @@ bool mila::sudokusolver::sequential::SudokuSolver::IsValidHorizontally(const std
 
   return is_valid;
 }
+
+bool mila::sudokusolver::sequential::SudokuSolver::IsValidVertically(const std::vector<int> &grid,
+                                                                    int n,
+                                                                    int column) const {
+  auto is_valid = true;
+  auto checked_numbers = std::vector<int>();
+
+  for (auto row = 0; row < n; ++row) {
+    auto value = grid[row * n + column];
+    if (value != 0 && std::find(checked_numbers.begin(), checked_numbers.end(), value) != checked_numbers.end()) {
+      is_valid = false;
+      break;
+    } else {
+      checked_numbers.push_back(value);
+    }
+  }
+
+  return is_valid;
+}
