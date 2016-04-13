@@ -72,3 +72,13 @@ bool mila::sudokusolver::sequential::SudokuSolver::IsValidInBoxes(const std::vec
 
   return is_valid;
 }
+
+bool mila::sudokusolver::sequential::SudokuSolver::IsValidMove(const std::vector<int> &grid, int n, int field) const {
+  const auto row = field / n;
+  const auto column = field % n;
+  return grid[field] >= 1 &&
+      grid[field] <= n &&
+      IsValidHorizontally(grid, n, row) &&
+      IsValidVertically(grid, n, column) &&
+      IsValidInBoxes(grid, n, row, column);
+}
