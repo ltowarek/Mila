@@ -60,12 +60,18 @@ TEST(SudokuSolverTest, IsValidHorizontallyInvalid) {
   EXPECT_EQ(solver.IsValidHorizontally(input, 9, 2), false);
 }
 
-TEST(SudokuSolverTest, IsValidVericallyValid) {
+TEST(SudokuSolverTest, IsValidVerticallyValid) {
   mila::sudokusolver::sequential::SudokuSolver solver;
   std::vector<int> input = {
       1, 1, 1, 1, 1, 1, 1, 1, 1,
-      2, 2, 2, 1, 1, 1, 1, 1, 1,
-      3, 3, 3, 1, 1, 1, 1, 1, 1
+      2, 2, 2, 1, 1, 2, 2, 2, 2,
+      3, 3, 3, 1, 3, 3, 3, 3, 3,
+      4, 4, 4, 1, 4, 4, 4, 4, 4,
+      5, 5, 5, 1, 5, 5, 5, 5, 5,
+      6, 6, 6, 1, 6, 6, 6, 6, 6,
+      7, 7, 7, 1, 7, 7, 7, 7, 7,
+      8, 8, 8, 1, 8, 8, 8, 8, 8,
+      9, 9, 9, 1, 9, 1, 9, 9, 9
   };
 
   EXPECT_EQ(solver.IsValidVertically(input, 9, 0), true);
@@ -73,15 +79,59 @@ TEST(SudokuSolverTest, IsValidVericallyValid) {
   EXPECT_EQ(solver.IsValidVertically(input, 9, 2), true);
 }
 
-TEST(SudokuSolverTest, IsValidVericallyInvalid) {
+TEST(SudokuSolverTest, IsValidVerticallyInvalid) {
   mila::sudokusolver::sequential::SudokuSolver solver;
   std::vector<int> input = {
       1, 1, 1, 1, 1, 1, 1, 1, 1,
-      2, 2, 2, 1, 1, 1, 2, 2, 2,
-      3, 3, 3, 1, 1, 1, 3, 3, 3
+      2, 2, 2, 1, 1, 2, 2, 2, 2,
+      3, 3, 3, 1, 3, 3, 3, 3, 3,
+      4, 4, 4, 1, 4, 4, 4, 4, 4,
+      5, 5, 5, 1, 5, 5, 5, 5, 5,
+      6, 6, 6, 1, 6, 6, 6, 6, 6,
+      7, 7, 7, 1, 7, 7, 7, 7, 7,
+      8, 8, 8, 1, 8, 8, 8, 8, 8,
+      9, 9, 9, 1, 9, 1, 9, 9, 9
   };
 
   EXPECT_EQ(solver.IsValidVertically(input, 9, 3), false);
   EXPECT_EQ(solver.IsValidVertically(input, 9, 4), false);
   EXPECT_EQ(solver.IsValidVertically(input, 9, 5), false);
+}
+
+TEST(SudokuSolverTest, IsValidInBoxesValid) {
+  mila::sudokusolver::sequential::SudokuSolver solver;
+  std::vector<int> input = {
+      1, 2, 3, 1, 1, 1, 1, 1, 1,
+      4, 5, 6, 1, 1, 1, 2, 2, 2,
+      7, 8, 9, 1, 1, 1, 3, 3, 3,
+      4, 4, 4, 9, 8, 7, 4, 4, 4,
+      5, 5, 5, 6, 5, 4, 5, 5, 5,
+      6, 6, 6, 3, 2, 1, 6, 6, 6,
+      7, 7, 7, 1, 2, 3, 1, 4, 7,
+      8, 8, 8, 2, 3, 4, 2, 5, 8,
+      9, 9, 9, 3, 4, 1, 3, 6, 9
+  };
+
+  EXPECT_EQ(solver.IsValidInBoxes(input, 9, 0, 0), true);
+  EXPECT_EQ(solver.IsValidInBoxes(input, 9, 3, 3), true);
+  EXPECT_EQ(solver.IsValidInBoxes(input, 9, 6, 6), true);
+}
+
+TEST(SudokuSolverTest, IsValidInBoxesInvalid) {
+  mila::sudokusolver::sequential::SudokuSolver solver;
+  std::vector<int> input = {
+      1, 2, 3, 1, 1, 1, 1, 1, 1,
+      4, 5, 6, 1, 1, 1, 2, 2, 2,
+      7, 8, 9, 1, 1, 1, 3, 3, 3,
+      4, 4, 4, 9, 8, 7, 4, 4, 4,
+      5, 5, 5, 6, 5, 4, 5, 5, 5,
+      6, 6, 6, 3, 2, 1, 6, 6, 6,
+      7, 7, 7, 1, 2, 3, 1, 4, 7,
+      8, 8, 8, 2, 3, 4, 2, 5, 8,
+      9, 9, 9, 3, 4, 1, 3, 6, 9
+  };
+
+  EXPECT_EQ(solver.IsValidInBoxes(input, 9, 3, 0), false);
+  EXPECT_EQ(solver.IsValidInBoxes(input, 9, 0, 6), false);
+  EXPECT_EQ(solver.IsValidInBoxes(input, 9, 3, 6), false);
 }
