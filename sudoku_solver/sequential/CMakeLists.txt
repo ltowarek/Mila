@@ -11,4 +11,7 @@ add_library(sudoku_solver_sequential_lib include/sudoku_solver_sequential.h incl
 
 add_subdirectory(test)
 
+include_directories(${UTILS_INCLUDE_DIRS} ${SUDOKU_SOLVER_SEQUENTIAL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} ${UTILS_LIBRARIES} ${SUDOKU_SOLVER_SEQUENTIAL_LIBRARIES})
+
