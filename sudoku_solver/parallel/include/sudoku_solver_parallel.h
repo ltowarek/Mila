@@ -19,6 +19,7 @@ class SudokuSolver {
   SudokuSolver(size_t platform_id, size_t device_id);
 
   virtual std::vector<int> Run(const std::vector<int>& grid, int n);
+  virtual std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int n, int number_of_cells_to_fill);
 
   size_t platform_id() const;
   size_t device_id() const;
@@ -26,7 +27,8 @@ class SudokuSolver {
   clpp::Device device() const;
   clpp::Context context() const;
   clpp::Queue queue() const;
-  clpp::Kernel kernel() const;
+  clpp::Kernel dfs_kernel() const;
+  clpp::Kernel bfs_kernel() const;
  protected:
   virtual void Initialize(const std::string& options);
 
@@ -36,7 +38,8 @@ class SudokuSolver {
   clpp::Device device_;
   clpp::Context context_;
   clpp::Queue queue_;
-  clpp::Kernel kernel_;
+  clpp::Kernel dfs_kernel_;
+  clpp::Kernel bfs_kernel_;
 };
 
 }  // parallel
