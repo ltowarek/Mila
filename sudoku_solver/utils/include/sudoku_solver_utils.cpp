@@ -1,5 +1,15 @@
 #include "sudoku_solver_utils.h"
 
+std::vector<int> mila::sudokusolver::utils::FindEmptyCells(const std::vector<int> &grid) {
+  auto output = std::vector<int>();
+  for (auto i = 0; i < grid.size(); ++i) {
+    if (grid[i] == 0) {
+      output.push_back(i);
+    }
+  }
+  return output;
+}
+
 mila::sudokusolver::utils::SudokuFile::SudokuFile(): SudokuFile("") {}
 
 mila::sudokusolver::utils::SudokuFile::SudokuFile(const std::string& file_name): file_name_(file_name) {}

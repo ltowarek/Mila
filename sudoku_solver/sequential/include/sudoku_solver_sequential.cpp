@@ -1,15 +1,5 @@
 #include "sudoku_solver_sequential.h"
 
-std::vector<int> mila::sudokusolver::sequential::SudokuSolver::FindEmptyCells(const std::vector<int> &grid) const {
-  auto output = std::vector<int>();
-  for (auto i = 0; i < grid.size(); ++i) {
-    if (grid[i] == 0) {
-      output.push_back(i);
-    }
-  }
-  return output;
-}
-
 bool mila::sudokusolver::sequential::SudokuSolver::IsValidHorizontally(const std::vector<int> &grid,
                                                                        int n,
                                                                        int row) const {
@@ -85,7 +75,7 @@ bool mila::sudokusolver::sequential::SudokuSolver::IsValidMove(const std::vector
 
 std::vector<int> mila::sudokusolver::sequential::SudokuSolver::Run(const std::vector<int> &grid, int n) {
   auto output = grid;
-  auto empty_cells = FindEmptyCells(output);
+  auto empty_cells = mila::sudokusolver::utils::FindEmptyCells(output);
 
   auto current_empty_cell = 0;
   auto number_of_empty_cells = empty_cells.size();

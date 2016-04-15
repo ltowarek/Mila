@@ -1,4 +1,4 @@
-// kN passed as a build option
+// n passed as a build option
 
 void ClearBoolArray(bool *array, int array_size, bool value) {
     for (int i = 0; i < array_size; ++i) {
@@ -9,8 +9,8 @@ void ClearBoolArray(bool *array, int array_size, bool value) {
 bool IsValidHorizontally(int *kGrid, int kSize, int kRow) {
     bool is_valid = true;
 
-    bool checked_numbers[kN];
-    ClearBoolArray(checked_numbers, kN, false);
+    bool checked_numbers[n];
+    ClearBoolArray(checked_numbers, n, false);
 
     for (int column = 0; column < kSize; ++column) {
         int value = kGrid[kRow * kSize + column];
@@ -27,8 +27,8 @@ bool IsValidHorizontally(int *kGrid, int kSize, int kRow) {
 bool IsValidVertically(int *kGrid, int kSize, int kColumn) {
     bool is_valid = true;
 
-    bool checked_numbers[kN];
-    ClearBoolArray(checked_numbers, kN, false);
+    bool checked_numbers[n];
+    ClearBoolArray(checked_numbers, n, false);
 
     for (int row = 0; row < kSize; ++row) {
         int value = kGrid[row * kSize + kColumn];
@@ -48,8 +48,8 @@ bool IsValidInBoxes(int *kGrid, int kSize, int kRow, int kColumn) {
     int kBoxColumn = kColumn / kBoxSize;
     bool is_valid = true;
 
-    bool checked_numbers[kN];
-    ClearBoolArray(checked_numbers, kN, false);
+    bool checked_numbers[n];
+    ClearBoolArray(checked_numbers, n, false);
 
     for (int row = kBoxRow * kBoxSize; row < kBoxRow * kBoxSize + kBoxSize; ++row) {
         for (int column = kBoxColumn * kBoxSize; column < kBoxColumn * kBoxSize + kBoxSize; ++column) {
@@ -83,24 +83,24 @@ kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_g
     // Iterate over all old grids
     while (current_old_grid < *number_of_old_grids) {
         // Get next grid
-        int grid[kN * kN];
-        for (int i = 0; i < kN * kN; ++i) {
-            grid[i] = kOldGrids[current_old_grid * kN * kN + i];
+        int grid[n * n];
+        for (int i = 0; i < n * n; ++i) {
+            grid[i] = kOldGrids[current_old_grid * n * n + i];
         }
 
-        for (int i = 0; i < kN * kN; ++i) {
+        for (int i = 0; i < n * n; ++i) {
             // Find first empty cell
             if (grid[i] == 0) {
                 // Fill this cell with all valid values
-                for (int value = 1; value <= kN; ++value) {
+                for (int value = 1; value <= n; ++value) {
                     grid[i] = value;
-                    if (IsValid(grid, kN, i)) {
+                    if (IsValid(grid, n, i)) {
                         int next_new_grid = atomic_inc(number_of_new_grids);
                         int number_of_empty_cells = 0;
-                        for (int j = 0; j < kN * kN; ++j) {
-                            new_grids[next_new_grid * kN * kN + j] = grid[j];
+                        for (int j = 0; j < n * n; ++j) {
+                            new_grids[next_new_grid * n * n + j] = grid[j];
                             if (grid[j] == 0) {
-                                empty_cells[next_new_grid * kN * kN + number_of_empty_cells] = j;
+                                empty_cells[next_new_grid * n * n + number_of_empty_cells] = j;
                                 number_of_empty_cells++;
                             }
                         }
@@ -115,28 +115,28 @@ kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_g
     }
 }
 
-kernel void SudokuSolverDFS(constant int *kGrids, global int *number_of_grids, constant int *kEmptyCells, constant int *kNumbersOfEmptyCells, global int *solved_grid, global int *is_solved) {
+kernel void SudokuSolverDFS(constant int *kGrids, global int *number_of_grids, constant int *kEmptyCells, constant int *numbersOfEmptyCells, global int *solved_grid, global int *is_solved) {
     int tid = get_global_id(0);
     int number_of_threads = get_global_size(0);
     int current_grid = tid;
 
     while ((*is_solved == 0) && (current_grid < *number_of_grids)) {
-        int grid[kN * kN];
-        int empty_cells[kN * kN];
-        for (int i = 0; i < kN * kN; ++i) {
-            grid[i] = kGrids[current_grid * kN * kN + i];
-            empty_cells[i] = kEmptyCells[current_grid * kN * kN + i];
+        int grid[n * n];
+        int empty_cells[n * n];
+        for (int i = 0; i < n * n; ++i) {
+            grid[i] = kGrids[current_grid * n * n + i];
+            empty_cells[i] = kEmptyCells[current_grid * n * n + i];
         }
 
         int current_empty_cell = 0;
-        int number_of_empty_cells = kNumbersOfEmptyCells[current_grid];
+        int number_of_empty_cells = numbersOfEmptyCells[current_grid];
 
         while ((current_empty_cell >= 0) && (current_empty_cell < number_of_empty_cells)) {
             int id = empty_cells[current_empty_cell];
             grid[id]++;
-            if (IsValid(grid, kN, id)) {
+            if (IsValid(grid, n, id)) {
                 current_empty_cell++;
-            } else if (grid[id] >= kN) {
+            } else if (grid[id] >= n) {
                 grid[id] = 0;
                 current_empty_cell--;
             }
@@ -145,7 +145,7 @@ kernel void SudokuSolverDFS(constant int *kGrids, global int *number_of_grids, c
         if (current_empty_cell == number_of_empty_cells) {
             // Only one thread will update solved_grid
             if (!atomic_inc(is_solved)) {
-                for (int i = 0; i < kN * kN; ++i) {
+                for (int i = 0; i < n * n; ++i) {
                     solved_grid[i] = grid[i];
                 }
             }

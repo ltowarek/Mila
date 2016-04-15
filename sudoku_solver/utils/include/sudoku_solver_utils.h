@@ -10,6 +10,8 @@ namespace mila {
 namespace sudokusolver {
 namespace utils {
 
+std::vector<int> FindEmptyCells(const std::vector<int>& grid);
+
 class SudokuFile {
  public:
   SudokuFile();
