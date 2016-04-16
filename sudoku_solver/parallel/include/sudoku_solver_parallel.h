@@ -19,7 +19,7 @@ class SudokuSolver {
   SudokuSolver();
   SudokuSolver(size_t platform_id, size_t device_id);
 
-  virtual std::vector<int> Run(const std::vector<int>& grid);
+  virtual std::vector<int> Run(const std::vector<int>& grid, int number_of_cells_to_fill);
   virtual std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int number_of_cells_to_fill);
   virtual std::vector<int> SolveSudoku(std::vector<int>& grids, int number_of_grids, std::vector<int>& empty_cells, std::vector<int>& numbers_of_empty_cells_per_grid);
 
@@ -44,6 +44,7 @@ class SudokuSolver {
   clpp::Queue queue_;
   clpp::Kernel dfs_kernel_;
   clpp::Kernel bfs_kernel_;
+  bool is_initialized_;
 };
 
 }  // parallel
