@@ -75,7 +75,7 @@ bool IsValid(int *kGrid, int kSize, int kId) {
            IsValidInBoxes(kGrid, kSize, kRow, kColumn);
 }
 
-kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_grids, global int *new_grids, global int *number_of_new_grids, global int *empty_cells, global int *numbers_of_empty_cells) {
+kernel void SudokuSolverBFS(global int *kOldGrids, global int *number_of_old_grids, global int *new_grids, global int *number_of_new_grids, global int *empty_cells, global int *numbers_of_empty_cells) {
     int tid = get_global_id(0);
     int number_of_threads = get_global_size(0);
     int current_old_grid = tid;
@@ -115,7 +115,7 @@ kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_g
     }
 }
 
-kernel void SudokuSolverDFS(constant int *kGrids, global int *number_of_grids, constant int *kEmptyCells, constant int *numbersOfEmptyCells, global int *solved_grid, global int *is_solved) {
+kernel void SudokuSolverDFS(global int *kGrids, global int *number_of_grids, global int *kEmptyCells, global int *numbersOfEmptyCells, global int *solved_grid, global int *is_solved) {
     int tid = get_global_id(0);
     int number_of_threads = get_global_size(0);
     int current_grid = tid;
