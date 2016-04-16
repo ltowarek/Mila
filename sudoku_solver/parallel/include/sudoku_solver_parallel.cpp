@@ -3,7 +3,7 @@
 mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(): SudokuSolver(0 ,0) {
 }
 
-mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(size_t platform_id, size_t device_id): platform_id_(platform_id), device_id_(device_id){
+mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(size_t platform_id, size_t device_id): platform_id_(platform_id), device_id_(device_id), n_(9){
 }
 
 size_t mila::sudokusolver::parallel::SudokuSolver::platform_id() const {
@@ -63,9 +63,13 @@ void mila::sudokusolver::parallel::SudokuSolver::Initialize(const std::string& o
   bfs_kernel_ = clpp::Kernel(program, bfs_kernel_name.c_str());
 }
 
-std::vector<int> mila::sudokusolver::parallel::SudokuSolver::Run(const std::vector<int> &grid, int n) {
+uint32_t mila::sudokusolver::parallel::SudokuSolver::n() const {
+  return n_;
+}
+
+std::vector<int> mila::sudokusolver::parallel::SudokuSolver::Run(const std::vector<int> &grid) {
   std::stringstream string_stream;
-  string_stream << "-D n=" << n;
+  string_stream << "-D n=" << n_;
   Initialize(string_stream.str());
 
   auto output = grid;
@@ -90,18 +94,18 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::Run(const std::vect
 
   return output;
 }
+
 std::tuple<std::vector<int>,
            int,
            std::vector<int>,
            std::vector<int>> mila::sudokusolver::parallel::SudokuSolver::GeneratePossibleSolutions(const std::vector<int> &grid,
-                                                                                                   int n,
                                                                                                    int number_of_cells_to_fill) {
   std::stringstream string_stream;
-  string_stream << "-D n=" << n;
+  string_stream << "-D n=" << n_;
   Initialize(string_stream.str());
 
-  const auto grid_size = n * n;
-  const auto number_of_possible_solutions = static_cast<size_t>(pow(static_cast<double>(n), static_cast<double>(number_of_cells_to_fill)));
+  const auto grid_size = n_ * n_;
+  const auto number_of_possible_solutions = static_cast<size_t>(pow(static_cast<double>(n_), static_cast<double>(number_of_cells_to_fill)));
 
   auto grids = grid;
   grids.resize(number_of_possible_solutions * grid_size);
@@ -121,7 +125,7 @@ std::tuple<std::vector<int>,
   auto numbers_of_empty_cells_per_grid_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
 
   for (auto i = 0; i < number_of_cells_to_fill; ++i) {
-    auto global_work_size = std::vector<int>{static_cast<int>(pow(n, i))};
+    auto global_work_size = std::vector<int>{static_cast<int>(pow(n_, i))};
     bfs_kernel_.setArgs(old_grids_buffer, number_of_old_grids_buffer, new_grids_buffer, number_of_new_grids_buffer, empty_cells_buffer, numbers_of_empty_cells_per_grid_buffer);
     queue_.enqueueNDRangeKernel(bfs_kernel_, global_work_size).wait();
     queue_.enqueueCopyBuffer(new_grids_buffer, old_grids_buffer, 0, 0, grids.size() * sizeof(grids.at(0))).wait();
@@ -134,4 +138,31 @@ std::tuple<std::vector<int>,
   queue_.readBuffer(numbers_of_empty_cells_per_grid_buffer, 0, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
 
   return std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>>(grids, number_of_old_grids, empty_cells, numbers_of_empty_cells_per_grid);
+}
+
+std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::vector<int> &grids,
+                                                                         int number_of_grids,
+                                                                         std::vector<int> &empty_cells,
+                                                                         std::vector<int> &numbers_of_empty_cells_per_grid) {
+  std::stringstream string_stream;
+  string_stream << "-D n=" << n_;
+  Initialize(string_stream.str());
+
+  auto output = std::vector<int>(n_ * n_);
+  auto is_solved = 0;
+
+  auto grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids.at(0)), grids.data());
+  auto number_of_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(number_of_grids), &number_of_grids);
+  auto empty_cells_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
+  auto numbers_of_empty_cells_per_grid_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
+  auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
+  auto is_solved_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved);
+
+  auto global_work_size = {number_of_grids};
+
+  dfs_kernel_.setArgs(grids_buffer, number_of_grids_buffer, empty_cells_buffer, numbers_of_empty_cells_per_grid_buffer, output_buffer, is_solved_buffer);
+  queue_.enqueueNDRangeKernel(dfs_kernel_, global_work_size).wait();
+  queue_.readBuffer(output_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
+
+  return output;
 }

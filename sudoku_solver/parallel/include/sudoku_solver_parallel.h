@@ -19,9 +19,11 @@ class SudokuSolver {
   SudokuSolver();
   SudokuSolver(size_t platform_id, size_t device_id);
 
-  virtual std::vector<int> Run(const std::vector<int>& grid, int n);
-  virtual std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int n, int number_of_cells_to_fill);
+  virtual std::vector<int> Run(const std::vector<int>& grid);
+  virtual std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int number_of_cells_to_fill);
+  virtual std::vector<int> SolveSudoku(std::vector<int>& grids, int number_of_grids, std::vector<int>& empty_cells, std::vector<int>& numbers_of_empty_cells_per_grid);
 
+  uint32_t n() const;
   size_t platform_id() const;
   size_t device_id() const;
   clpp::Platform platform() const;
@@ -33,6 +35,7 @@ class SudokuSolver {
  protected:
   virtual void Initialize(const std::string& options);
 
+  const uint32_t n_;
   const size_t platform_id_;
   const size_t device_id_;
   clpp::Platform platform_;
