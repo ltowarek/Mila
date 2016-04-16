@@ -47,6 +47,12 @@ class SudokuSolver {
   bool is_initialized_;
 };
 
+class SudokuSolverBasedOnFiles: public SudokuSolver {
+ public:
+  virtual std::vector<int> Run(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  virtual void Run(const std::string& input_file_name, const std::string& output_file_name, int number_of_cells_to_fill);
+};
+
 }  // parallel
 }  // sudokusolver
 }  // mila

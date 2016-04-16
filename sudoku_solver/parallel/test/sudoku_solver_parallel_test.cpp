@@ -920,3 +920,56 @@ TEST(SudokuSolverParallelProfilerTest, Run1FilledCellWithProfiler) {
   solver.Run(input, 1);
   EXPECT_EQ(solver.results().count("Run"), 1);
 }
+
+TEST(SudokuSolverParallelBasedOnFilesTest, Run1FilledCellWithoutFiles) {
+  mila::sudokusolver::parallel::SudokuSolverBasedOnFiles solver;
+  std::vector<int> input {
+      0, 0, 0, 0, 3, 7, 6, 0, 0,
+      0, 0, 0, 6, 0, 0, 0, 9, 0,
+      0, 0, 8, 0, 0, 0, 0, 0, 4,
+      0, 9, 0, 0, 0, 0, 0, 0, 1,
+      6, 0, 0, 0, 0, 0, 0, 0, 9,
+      3, 0, 0, 0, 0, 0, 0, 4, 0,
+      7, 0, 0, 0, 0, 0, 8, 0, 0,
+      0, 1, 0, 0, 0, 9, 0, 0, 0,
+      0, 0, 2, 5, 4, 0, 0, 0, 0
+  };
+  std::vector<int> expected_output {
+      9, 5, 4, 1, 3, 7, 6, 8, 2,
+      2, 7, 3, 6, 8, 4, 1, 9, 5,
+      1, 6, 8, 2, 9, 5, 7, 3, 4,
+      4, 9, 5, 7, 2, 8, 3, 6, 1,
+      6, 8, 1, 4, 5, 3, 2, 7, 9,
+      3, 2, 7, 9, 6, 1, 5, 4, 8,
+      7, 4, 9, 3, 1, 2, 8, 5, 6,
+      5, 1, 6, 8, 7, 9, 4, 2, 3,
+      8, 3, 2, 5, 4, 6, 9, 1, 7
+  };
+
+  std::vector<int> output = solver.Run(input, 1);
+
+  ASSERT_EQ(expected_output.size(), output.size());
+  for (int i = 0; i < expected_output.size(); ++i) {
+    EXPECT_EQ(expected_output[i], output[i]);
+  }
+}
+
+TEST(SudokuSolverParallelBasedOnFilesTest, Run1FilledCellWithFiles) {
+  mila::sudokusolver::parallel::SudokuSolverBasedOnFiles solver;
+  std::string input_file_name = "test_file.txt";
+  std::string output_file_name = "test_file_output.txt";
+  std::string reference_file_name = "test_file_reference.txt";
+
+  solver.Run(input_file_name, output_file_name, 1);
+
+  mila::sudokusolver::utils::SudokuFile output_file = mila::sudokusolver::utils::SudokuFile(output_file_name);
+  mila::sudokusolver::utils::SudokuFile reference_file = mila::sudokusolver::utils::SudokuFile(reference_file_name);
+
+  std::vector<int> output = output_file.Read();
+  std::vector<int> expected_output = reference_file.Read();
+
+  ASSERT_EQ(expected_output.size(), output.size());
+  for (int i = 0; i < expected_output.size(); ++i) {
+    EXPECT_EQ(expected_output[i], output[i]);
+  }
+}

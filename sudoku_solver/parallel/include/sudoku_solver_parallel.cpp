@@ -157,3 +157,20 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::ve
 
   return output;
 }
+
+std::vector<int> mila::sudokusolver::parallel::SudokuSolverBasedOnFiles::Run(const std::vector<int> &grid,
+                                                                             int number_of_cells_to_fill) {
+  return SudokuSolver::Run(grid, number_of_cells_to_fill);
+}
+
+void mila::sudokusolver::parallel::SudokuSolverBasedOnFiles::Run(const std::string &input_file_name,
+                                                                 const std::string &output_file_name,
+                                                                 int number_of_cells_to_fill) {
+  auto input_file = mila::sudokusolver::utils::SudokuFile(input_file_name);
+  auto output_file = mila::sudokusolver::utils::SudokuFile(output_file_name);
+
+  auto input_grid = input_file.Read();
+  auto output_grid = Run(input_grid, number_of_cells_to_fill);
+
+  output_file.Write(output_grid);
+}
