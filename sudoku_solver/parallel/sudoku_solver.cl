@@ -14,11 +14,13 @@ bool IsValidHorizontally(int *kGrid, int kSize, int kRow) {
 
     for (int column = 0; column < kSize; ++column) {
         int value = kGrid[kRow * kSize + column];
-        if (value != 0 && checked_numbers[value - 1]) {
-            is_valid = false;
-            break;
-        } else {
-            checked_numbers[value - 1] = true;
+        if (value != 0) {
+             if (checked_numbers[value - 1]) {
+                is_valid = false;
+                break;
+             } else {
+                checked_numbers[value - 1] = true;
+             }
         }
     }
     return is_valid;
@@ -32,11 +34,13 @@ bool IsValidVertically(int *kGrid, int kSize, int kColumn) {
 
     for (int row = 0; row < kSize; ++row) {
         int value = kGrid[row * kSize + kColumn];
-        if (value != 0 && checked_numbers[value - 1]) {
-            is_valid = false;
-            break;
-        } else {
-            checked_numbers[value - 1] = true;
+        if (value != 0) {
+             if (checked_numbers[value - 1]) {
+                is_valid = false;
+                break;
+             } else {
+                checked_numbers[value - 1] = true;
+             }
         }
     }
     return is_valid;
@@ -54,11 +58,13 @@ bool IsValidInBoxes(int *kGrid, int kSize, int kRow, int kColumn) {
     for (int row = kBoxRow * kBoxSize; row < kBoxRow * kBoxSize + kBoxSize; ++row) {
         for (int column = kBoxColumn * kBoxSize; column < kBoxColumn * kBoxSize + kBoxSize; ++column) {
             int value = kGrid[row * kSize + column];
-            if (value != 0 && checked_numbers[value - 1]) {
-                is_valid = false;
-                break;
-            } else {
-                checked_numbers[value - 1] = true;
+            if (value != 0) {
+                 if (checked_numbers[value - 1]) {
+                    is_valid = false;
+                    break;
+                 } else {
+                    checked_numbers[value - 1] = true;
+                 }
             }
         }
     }
