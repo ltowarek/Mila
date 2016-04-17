@@ -16,6 +16,8 @@ class SudokuSolverProfiler: public SudokuSolver {
   SudokuSolverProfiler(size_t platform_id, size_t device_id);
 
   std::vector<int> Run(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  std::vector<int> SolveSudoku(std::vector<int>& grids, int number_of_grids, std::vector<int>& empty_cells, std::vector<int>& numbers_of_empty_cells_per_grid) override;
 
   std::string main_result() const;
   std::map<std::string, int64_t> results() const;
@@ -31,6 +33,8 @@ class SudokuSolverBasedOnFilesProfiler: public SudokuSolverBasedOnFiles {
 
   std::vector<int> Run(const std::vector<int>& grid, int number_of_cells_to_fill) override;
   void Run(const std::string& input_file_name, const std::string& output_file_name, int number_of_cells_to_fill) override;
+  std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  std::vector<int> SolveSudoku(std::vector<int>& grids, int number_of_grids, std::vector<int>& empty_cells, std::vector<int>& numbers_of_empty_cells_per_grid) override;
 
   std::string main_result() const;
   std::map<std::string, int64_t> results() const;
