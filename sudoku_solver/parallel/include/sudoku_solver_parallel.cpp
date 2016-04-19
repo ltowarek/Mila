@@ -117,10 +117,28 @@ std::tuple<std::vector<int>,
 
   for (auto i = 0; i < number_of_cells_to_fill; ++i) {
     auto global_work_size = std::vector<int>{static_cast<int>(pow(n_, i))};
+
+    // TODO: Replace with fillBuffer from ocl1.2
+    auto mapped_buffer = static_cast<int*>(queue_.mapBuffer(empty_cells_buffer, CL_MAP_WRITE, 0, empty_cells.size() * sizeof(empty_cells.at(0))));
+    for (auto j = 0; j < empty_cells.size(); ++j) {
+      mapped_buffer[j] = 0;
+    }
+    queue_.enqueueUnmapMemObject(empty_cells_buffer, mapped_buffer).wait();
+
     bfs_kernel_.setArgs(old_grids_buffer, number_of_old_grids_buffer, new_grids_buffer, number_of_new_grids_buffer, empty_cells_buffer, numbers_of_empty_cells_per_grid_buffer);
     queue_.enqueueNDRangeKernel(bfs_kernel_, global_work_size).wait();
     queue_.enqueueCopyBuffer(new_grids_buffer, old_grids_buffer, 0, 0, grids.size() * sizeof(grids.at(0))).wait();
     queue_.enqueueCopyBuffer(number_of_new_grids_buffer, number_of_old_grids_buffer, 0, 0, sizeof(number_of_new_grids)).wait();
+
+    // TODO: Replace with fillBuffer from ocl1.2
+    mapped_buffer = static_cast<int*>(queue_.mapBuffer(number_of_new_grids_buffer, CL_MAP_WRITE, 0, sizeof(number_of_new_grids)));
+    *mapped_buffer = 0;
+    queue_.enqueueUnmapMemObject(number_of_new_grids_buffer, mapped_buffer).wait();
+
+    queue_.readBuffer(old_grids_buffer, 0, grids.size() * sizeof(grids.at(0)), grids.data());
+    queue_.readBuffer(number_of_old_grids_buffer, 0, sizeof(number_of_old_grids), &number_of_old_grids);
+    queue_.readBuffer(empty_cells_buffer, 0, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
+    queue_.readBuffer(numbers_of_empty_cells_per_grid_buffer, 0, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
   }
 
   queue_.readBuffer(old_grids_buffer, 0, grids.size() * sizeof(grids.at(0)), grids.data());

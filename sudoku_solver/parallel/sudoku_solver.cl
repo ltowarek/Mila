@@ -81,6 +81,14 @@ bool IsValid(int *kGrid, int kSize, int kId) {
            IsValidInBoxes(kGrid, kSize, kRow, kColumn);
 }
 
+void PrintGrid(int *grid, int size) {
+    printf("grid: ");
+    for (int i = 0; i < size; ++i) {
+        printf("%d, ", grid[i]);
+    }
+    printf("\n");
+}
+
 kernel void SudokuSolverBFS(global int *kOldGrids, global int *number_of_old_grids, global int *new_grids, global int *number_of_new_grids, global int *empty_cells, global int *numbers_of_empty_cells) {
     int tid = get_global_id(0);
     int number_of_threads = get_global_size(0);
