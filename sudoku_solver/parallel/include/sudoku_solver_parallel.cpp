@@ -3,7 +3,12 @@
 mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(): SudokuSolver(0 ,0) {
 }
 
-mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(size_t platform_id, size_t device_id): platform_id_(platform_id), device_id_(device_id), n_(9), is_initialized_(false) {
+mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(size_t platform_id, size_t device_id): platform_id_(platform_id),
+                                                                                                device_id_(device_id),
+                                                                                                n_(9),
+                                                                                                max_number_of_grids_(5000),
+                                                                                                max_number_of_cells_(max_number_of_grids_ * n_* n_),
+                                                                                                is_initialized_(false) {
 }
 
 size_t mila::sudokusolver::parallel::SudokuSolver::platform_id() const {
@@ -95,14 +100,11 @@ std::tuple<std::vector<int>,
   string_stream << "-D n=" << n_;
   Initialize(string_stream.str());
 
-  const auto grid_size = n_ * n_;
-  const auto number_of_possible_solutions = static_cast<size_t>(pow(static_cast<double>(n_), static_cast<double>(number_of_cells_to_fill)));
+  auto grids = std::vector<int>(max_number_of_cells_, 0);
+  std::copy(grid.begin(), grid.end(), grids.begin());
 
-  auto grids = grid;
-  grids.resize(number_of_possible_solutions * grid_size);
-
-  auto empty_cells = std::vector<int>(number_of_possible_solutions * grid_size);
-  auto numbers_of_empty_cells_per_grid = std::vector<int>(number_of_possible_solutions, 0);
+  auto empty_cells = std::vector<int>(max_number_of_cells_);
+  auto numbers_of_empty_cells_per_grid = std::vector<int>(max_number_of_grids_, 0);
 
   auto old_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids.at(0)), grids.data());
   auto number_of_old_grids = 1;
@@ -136,6 +138,7 @@ std::tuple<std::vector<int>,
     queue_.enqueueUnmapMemObject(number_of_new_grids_buffer, mapped_buffer).wait();
   }
 
+  // TODO: Buffers can be shared within an object so readBuffer won't be needed
   queue_.readBuffer(old_grids_buffer, 0, grids.size() * sizeof(grids.at(0)), grids.data());
   queue_.readBuffer(number_of_old_grids_buffer, 0, sizeof(number_of_old_grids), &number_of_old_grids);
   queue_.readBuffer(empty_cells_buffer, 0, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
@@ -152,8 +155,6 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::ve
   string_stream << "-D n=" << n_;
   Initialize(string_stream.str());
 
-  auto output = std::vector<int>(n_ * n_);
-  auto is_solved = 0;
   auto output = std::vector<int>(n_ * n_, 0);
   auto is_solved = int{0};
 
