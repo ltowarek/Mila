@@ -1,0 +1,50 @@
+#ifndef MILA_SUDOKU_SOLVER_PARALLEL_PROFILER_H_
+#define MILA_SUDOKU_SOLVER_PARALLEL_PROFILER_H_
+
+#include <chrono>
+#include <map>
+
+#include "sudoku_solver_parallel.h"
+
+namespace mila {
+namespace sudokusolver {
+namespace parallel {
+
+class SudokuSolverProfiler: public SudokuSolver {
+ public:
+  SudokuSolverProfiler();
+  SudokuSolverProfiler(size_t platform_id, size_t device_id);
+
+  std::vector<int> Run(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  std::vector<int> SolveSudoku(std::vector<int>& grids, int number_of_grids, std::vector<int>& empty_cells, std::vector<int>& numbers_of_empty_cells_per_grid) override;
+
+  std::string main_result() const;
+  std::map<std::string, int64_t> results() const;
+ private:
+  const std::string main_result_;
+  std::map<std::string, int64_t> results_;
+};
+
+class SudokuSolverBasedOnFilesProfiler: public SudokuSolverBasedOnFiles {
+ public:
+  SudokuSolverBasedOnFilesProfiler();
+  SudokuSolverBasedOnFilesProfiler(size_t platform_id, size_t device_id);
+
+  std::vector<int> Run(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  void Run(const std::string& input_file_name, const std::string& output_file_name, int number_of_cells_to_fill) override;
+  std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>> GeneratePossibleSolutions(const std::vector<int>& grid, int number_of_cells_to_fill) override;
+  std::vector<int> SolveSudoku(std::vector<int>& grids, int number_of_grids, std::vector<int>& empty_cells, std::vector<int>& numbers_of_empty_cells_per_grid) override;
+
+  std::string main_result() const;
+  std::map<std::string, int64_t> results() const;
+ private:
+  const std::string main_result_;
+  std::map<std::string, int64_t> results_;
+};
+
+}  // parallel
+}  // sudokusolver
+}  // mila
+
+#endif  // MILA_SUDOKU_SOLVER_PARALLEL_PROFILER_H_

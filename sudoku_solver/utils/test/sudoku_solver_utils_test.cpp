@@ -1,6 +1,36 @@
 #include "gtest/gtest.h"
 #include "sudoku_solver_utils.h"
 
+TEST(SudokuUtilsTest, FindEmptyCellsEmpty) {
+  std::vector<int> input = {};
+  std::vector<int> expected_output = {};
+
+  std::vector<int> output = mila::sudokusolver::utils::FindEmptyCells(input);
+
+  EXPECT_EQ(expected_output.size(), output.size());
+}
+
+TEST(SudokuUtilsTest, FindEmptyCellsNoEmptyCells) {
+  std::vector<int> input = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<int> expected_output = {};
+
+  std::vector<int> output = mila::sudokusolver::utils::FindEmptyCells(input);
+
+  EXPECT_EQ(expected_output.size(), output.size());
+}
+
+TEST(SudokuUtilsTest, FindEmptyCells) {
+  std::vector<int> input = {1, 2, 0, 4, 0, 0, 7, 8, 0};
+  std::vector<int> expected_output = {2, 4, 5, 8};
+
+  std::vector<int> output = mila::sudokusolver::utils::FindEmptyCells(input);
+
+  ASSERT_EQ(expected_output.size(), output.size());
+  for (int i = 0; i < expected_output.size(); ++i) {
+    EXPECT_EQ(expected_output[i], output[i]);
+  }
+}
+
 TEST(SudokuSolverUtilsSudokuFileTest, DefaultConstructor) {
   mila::sudokusolver::utils::SudokuFile file;
   EXPECT_EQ(file.file_name(), "");

@@ -1,81 +1,95 @@
-// kN passed as a build option
+// n passed as a build option
 
-void ClearBoolArray(bool *array, int array_size, bool value) {
+void ClearBoolArray(bool *array, int array_size) {
     for (int i = 0; i < array_size; ++i) {
-        array[i] = value;
+        array[i] = false;
     }
 }
 
-bool IsValidHorizontally(int *kGrid, int kSize, int kRow) {
+bool IsValidHorizontally(int *grid, int size, int row) {
     bool is_valid = true;
 
-    bool checked_numbers[kN];
-    ClearBoolArray(checked_numbers, kN, false);
+    bool checked_numbers[n];
+    ClearBoolArray(checked_numbers, n);
 
-    for (int column = 0; column < kSize; ++column) {
-        int value = kGrid[kRow * kSize + column];
-        if (value != 0 && checked_numbers[value - 1]) {
-            is_valid = false;
-            break;
-        } else {
-            checked_numbers[value - 1] = true;
-        }
-    }
-    return is_valid;
-}
-
-bool IsValidVertically(int *kGrid, int kSize, int kColumn) {
-    bool is_valid = true;
-
-    bool checked_numbers[kN];
-    ClearBoolArray(checked_numbers, kN, false);
-
-    for (int row = 0; row < kSize; ++row) {
-        int value = kGrid[row * kSize + kColumn];
-        if (value != 0 && checked_numbers[value - 1]) {
-            is_valid = false;
-            break;
-        } else {
-            checked_numbers[value - 1] = true;
-        }
-    }
-    return is_valid;
-}
-
-bool IsValidInBoxes(int *kGrid, int kSize, int kRow, int kColumn) {
-    int kBoxSize = (int)sqrt((float)kSize);
-    int kBoxRow = kRow / kBoxSize;
-    int kBoxColumn = kColumn / kBoxSize;
-    bool is_valid = true;
-
-    bool checked_numbers[kN];
-    ClearBoolArray(checked_numbers, kN, false);
-
-    for (int row = kBoxRow * kBoxSize; row < kBoxRow * kBoxSize + kBoxSize; ++row) {
-        for (int column = kBoxColumn * kBoxSize; column < kBoxColumn * kBoxSize + kBoxSize; ++column) {
-            int value = kGrid[row * kSize + column];
-            if (value != 0 && checked_numbers[value - 1]) {
+    for (int column = 0; column < size; ++column) {
+        int value = grid[row * size + column];
+        if (value != 0) {
+             if (checked_numbers[value - 1]) {
                 is_valid = false;
                 break;
-            } else {
+             } else {
                 checked_numbers[value - 1] = true;
+             }
+        }
+    }
+    return is_valid;
+}
+
+bool IsValidVertically(int *grid, int size, int column) {
+    bool is_valid = true;
+
+    bool checked_numbers[n];
+    ClearBoolArray(checked_numbers, n);
+
+    for (int row = 0; row < size; ++row) {
+        int value = grid[row * size + column];
+        if (value != 0) {
+             if (checked_numbers[value - 1]) {
+                is_valid = false;
+                break;
+             } else {
+                checked_numbers[value - 1] = true;
+             }
+        }
+    }
+    return is_valid;
+}
+
+bool IsValidInBoxes(int *kGrid, int size, int row, int column) {
+    int box_size = (int)sqrt((float)size);
+    int box_row = row / box_size;
+    int box_column = column / box_size;
+    bool is_valid = true;
+
+    bool checked_numbers[n];
+    ClearBoolArray(checked_numbers, n);
+
+    for (int row = box_row * box_size; row < box_row * box_size + box_size; ++row) {
+        for (int column = box_column * box_size; column < box_column * box_size + box_size; ++column) {
+            int value = kGrid[row * size + column];
+            if (value != 0) {
+                 if (checked_numbers[value - 1]) {
+                    is_valid = false;
+                    break;
+                 } else {
+                    checked_numbers[value - 1] = true;
+                 }
             }
         }
     }
     return is_valid;
 }
 
-bool IsValid(int *kGrid, int kSize, int kId) {
-    int kRow = kId / kSize;
-    int kColumn = kId % kSize;
-    return kGrid[kId] >= 1 &&
-           kGrid[kId] <= kSize &&
-           IsValidHorizontally(kGrid, kSize, kRow) &&
-           IsValidVertically(kGrid, kSize, kColumn) &&
-           IsValidInBoxes(kGrid, kSize, kRow, kColumn);
+bool IsValid(int *grid, int size, int id) {
+    int row = id / size;
+    int column = id % size;
+    return grid[id] >= 1 &&
+           grid[id] <= size &&
+           IsValidHorizontally(grid, size, row) &&
+           IsValidVertically(grid, size, column) &&
+           IsValidInBoxes(grid, size, row, column);
 }
 
-kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_grids, global int *new_grids, global int *number_of_new_grids, global int *empty_cells, global int *numbers_of_empty_cells) {
+void PrintGrid(int *grid, int size) {
+    printf("grid: ");
+    for (int i = 0; i < size; ++i) {
+        printf("%d, ", grid[i]);
+    }
+    printf("\n");
+}
+
+kernel void SudokuSolverBFS(global int *old_grids, global int *number_of_old_grids, global int *new_grids, global int *number_of_new_grids, global int *empty_cells, global int *numbers_of_empty_cells) {
     int tid = get_global_id(0);
     int number_of_threads = get_global_size(0);
     int current_old_grid = tid;
@@ -83,24 +97,24 @@ kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_g
     // Iterate over all old grids
     while (current_old_grid < *number_of_old_grids) {
         // Get next grid
-        int grid[kN * kN];
-        for (int i = 0; i < kN * kN; ++i) {
-            grid[i] = kOldGrids[current_old_grid * kN * kN + i];
+        int grid[n * n];
+        for (int i = 0; i < n * n; ++i) {
+            grid[i] = old_grids[current_old_grid * n * n + i];
         }
 
-        for (int i = 0; i < kN * kN; ++i) {
+        for (int i = 0; i < n * n; ++i) {
             // Find first empty cell
             if (grid[i] == 0) {
                 // Fill this cell with all valid values
-                for (int value = 1; value <= kN; ++value) {
+                for (int value = 1; value <= n; ++value) {
                     grid[i] = value;
-                    if (IsValid(grid, kN, i)) {
+                    if (IsValid(grid, n, i)) {
                         int next_new_grid = atomic_inc(number_of_new_grids);
                         int number_of_empty_cells = 0;
-                        for (int j = 0; j < kN * kN; ++j) {
-                            new_grids[next_new_grid * kN * kN + j] = grid[j];
+                        for (int j = 0; j < n * n; ++j) {
+                            new_grids[next_new_grid * n * n + j] = grid[j];
                             if (grid[j] == 0) {
-                                empty_cells[next_new_grid * kN * kN + number_of_empty_cells] = j;
+                                empty_cells[next_new_grid * n * n + number_of_empty_cells] = j;
                                 number_of_empty_cells++;
                             }
                         }
@@ -115,42 +129,43 @@ kernel void SudokuSolverBFS(constant int *kOldGrids, global int *number_of_old_g
     }
 }
 
-kernel void SudokuSolverDFS(constant int *kGrids, global int *number_of_grids, constant int *kEmptyCells, constant int *kNumbersOfEmptyCells, global int *solved_grid, global int *is_solved) {
-    int tid = get_global_id(0);
+kernel void SudokuSolverDFS(global int *grids, global int *number_of_grids, global int *empty_cells, global int *numbers_of_empty_cells, global int *solved_grid, global int *is_solved) {
     int number_of_threads = get_global_size(0);
-    int current_grid = tid;
+    int current_grid[n * n];
+    int current_grid_id = get_global_id(0);
+    int current_empty_cells[n * n];
+    int current_empty_cell_id = 0;
+    int number_of_empty_cells = 0;
 
-    while ((*is_solved == 0) && (current_grid < *number_of_grids)) {
-        int grid[kN * kN];
-        int empty_cells[kN * kN];
-        for (int i = 0; i < kN * kN; ++i) {
-            grid[i] = kGrids[current_grid * kN * kN + i];
-            empty_cells[i] = kEmptyCells[current_grid * kN * kN + i];
+    while ((*is_solved == 0) && (current_grid_id < *number_of_grids)) {
+        for (int i = 0; i < n * n; ++i) {
+            current_grid[i] = grids[current_grid_id * n * n + i];
+            current_empty_cells[i] = empty_cells[current_grid_id * n * n + i];
         }
 
-        int current_empty_cell = 0;
-        int number_of_empty_cells = kNumbersOfEmptyCells[current_grid];
+        current_empty_cell_id = 0;
+        number_of_empty_cells = numbers_of_empty_cells[current_grid_id];
 
-        while ((current_empty_cell >= 0) && (current_empty_cell < number_of_empty_cells)) {
-            int id = empty_cells[current_empty_cell];
-            grid[id]++;
-            if (IsValid(grid, kN, id)) {
-                current_empty_cell++;
-            } else if (grid[id] >= kN) {
-                grid[id] = 0;
-                current_empty_cell--;
+        while ((current_empty_cell_id >= 0) && (current_empty_cell_id < number_of_empty_cells)) {
+            int id = current_empty_cells[current_empty_cell_id];
+            current_grid[id]++;
+            if (IsValid(current_grid, n, id)) {
+                current_empty_cell_id++;
+            } else if (current_grid[id] >= n) {
+                current_grid[id] = 0;
+                current_empty_cell_id--;
             }
         }
 
-        if (current_empty_cell == number_of_empty_cells) {
+        if (current_empty_cell_id == number_of_empty_cells) {
             // Only one thread will update solved_grid
             if (!atomic_inc(is_solved)) {
-                for (int i = 0; i < kN * kN; ++i) {
-                    solved_grid[i] = grid[i];
+                for (int i = 0; i < n * n; ++i) {
+                    solved_grid[i] = current_grid[i];
                 }
             }
         }
 
-        current_grid += number_of_threads;
+        current_grid_id += number_of_threads;
     }
 }
