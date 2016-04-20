@@ -40,6 +40,7 @@ class SudokuSolver {
   const size_t device_id_;
   const int max_number_of_grids_;
   const int max_number_of_cells_;
+  const int number_of_threads_;
   clpp::Platform platform_;
   clpp::Device device_;
   clpp::Context context_;

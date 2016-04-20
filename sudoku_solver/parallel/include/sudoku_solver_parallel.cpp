@@ -5,6 +5,7 @@ mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(): SudokuSolver(0 ,0) {
 
 mila::sudokusolver::parallel::SudokuSolver::SudokuSolver(size_t platform_id, size_t device_id): platform_id_(platform_id),
                                                                                                 device_id_(device_id),
+                                                                                                number_of_threads_(256),
                                                                                                 n_(9),
                                                                                                 max_number_of_grids_(5000),
                                                                                                 max_number_of_cells_(max_number_of_grids_ * n_* n_),
@@ -117,9 +118,9 @@ std::tuple<std::vector<int>,
   auto empty_cells_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
   auto numbers_of_empty_cells_per_grid_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
 
-  for (auto i = 0; i < number_of_cells_to_fill; ++i) {
-    auto global_work_size = std::vector<int>{static_cast<int>(pow(n_, i))};
+  auto global_work_size = std::vector<int>{number_of_threads_};
 
+  for (auto i = 0; i < number_of_cells_to_fill; ++i) {
     // TODO: Replace with fillBuffer from ocl1.2
     auto mapped_buffer = static_cast<int*>(queue_.mapBuffer(empty_cells_buffer, CL_MAP_WRITE, 0, empty_cells.size() * sizeof(empty_cells.at(0))));
     for (auto j = 0; j < empty_cells.size(); ++j) {
@@ -165,7 +166,7 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::ve
   auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
   auto is_solved_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved);
 
-  auto global_work_size = {number_of_grids};
+  auto global_work_size = {number_of_threads_};
 
   dfs_kernel_.setArgs(grids_buffer, number_of_grids_buffer, empty_cells_buffer, numbers_of_empty_cells_per_grid_buffer, output_buffer, is_solved_buffer);
   queue_.enqueueNDRangeKernel(dfs_kernel_, global_work_size).wait();
