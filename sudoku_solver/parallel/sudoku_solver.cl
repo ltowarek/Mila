@@ -129,42 +129,43 @@ kernel void SudokuSolverBFS(global int *old_grids, global int *number_of_old_gri
     }
 }
 
-kernel void SudokuSolverDFS(global int *grids, global int *number_of_grids, global int *empty_cells, global int *numbersOfEmptyCells, global int *solved_grid, global int *is_solved) {
-    int tid = get_global_id(0);
+kernel void SudokuSolverDFS(global int *grids, global int *number_of_grids, global int *empty_cells, global int *numbers_of_empty_cells, global int *solved_grid, global int *is_solved) {
     int number_of_threads = get_global_size(0);
-    int current_grid = tid;
+    int current_grid[n * n];
+    int current_grid_id = get_global_id(0);
+    int current_empty_cells[n * n];
+    int current_empty_cell_id = 0;
+    int number_of_empty_cells = 0;
 
-    while ((*is_solved == 0) && (current_grid < *number_of_grids)) {
-        int grid[n * n];
-        int empty_cells[n * n];
+    while ((*is_solved == 0) && (current_grid_id < *number_of_grids)) {
         for (int i = 0; i < n * n; ++i) {
-            grid[i] = grids[current_grid * n * n + i];
-            empty_cells[i] = empty_cells[current_grid * n * n + i];
+            current_grid[i] = grids[current_grid_id * n * n + i];
+            current_empty_cells[i] = empty_cells[current_grid_id * n * n + i];
         }
 
-        int current_empty_cell = 0;
-        int number_of_empty_cells = numbersOfEmptyCells[current_grid];
+        current_empty_cell_id = 0;
+        number_of_empty_cells = numbers_of_empty_cells[current_grid_id];
 
-        while ((current_empty_cell >= 0) && (current_empty_cell < number_of_empty_cells)) {
-            int id = empty_cells[current_empty_cell];
-            grid[id]++;
-            if (IsValid(grid, n, id)) {
-                current_empty_cell++;
-            } else if (grid[id] >= n) {
-                grid[id] = 0;
-                current_empty_cell--;
+        while ((current_empty_cell_id >= 0) && (current_empty_cell_id < number_of_empty_cells)) {
+            int id = current_empty_cells[current_empty_cell_id];
+            current_grid[id]++;
+            if (IsValid(current_grid, n, id)) {
+                current_empty_cell_id++;
+            } else if (current_grid[id] >= n) {
+                current_grid[id] = 0;
+                current_empty_cell_id--;
             }
         }
 
-        if (current_empty_cell == number_of_empty_cells) {
+        if (current_empty_cell_id == number_of_empty_cells) {
             // Only one thread will update solved_grid
             if (!atomic_inc(is_solved)) {
                 for (int i = 0; i < n * n; ++i) {
-                    solved_grid[i] = grid[i];
+                    solved_grid[i] = current_grid[i];
                 }
             }
         }
 
-        current_grid += number_of_threads;
+        current_grid_id += number_of_threads;
     }
 }
