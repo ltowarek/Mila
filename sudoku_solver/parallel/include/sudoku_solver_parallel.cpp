@@ -134,11 +134,6 @@ std::tuple<std::vector<int>,
     mapped_buffer = static_cast<int*>(queue_.mapBuffer(number_of_new_grids_buffer, CL_MAP_WRITE, 0, sizeof(number_of_new_grids)));
     *mapped_buffer = 0;
     queue_.enqueueUnmapMemObject(number_of_new_grids_buffer, mapped_buffer).wait();
-
-    queue_.readBuffer(old_grids_buffer, 0, grids.size() * sizeof(grids.at(0)), grids.data());
-    queue_.readBuffer(number_of_old_grids_buffer, 0, sizeof(number_of_old_grids), &number_of_old_grids);
-    queue_.readBuffer(empty_cells_buffer, 0, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
-    queue_.readBuffer(numbers_of_empty_cells_per_grid_buffer, 0, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
   }
 
   queue_.readBuffer(old_grids_buffer, 0, grids.size() * sizeof(grids.at(0)), grids.data());
