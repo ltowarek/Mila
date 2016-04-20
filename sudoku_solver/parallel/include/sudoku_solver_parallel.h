@@ -34,20 +34,26 @@ class SudokuSolver {
   clpp::Kernel bfs_kernel() const;
  protected:
   virtual void Initialize(const std::string& options);
+  virtual void GeneratePossibleSolutionsInPlace(const std::vector<int>& grid, int number_of_cells_to_fill);
+  virtual std::vector<int> SolveSudokuInPlace();
 
   const uint32_t n_;
   const size_t platform_id_;
   const size_t device_id_;
-  const int max_number_of_grids_;
-  const int max_number_of_cells_;
-  const int number_of_threads_;
+  const size_t max_number_of_grids_;
+  const size_t max_number_of_cells_;
+  const size_t number_of_threads_;
+  bool is_initialized_;
   clpp::Platform platform_;
   clpp::Device device_;
   clpp::Context context_;
   clpp::Queue queue_;
   clpp::Kernel dfs_kernel_;
   clpp::Kernel bfs_kernel_;
-  bool is_initialized_;
+  clpp::Buffer grids_buffer_;
+  clpp::Buffer number_of_grids_buffer_;
+  clpp::Buffer empty_cells_buffer_;
+  clpp::Buffer numbers_of_empty_cells_per_grid_buffer_;
 };
 
 class SudokuSolverBasedOnFiles: public SudokuSolver {

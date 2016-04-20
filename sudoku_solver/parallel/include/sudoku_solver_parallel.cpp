@@ -80,16 +80,52 @@ void mila::sudokusolver::parallel::SudokuSolver::Initialize(const std::string& o
 }
 
 std::vector<int> mila::sudokusolver::parallel::SudokuSolver::Run(const std::vector<int> &grid, int number_of_cells_to_fill) {
-  auto grids = std::vector<int>{};
-  auto number_of_grids = int{0};
-  auto empty_cells = std::vector<int>{};
-  auto numbers_of_empty_cells_per_grid = std::vector<int>{};
-
-  std::tie(grids, number_of_grids, empty_cells, numbers_of_empty_cells_per_grid) = GeneratePossibleSolutions(grid, number_of_cells_to_fill);
-
-  auto output = SolveSudoku(grids, number_of_grids, empty_cells, numbers_of_empty_cells_per_grid);
-
+  GeneratePossibleSolutionsInPlace(grid, number_of_cells_to_fill);
+  auto output = SolveSudokuInPlace();
   return output;
+}
+
+void mila::sudokusolver::parallel::SudokuSolver::GeneratePossibleSolutionsInPlace(const std::vector<int> &grid,
+                                                                                  int number_of_cells_to_fill) {
+  std::stringstream string_stream;
+  string_stream << "-D n=" << n_;
+  Initialize(string_stream.str());
+
+  auto grids = std::vector<int>(max_number_of_cells_, 0);
+  std::copy(grid.begin(), grid.end(), grids.begin());
+  auto number_of_grids = int{1};
+  grids_buffer_ = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids.at(0)), grids.data());
+  number_of_grids_buffer_ = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(number_of_grids), &number_of_grids);
+
+  auto empty_cells = std::vector<int>(max_number_of_cells_, 0);
+  auto numbers_of_empty_cells_per_grid = std::vector<int>(max_number_of_grids_, 0);
+  empty_cells_buffer_ = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
+  numbers_of_empty_cells_per_grid_buffer_ = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
+
+  auto new_grids_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, grids.size() * sizeof(grids.at(0)), nullptr);
+  auto number_of_new_grids = int{0};
+  auto number_of_new_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(number_of_new_grids), &number_of_new_grids);
+
+  auto global_work_size = std::vector<int>{number_of_threads_};
+
+  for (auto i = 0; i < number_of_cells_to_fill; ++i) {
+    // TODO: Replace with fillBuffer from ocl1.2
+    auto mapped_buffer = static_cast<int*>(queue_.mapBuffer(empty_cells_buffer_, CL_MAP_WRITE, 0, empty_cells.size() * sizeof(empty_cells.at(0))));
+    for (auto j = 0; j < empty_cells.size(); ++j) {
+      mapped_buffer[j] = 0;
+    }
+    queue_.enqueueUnmapMemObject(empty_cells_buffer_, mapped_buffer).wait();
+
+    bfs_kernel_.setArgs(grids_buffer_, number_of_grids_buffer_, new_grids_buffer, number_of_new_grids_buffer, empty_cells_buffer_, numbers_of_empty_cells_per_grid_buffer_);
+    queue_.enqueueNDRangeKernel(bfs_kernel_, global_work_size).wait();
+    queue_.enqueueCopyBuffer(new_grids_buffer, grids_buffer_, 0, 0, grids.size() * sizeof(grids.at(0))).wait();
+    queue_.enqueueCopyBuffer(number_of_new_grids_buffer, number_of_grids_buffer_, 0, 0, sizeof(number_of_new_grids)).wait();
+
+    // TODO: Replace with fillBuffer from ocl1.2
+    mapped_buffer = static_cast<int*>(queue_.mapBuffer(number_of_new_grids_buffer, CL_MAP_WRITE, 0, sizeof(number_of_new_grids)));
+    *mapped_buffer = 0;
+    queue_.enqueueUnmapMemObject(number_of_new_grids_buffer, mapped_buffer).wait();
+  }
 }
 
 std::tuple<std::vector<int>,
@@ -97,55 +133,39 @@ std::tuple<std::vector<int>,
            std::vector<int>,
            std::vector<int>> mila::sudokusolver::parallel::SudokuSolver::GeneratePossibleSolutions(const std::vector<int> &grid,
                                                                                                    int number_of_cells_to_fill) {
+  auto grids = std::vector<int>(max_number_of_cells_, 0);
+  auto number_of_grids = int{1};
+  auto empty_cells = std::vector<int>(max_number_of_cells_, 0);
+  auto numbers_of_empty_cells_per_grid = std::vector<int>(max_number_of_grids_, 0);
+
+  GeneratePossibleSolutionsInPlace(grid, number_of_cells_to_fill);
+
+  queue_.readBuffer(grids_buffer_, 0, grids.size() * sizeof(grids.at(0)), grids.data());
+  queue_.readBuffer(number_of_grids_buffer_, 0, sizeof(number_of_grids), &number_of_grids);
+  queue_.readBuffer(empty_cells_buffer_, 0, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
+  queue_.readBuffer(numbers_of_empty_cells_per_grid_buffer_, 0, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
+
+  return std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>>(grids, number_of_grids, empty_cells, numbers_of_empty_cells_per_grid);
+}
+
+std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudokuInPlace() {
   std::stringstream string_stream;
   string_stream << "-D n=" << n_;
   Initialize(string_stream.str());
 
-  std::vector<int> grids = std::vector<int>(max_number_of_cells_, 0);
-  std::copy(grid.begin(), grid.end(), grids.begin());
+  auto output = std::vector<int>(n_ * n_, 0);
+  auto is_solved = int{0};
 
-  auto empty_cells = std::vector<int>(max_number_of_cells_, 0);
-  auto numbers_of_empty_cells_per_grid = std::vector<int>(max_number_of_grids_, 0);
+  auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
+  auto is_solved_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved);
 
-  auto old_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids.at(0)), grids.data());
-  auto number_of_old_grids = 1;
-  auto number_of_old_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(number_of_old_grids), &number_of_old_grids);
+  auto global_work_size = {number_of_threads_};
 
-  auto new_grids_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, grids.size() * sizeof(grids.at(0)), nullptr);
-  auto number_of_new_grids = 0;
-  auto number_of_new_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(number_of_new_grids), &number_of_new_grids);
+  dfs_kernel_.setArgs(grids_buffer_, number_of_grids_buffer_, empty_cells_buffer_, numbers_of_empty_cells_per_grid_buffer_, output_buffer, is_solved_buffer);
+  queue_.enqueueNDRangeKernel(dfs_kernel_, global_work_size).wait();
+  queue_.readBuffer(output_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
 
-  auto empty_cells_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
-  auto numbers_of_empty_cells_per_grid_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
-
-  auto global_work_size = std::vector<int>{number_of_threads_};
-
-  for (auto i = 0; i < number_of_cells_to_fill; ++i) {
-    // TODO: Replace with fillBuffer from ocl1.2
-    auto mapped_buffer = static_cast<int*>(queue_.mapBuffer(empty_cells_buffer, CL_MAP_WRITE, 0, empty_cells.size() * sizeof(empty_cells.at(0))));
-    for (auto j = 0; j < empty_cells.size(); ++j) {
-      mapped_buffer[j] = 0;
-    }
-    queue_.enqueueUnmapMemObject(empty_cells_buffer, mapped_buffer).wait();
-
-    bfs_kernel_.setArgs(old_grids_buffer, number_of_old_grids_buffer, new_grids_buffer, number_of_new_grids_buffer, empty_cells_buffer, numbers_of_empty_cells_per_grid_buffer);
-    queue_.enqueueNDRangeKernel(bfs_kernel_, global_work_size).wait();
-    queue_.enqueueCopyBuffer(new_grids_buffer, old_grids_buffer, 0, 0, grids.size() * sizeof(grids.at(0))).wait();
-    queue_.enqueueCopyBuffer(number_of_new_grids_buffer, number_of_old_grids_buffer, 0, 0, sizeof(number_of_new_grids)).wait();
-
-    // TODO: Replace with fillBuffer from ocl1.2
-    mapped_buffer = static_cast<int*>(queue_.mapBuffer(number_of_new_grids_buffer, CL_MAP_WRITE, 0, sizeof(number_of_new_grids)));
-    *mapped_buffer = 0;
-    queue_.enqueueUnmapMemObject(number_of_new_grids_buffer, mapped_buffer).wait();
-  }
-
-  // TODO: Buffers can be shared within an object so readBuffer won't be needed
-  queue_.readBuffer(old_grids_buffer, 0, grids.size() * sizeof(grids.at(0)), grids.data());
-  queue_.readBuffer(number_of_old_grids_buffer, 0, sizeof(number_of_old_grids), &number_of_old_grids);
-  queue_.readBuffer(empty_cells_buffer, 0, empty_cells.size() * sizeof(empty_cells.at(0)), empty_cells.data());
-  queue_.readBuffer(numbers_of_empty_cells_per_grid_buffer, 0, numbers_of_empty_cells_per_grid.size() * sizeof(numbers_of_empty_cells_per_grid.at(0)), numbers_of_empty_cells_per_grid.data());
-
-  return std::tuple<std::vector<int>, int, std::vector<int>, std::vector<int>>(grids, number_of_old_grids, empty_cells, numbers_of_empty_cells_per_grid);
+  return output;
 }
 
 std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::vector<int> &grids,
