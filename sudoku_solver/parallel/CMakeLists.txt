@@ -10,9 +10,9 @@ set(KERNEL_FILE ${PROJECT_SOURCE_DIR}/sudoku_solver.cl)
 configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 set(SUDOKU_SOLVER_PARALLEL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include ${SUDOKU_SOLVER_UTILS_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIR} ${CLPP_INCLUDE_DIRS})
-set(SUDOKU_SOLVER_PARALLEL_LIBRARIES sudoku_solver_parallel_lib ${SUDOKU_SOLVER_UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
+set(SUDOKU_SOLVER_PARALLEL_LIBRARIES ${SUDOKU_SOLVER_UTILS_LIBRARIES} ${OpenCL_LIBRARIES} sudoku_solver_parallel_lib)
 add_library(sudoku_solver_parallel_lib include/sudoku_solver_parallel.h include/sudoku_solver_parallel.cpp include/sudoku_solver_parallel_profiler.cpp include/sudoku_solver_parallel_profiler.h)
-target_link_libraries(sudoku_solver_parallel_lib ${UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
+target_link_libraries(sudoku_solver_parallel_lib ${UTILS_LIBRARIES} ${OpenCL_LIBRARIES} ${SUDOKU_SOLVER_UTILS_LIBRARIES})
 
 add_subdirectory(test)
 
