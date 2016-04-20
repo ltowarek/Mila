@@ -100,10 +100,10 @@ std::tuple<std::vector<int>,
   string_stream << "-D n=" << n_;
   Initialize(string_stream.str());
 
-  auto grids = std::vector<int>(max_number_of_cells_, 0);
+  std::vector<int> grids = std::vector<int>(max_number_of_cells_, 0);
   std::copy(grid.begin(), grid.end(), grids.begin());
 
-  auto empty_cells = std::vector<int>(max_number_of_cells_);
+  auto empty_cells = std::vector<int>(max_number_of_cells_, 0);
   auto numbers_of_empty_cells_per_grid = std::vector<int>(max_number_of_grids_, 0);
 
   auto old_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids.at(0)), grids.data());
