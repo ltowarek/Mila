@@ -154,6 +154,8 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::ve
 
   auto output = std::vector<int>(n_ * n_);
   auto is_solved = 0;
+  auto output = std::vector<int>(n_ * n_, 0);
+  auto is_solved = int{0};
 
   auto grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, grids.size() * sizeof(grids.at(0)), grids.data());
   auto number_of_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(number_of_grids), &number_of_grids);
