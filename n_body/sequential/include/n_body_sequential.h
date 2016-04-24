@@ -2,6 +2,9 @@
 #define MILA_N_BODY_SEQUENTIAL_H_
 
 #include <cmath>
+#include <vector>
+
+#include "n_body_utils.h"
 
 namespace mila {
 namespace nbody {
@@ -19,6 +22,8 @@ struct Particle {
   Vector2D velocity;
   Vector2D acceleration;
 };
+
+std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
 
 class NBodySequential {
  public:

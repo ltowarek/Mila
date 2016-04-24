@@ -45,6 +45,26 @@ TEST(NBodyParticleTest, InitializeWithMultipleValues) {
   EXPECT_EQ(particle.acceleration.y, 6.0f);
 }
 
+TEST(NBodyParticleTest, GenerateParticles) {
+  int number_of_particles = 5;
+  float min = 10.0f;
+  float max = 20.0f;
+
+  std::vector<mila::nbody::sequential::Particle> output = mila::nbody::sequential::GenerateParticles(number_of_particles, min, max);
+
+  ASSERT_EQ(output.size(), number_of_particles);
+  for (int i = 0; i < number_of_particles; ++i) {
+    EXPECT_GE(output[i].position.x, min);
+    EXPECT_LT(output[i].position.x, max);
+    EXPECT_GE(output[i].position.y, min);
+    EXPECT_LT(output[i].position.y, max);
+    EXPECT_EQ(output[i].velocity.x, 0.0f);
+    EXPECT_EQ(output[i].velocity.y, 0.0f);
+    EXPECT_EQ(output[i].acceleration.x, 0.0f);
+    EXPECT_EQ(output[i].acceleration.y, 0.0f);
+  }
+}
+
 TEST(NBodySequentialTest, DefaultConstructor) {
   mila::nbody::sequential::NBodySequential n_body;
   EXPECT_EQ(n_body.precision(), 1e-5f);
