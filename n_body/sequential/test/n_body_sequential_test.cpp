@@ -13,16 +13,18 @@ TEST(NBodyVector2DTest, InitializeWithMultipleValues) {
   EXPECT_EQ(vector2D.y, 2.0f);
 }
 
-TEST(NBodyVector2DTest, DistanceZero) {
+TEST(NBodySequentialTest, DistanceZero) {
+  mila::nbody::sequential::NBodySequential n_body;
   mila::nbody::sequential::Vector2D vector1 = {0.0f};
   mila::nbody::sequential::Vector2D vector2 = {0.0f};
-  EXPECT_EQ(mila::nbody::sequential::Distance(vector1, vector2), 0.0f);
+  EXPECT_EQ(n_body.Distance(vector1, vector2), 0.0f);
 }
 
-TEST(NBodyVector2DTest, DistanceComplex) {
+TEST(NBodySequentialTest, DistanceComplex) {
+  mila::nbody::sequential::NBodySequential n_body;
   mila::nbody::sequential::Vector2D vector1 = {3.0f, 2.0f};
   mila::nbody::sequential::Vector2D vector2 = {5.0f, -1.0f};
-  EXPECT_NEAR(mila::nbody::sequential::Distance(vector1, vector2), 3.60555f, 1e-5f);
+  EXPECT_NEAR(n_body.Distance(vector1, vector2), 3.60555f, 1e-5f);
 }
 
 TEST(NBodyParticleTest, InitializeWithSingleValue) {

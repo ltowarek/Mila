@@ -1,10 +1,5 @@
 #include "n_body_sequential.h"
 
-float ::mila::nbody::sequential::Distance(mila::nbody::sequential::Vector2D vector1,
-                                          mila::nbody::sequential::Vector2D vector2) {
-  return sqrtf(powf(vector1.x - vector2.x, 2.0f) + powf(vector1.y - vector2.y, 2.0f));
-}
-
 std::vector<mila::nbody::sequential::Particle> mila::nbody::sequential::GenerateParticles(int number_of_particles, float min, float max) {
   auto particles = std::vector<mila::nbody::sequential::Particle>();
   for (auto i = 0; i < number_of_particles; ++i) {
@@ -24,4 +19,8 @@ mila::nbody::sequential::NBodySequential::NBodySequential(float precision_): pre
 
 float mila::nbody::sequential::NBodySequential::precision() const {
   return precision_;
+}
+
+float mila::nbody::sequential::NBodySequential::Distance(Vector2D vector1, Vector2D vector2) {
+  return sqrtf(powf(vector1.x - vector2.x, 2.0f) + powf(vector1.y - vector2.y, 2.0f));
 }
