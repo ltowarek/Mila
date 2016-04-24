@@ -14,6 +14,12 @@ struct Vector2D {
 
 float Distance(Vector2D vector1, Vector2D vector2);
 
+struct Particle {
+  Vector2D position;
+  Vector2D velocity;
+  Vector2D acceleration;
+};
+
 class NBodySequential {
  public:
   NBodySequential();
