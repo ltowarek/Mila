@@ -5,9 +5,14 @@ namespace mila {
 namespace nbody {
 namespace sequential {
 
-class NBodySimulation {
+class NBodySequential {
  public:
+  NBodySequential();
+  NBodySequential(float precision_);
+
+  float precision() const;
  private:
+  const float precision_;
 };
 
 }  // sequential
