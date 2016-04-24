@@ -7,7 +7,7 @@ namespace mila {
 namespace nbody {
 namespace utils {
 
-int GenerateRandomValue(int min, int max);
+float GenerateRandomValue(float min, float max);
 
 }  // utils
 }  // nbody

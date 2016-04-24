@@ -3,8 +3,8 @@
 
 TEST(NBodyUtilsTest, GenerateRandomValue) {
   for (int i = 0; i < 10; ++i) {
-    int value = mila::nbody::utils::GenerateRandomValue(1, 2);
-    EXPECT_GE(value, 1);
-    EXPECT_LE(value, 2);
+    float value = mila::nbody::utils::GenerateRandomValue(1.0f, 2.0f);
+    EXPECT_GE(value, 1.0f);
+    EXPECT_LT(value, 2.0f);
   }
 }

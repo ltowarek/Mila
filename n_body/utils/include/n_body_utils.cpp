@@ -1,8 +1,8 @@
 #include "n_body_utils.h"
 
-int ::mila::nbody::utils::GenerateRandomValue(int min, int max) {
-  std::random_device device;
-  std::mt19937 generator(device());
-  std::uniform_int_distribution<> distribution(min, max);
+float mila::nbody::utils::GenerateRandomValue(float min, float max) {
+  static std::random_device device;
+  static std::mt19937 generator(device());
+  static std::uniform_real_distribution<float> distribution(min, max);
   return distribution(generator);
 }
