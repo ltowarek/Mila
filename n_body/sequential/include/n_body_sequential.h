@@ -1,9 +1,18 @@
 #ifndef MILA_N_BODY_SEQUENTIAL_H_
 #define MILA_N_BODY_SEQUENTIAL_H_
 
+#include <cmath>
+
 namespace mila {
 namespace nbody {
 namespace sequential {
+
+struct Vector2D {
+  float x;
+  float y;
+};
+
+float Distance(Vector2D vector1, Vector2D vector2);
 
 class NBodySequential {
  public:
