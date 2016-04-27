@@ -4,7 +4,7 @@ mila::nbody::sequential::NBodySequentialWithInputFileProfiler::NBodySequentialWi
                                                                                                                     Vector2D{512.0f, 512.0f}, 500, 0.0f, 1024.0f) {
 }
 
-mila::nbody::sequential::NBodySequentialWithInputFileProfiler::NBodySequentialWithInputFileProfiler(int number_of_particles): NBodySequentialWithInputFile(300.0f, 100.0f, 4.0f, 50.0f, 0.8f, 0.01f,
+mila::nbody::sequential::NBodySequentialWithInputFileProfiler::NBodySequentialWithInputFileProfiler(int number_of_particles): NBodySequentialWithInputFileProfiler(300.0f, 100.0f, 4.0f, 50.0f, 0.8f, 0.01f,
                                                                                                                                            Vector2D{512.0f, 512.0f}, number_of_particles, 0.0f, 1024.0f) {
 }
 
