@@ -10,10 +10,6 @@ float mila::nbody::sequential::NBodySequential::precision() const {
   return precision_;
 }
 
-float mila::nbody::sequential::NBodySequential::Distance(Vector2D vector1, Vector2D vector2) {
-  return sqrtf(powf(vector1.x - vector2.x, 2.0f) + powf(vector1.y - vector2.y, 2.0f));
-}
-
 mila::nbody::sequential::Particle mila::nbody::sequential::NBodySequential::ApplyCentralForce(Vector2D center,
                                                                                               float force_value,
                                                                                               Particle particle) {

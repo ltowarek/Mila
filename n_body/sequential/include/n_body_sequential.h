@@ -28,7 +28,6 @@ class NBodySequential {
   NBodySequential(float precision_);
 
   std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
-  float Distance(Vector2D vector1, Vector2D vector2);
   Particle ApplyCentralForce(Vector2D center, float force_value, Particle particle);
   Particle ApplyDampingForce(float force_value, Particle particle);
   Particle ApplyMotion(Particle particle);
