@@ -75,3 +75,24 @@ TEST(NBodyParallelTest, ComplexConstructor) {
   EXPECT_EQ(n_body.platform_id(), 12);
   EXPECT_EQ(n_body.device_id(), 13);
 }
+
+TEST(NBodyParallelTest, GenerateParticles) {
+  mila::nbody::parallel::NBodyParallel n_body;
+  int number_of_particles = 5;
+  float min = 10.0f;
+  float max = 20.0f;
+
+  std::vector<mila::nbody::parallel::Particle> output = n_body.GenerateParticles(number_of_particles, min, max);
+
+  ASSERT_EQ(output.size(), number_of_particles);
+  for (int i = 0; i < number_of_particles; ++i) {
+    EXPECT_GE(output[i].position.x, min);
+    EXPECT_LT(output[i].position.x, max);
+    EXPECT_GE(output[i].position.y, min);
+    EXPECT_LT(output[i].position.y, max);
+    EXPECT_EQ(output[i].velocity.x, 0.0f);
+    EXPECT_EQ(output[i].velocity.y, 0.0f);
+    EXPECT_EQ(output[i].acceleration.x, 0.0f);
+    EXPECT_EQ(output[i].acceleration.y, 0.0f);
+  }
+}

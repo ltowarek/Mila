@@ -54,6 +54,19 @@ mila::nbody::parallel::NBodyParallel::NBodyParallel(float active_repulsion_force
                                                                         device_id_(device_id) {
 }
 
+std::vector<mila::nbody::parallel::Particle> mila::nbody::parallel::NBodyParallel::GenerateParticles(int number_of_particles,
+                                                                              float min,
+                                                                              float max) {
+  auto particles = std::vector<mila::nbody::parallel::Particle>();
+  for (auto i = 0; i < number_of_particles; ++i) {
+    auto particle = mila::nbody::parallel::Particle{{0.0f}};
+    particle.position.x = mila::nbody::utils::GenerateRandomValue(min, max);
+    particle.position.y = mila::nbody::utils::GenerateRandomValue(min, max);
+    particles.push_back(particle);
+  }
+  return particles;
+}
+
 float mila::nbody::parallel::NBodyParallel::active_repulsion_force() const {
   return active_repulsion_force_;
 }
@@ -109,5 +122,3 @@ size_t mila::nbody::parallel::NBodyParallel::platform_id() const {
 size_t mila::nbody::parallel::NBodyParallel::device_id() const {
   return device_id_;
 }
-
-

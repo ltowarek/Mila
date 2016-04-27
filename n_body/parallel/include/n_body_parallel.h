@@ -2,6 +2,7 @@
 #define MILA_N_BODY_PARALLEL_H_
 
 #include "clpp.h"
+#include "n_body_utils.h"
 
 namespace mila {
 namespace nbody {
@@ -29,6 +30,8 @@ class NBodyParallel {
                 float max_position,
                 size_t platform_id,
                 size_t device_id);
+
+  std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
 
   size_t platform_id() const;
   size_t device_id() const;
