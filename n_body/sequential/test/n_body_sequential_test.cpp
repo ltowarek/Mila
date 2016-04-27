@@ -1,3 +1,4 @@
+#include <n_body_sequential_profiler.h>
 #include "gtest/gtest.h"
 #include "n_body_sequential.h"
 
@@ -335,4 +336,12 @@ TEST(NBodySequentialWithInputFileTest, ParseInputFile) {
     EXPECT_EQ(expected_output[i].x, output[i].x);
     EXPECT_EQ(expected_output[i].y, output[i].y);
   }
+}
+
+TEST(NBodySequentialWithInputFileProfilerTest, RunWithProfiler) {
+  mila::nbody::sequential::NBodySequentialWithInputFileProfiler n_body;
+
+  EXPECT_EQ(n_body.results().count("Run"), 0);
+  n_body.Run("test_file.txt");
+  EXPECT_EQ(n_body.results().count("Run"), 1);
 }
