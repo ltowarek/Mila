@@ -267,31 +267,29 @@ void mila::nbody::sequential::NBodySequentialWithInputFile::Run(const std::strin
   auto window = glfwCreateWindow(width, height, "Sequential N-Body", nullptr, nullptr);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
-  while (!glfwWindowShouldClose(window))
-  {
-    for (auto frame = 0; frame < active_force_positions.size(); ++frame) {
-      UpdateParticles(active_force_positions[frame]);
 
-      glClear(GL_COLOR_BUFFER_BIT);
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(0.0f, width, height, 0, 0, 1);
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
+  for (auto frame = 0; frame < active_force_positions.size() && !glfwWindowShouldClose(window); ++frame) {
+    UpdateParticles(active_force_positions[frame]);
 
-      for (auto i = 0; i < particles_.size(); ++i) {
-        glPointSize(1.0f);
-        glBegin(GL_POINTS);
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glVertex2f(particles_[i].position.x, particles_[i].position.y);
-        glEnd();
-      }
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, width, height, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-      glfwSwapBuffers(window);
-      glfwPollEvents();
+    for (auto i = 0; i < particles_.size(); ++i) {
+      glPointSize(1.0f);
+      glBegin(GL_POINTS);
+      glColor3f(1.0f, 1.0f, 1.0f);
+      glVertex2f(particles_[i].position.x, particles_[i].position.y);
+      glEnd();
     }
-    break;
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
   }
+
   glfwDestroyWindow(window);
   glfwTerminate();
 }
