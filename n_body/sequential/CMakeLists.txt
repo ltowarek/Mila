@@ -11,6 +11,8 @@ add_library(n_body_sequential_lib include/n_body_sequential.h include/n_body_seq
 
 add_subdirectory(test)
 
+configure_file(sample_input.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
 include_directories(${UTILS_INCLUDE_DIRS} ${N_BODY_SEQUENTIAL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${UTILS_LIBRARIES} ${N_BODY_SEQUENTIAL_LIBRARIES})

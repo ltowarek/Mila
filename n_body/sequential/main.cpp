@@ -1,103 +1,53 @@
-#include <GLFW/glfw3.h>
-
-#include <cstdlib>
 #include <cstdio>
-#include <cmath>
+#include <cstdlib>
+#include <string>
 #include <vector>
 
-struct Vector {
-    float x, y, z;
+#include "utils.h"
+#include "n_body_sequential_profiler.h"
+
+struct parameters {
+  std::string input_file;
+  int number_of_particles;
+  size_t number_of_iterations;
 };
 
-struct Body {
-    Vector position;
-    float m;
-    Vector velocity;
-};
-
-void update_bodies(std::vector<Body> &bodies) {
-    float eps = 0.0001f;
-    float dt = 0.01f;
-
-    std::vector<Vector> new_positions(bodies.size());
-
-    for (int i = 0; i < bodies.size(); ++i) {
-        Vector a = {0.f, 0.f, 0.f};
-
-        for (int j = 0; j < bodies.size(); ++j) {
-            Vector d = {
-                    bodies[j].position.x - bodies[i].position.x,
-                    bodies[j].position.y - bodies[i].position.y,
-                    bodies[j].position.z - bodies[i].position.z
-            };
-            float invr = 1.0 / sqrt(d.x * d.x + d.y * d.y + d.z * d.z + eps);
-            float invr3 = invr * invr * invr;
-            float f = bodies[j].m * invr3;
-            a.x += f * d.x;
-            a.y += f * d.y;
-            a.z += f * d.z;
-        }
-
-        new_positions[i].x = bodies[i].position.x + dt * bodies[i].velocity.x + 0.5f * dt * dt * a.x;
-        new_positions[i].y = bodies[i].position.y + dt * bodies[i].velocity.y + 0.5f * dt * dt * a.y;
-        new_positions[i].z = bodies[i].position.z + dt * bodies[i].velocity.z + 0.5f * dt * dt * a.z;
-        bodies[i].velocity.x += dt * a.x;
-        bodies[i].velocity.y += dt * a.y;
-        bodies[i].velocity.z += dt * a.z;
-    }
-
-    for (int i = 0; i < bodies.size(); ++i) {
-        bodies[i].position = new_positions[i];
-    }
+parameters ParseCommandLine(int argc, char **argv) {
+  auto config = parameters{};
+  // TODO: Verify input and add help message
+  config.input_file = std::string(argv[1]);
+  config.number_of_particles = atoi(argv[2]);
+  config.number_of_iterations = static_cast<size_t>(atoi(argv[3]));
+  return config;
 }
 
-int main(void)
-{
-    std::vector<Body> bodies {
-            {{0.f, 0.f, 0.f}, 0.5f, {0.f, 0.f, 0.f}},
-            {{0.5f, 0.f, 0.f}, 0.f, {0.f, 1.f, 0.f}}
-    };
+int main(int argc, char **argv) {
+  auto config = ParseCommandLine(argc, argv);
+  auto n_body_initial = mila::nbody::sequential::NBodySequentialWithInputFileProfiler(config.number_of_particles);
+  n_body_initial.Run(config.input_file);
+  auto duration = n_body_initial.results().at(n_body_initial.main_result());
+  printf("Initial results\n");
+  printf("Duration [us]: %lld\n", duration);
+  printf("Input file: %s\n", config.input_file.c_str());
+  printf("Number of particles: %d\n", config.number_of_particles);
 
-    GLFWwindow* window;
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
-    window = glfwCreateWindow(1024, 1024, "Sequential N-Body", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-    while (!glfwWindowShouldClose(window))
-    {
-        float ratio;
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float) height;
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+  auto results = std::vector<float>(config.number_of_iterations);
+  printf("Iterations\n");
+  for (size_t i = 0; i < config.number_of_iterations; ++i) {
+    auto n_body = mila::nbody::sequential::NBodySequentialWithInputFileProfiler(config.number_of_particles);
+    n_body.Run(config.input_file);
+    duration = n_body.results().at(n_body.main_result());
+    printf("Iteration: %d, Duration [us]: %lld\n", i, duration);
+    results[i] = duration;
+  }
 
-        update_bodies(bodies);
+  printf("Statistics\n");
+  printf("Mean: %f\n", mila::utils::Mean(results));
+  printf("Median: %f\n", mila::utils::Median(results));
+  printf("Variance: %f\n", mila::utils::Variance(results));
+  printf("Standard Deviation: %f\n", mila::utils::StandardDeviation(results));
+  printf("Coefficient of Variation: %f\n", mila::utils::CoefficientOfVariation(results));
 
-        for (int i = 0; i < bodies.size(); ++i) {
-            glPointSize(bodies[i].m);
-            glBegin(GL_POINTS);
-            glColor3f(1.f, 1.f, 1.f);
-            glVertex3f(bodies[i].position.x, bodies[i].position.y, bodies[i].position.z);
-            glEnd();
-        }
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    exit(EXIT_SUCCESS);
+  return 0;
 }
 
