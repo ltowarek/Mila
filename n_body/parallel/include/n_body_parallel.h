@@ -1,6 +1,8 @@
 #ifndef MILA_N_BODY_PARALLEL_H_
 #define MILA_N_BODY_PARALLEL_H_
 
+#include <sstream>
+
 #include "clpp.h"
 #include "utils.h"
 #include "n_body_utils.h"
@@ -33,7 +35,9 @@ class NBodyParallel {
                 size_t device_id);
 
   std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
+  void InitializeOpenCL();
   void Initialize();
+  void UpdateParticles(cl_float2 active_repulsion_force_position);
 
   size_t platform_id() const;
   size_t device_id() const;
@@ -50,7 +54,7 @@ class NBodyParallel {
   std::vector<Particle> particles() const;
   void set_particles(std::vector<Particle> particles);
  protected:
-  void InitializeOpenCL();
+  std::string PrepareBuildOptions();
 
   const size_t platform_id_;
   const size_t device_id_;

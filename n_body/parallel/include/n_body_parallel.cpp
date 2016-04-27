@@ -67,6 +67,20 @@ std::vector<mila::nbody::parallel::Particle> mila::nbody::parallel::NBodyParalle
   return particles;
 }
 
+std::string mila::nbody::parallel::NBodyParallel::PrepareBuildOptions() {
+  std::stringstream string_stream;
+  string_stream.precision(2);
+  string_stream << "-D CENTER_X=" << std::fixed << center_.x << "f ";
+  string_stream << "-D CENTER_Y=" << std::fixed << center_.y << "f ";
+  string_stream << "-D CENTRAL_FORCE_VALUE=" << std::fixed << central_force_ << "f ";
+  string_stream << "-D ACTIVE_REPULSION_FORCE_VALUE=" << std::fixed << active_repulsion_force_ << "f ";
+  string_stream << "-D ACTIVE_REPULSION_FORCE_MIN_DISTANCE=" << std::fixed << active_repulsion_min_distance_ << "f ";
+  string_stream << "-D PASSIVE_REPULSION_FORCE_VALUE=" << std::fixed << passive_repulsion_force_ << "f ";
+  string_stream << "-D PASSIVE_REPULSION_FORCE_MIN_DISTANCE=" << std::fixed << passive_repulsion_min_distance_ << "f ";
+  string_stream << "-D DAMPING_FORCE_VALUE=" << std::fixed << damping_force_ << "f";
+  return string_stream.str();
+}
+
 void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
   const auto platforms = clpp::Platform::get();
   platform_ = platforms.at(platform_id_);
@@ -82,8 +96,10 @@ void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
   auto source_file = mila::utils::ReadFile(source_file_name);
   auto program = clpp::Program(context_, source_file);
 
+  auto build_options = PrepareBuildOptions();
+
   try {
-    program.build(device_);
+    program.build(device_, build_options.c_str());
   } catch(const clpp::Error& error) {
     printf("%s\n", program.getBuildLog(device_).c_str());
   }
@@ -93,6 +109,19 @@ void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
 void mila::nbody::parallel::NBodyParallel::Initialize() {
   particles_ = GenerateParticles(number_of_particles_, min_position_, max_position_);
   InitializeOpenCL();
+}
+
+void mila::nbody::parallel::NBodyParallel::UpdateParticles(cl_float2 active_repulsion_force_position) {
+  auto input_particles_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, particles_.size() * sizeof(particles_.at(0)), particles_.data());
+  auto output_particles_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, particles_.size() * sizeof(particles_.at(0)));
+  auto force_position_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(active_repulsion_force_position), &active_repulsion_force_position);
+
+  auto global_work_size = std::vector<size_t>{particles_.size()};
+
+  kernel_.setArgs(input_particles_buffer, output_particles_buffer, force_position_buffer);
+  queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
+
+  queue_.readBuffer(output_particles_buffer, 0, particles_.size() * sizeof(particles_.at(0)), particles_.data());
 }
 
 float mila::nbody::parallel::NBodyParallel::active_repulsion_force() const {
