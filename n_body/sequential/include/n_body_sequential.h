@@ -2,6 +2,7 @@
 #define MILA_N_BODY_SEQUENTIAL_H_
 
 #include <cmath>
+#include <fstream>
 #include <vector>
 
 #include <GLFW/glfw3.h>
@@ -76,17 +77,36 @@ class NBodySequentialWithView: public NBodySequential {
  public:
   NBodySequentialWithView();
   NBodySequentialWithView(float active_repulsion_force_,
-                  float active_repulsion_min_distance_,
-                  float passive_repulsion_force_,
-                  float passive_repulsion_min_distance_,
-                  float damping_force_,
-                  float central_force_,
-                  Vector2D center_,
-                  int number_of_particles_,
-                  float min_position_,
-                  float max_position_);
+                          float active_repulsion_min_distance_,
+                          float passive_repulsion_force_,
+                          float passive_repulsion_min_distance_,
+                          float damping_force_,
+                          float central_force_,
+                          Vector2D center_,
+                          int number_of_particles_,
+                          float min_position_,
+                          float max_position_);
 
-  void Run();
+  virtual void Run();
+};
+
+class NBodySequentialWithInputFile: public NBodySequentialWithView {
+ public:
+  NBodySequentialWithInputFile();
+  NBodySequentialWithInputFile(float active_repulsion_force_,
+                               float active_repulsion_min_distance_,
+                               float passive_repulsion_force_,
+                               float passive_repulsion_min_distance_,
+                               float damping_force_,
+                               float central_force_,
+                               Vector2D center_,
+                               int number_of_particles_,
+                               float min_position_,
+                               float max_position_);
+
+  std::vector<Vector2D> ParseInputFile(const std::string &input_file);
+  virtual void Run(const std::string &input_file);
+  virtual void Run() override;
 };
 
 }  // sequential

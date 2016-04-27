@@ -221,3 +221,77 @@ void mila::nbody::sequential::NBodySequentialWithView::Run() {
   glfwDestroyWindow(window);
   glfwTerminate();
 }
+
+mila::nbody::sequential::NBodySequentialWithInputFile::NBodySequentialWithInputFile(): NBodySequentialWithInputFile(300.0f, 100.0f, 4.0f, 50.0f, 0.8f, 0.01f,
+                                                                                                     Vector2D{512.0f, 512.0f}, 500, 0.0f, 1024.0f) {
+}
+
+mila::nbody::sequential::NBodySequentialWithInputFile::NBodySequentialWithInputFile(float active_repulsion_force,
+                                                                          float active_repulsion_min_distance,
+                                                                          float passive_repulsion_force,
+                                                                          float passive_repulsion_min_distance,
+                                                                          float damping_force,
+                                                                          float central_force,
+                                                                          Vector2D center,
+                                                                          int number_of_particles,
+                                                                          float min_position,
+                                                                          float max_position)
+    : NBodySequentialWithView(active_repulsion_force, active_repulsion_min_distance, passive_repulsion_force, passive_repulsion_min_distance, damping_force, central_force, center, number_of_particles, min_position, max_position) {
+}
+
+std::vector<mila::nbody::sequential::Vector2D> mila::nbody::sequential::NBodySequentialWithInputFile::ParseInputFile(const std::string &input_file) {
+  auto output = std::vector<mila::nbody::sequential::Vector2D>();
+  std::ifstream file(input_file);
+  auto x = int{0};
+  auto y = int{0};
+  auto semicolon = char{};
+  while (file >> x >> semicolon >> y) {
+    output.push_back({static_cast<float>(x), static_cast<float>(y)});
+  }
+  return output;
+}
+
+void mila::nbody::sequential::NBodySequentialWithInputFile::Run(const std::string &input_file) {
+  auto width = 1024;
+  auto height = 1024;
+
+  Initialize();
+  auto active_force_positions = ParseInputFile(input_file);
+
+  // TODO: Check output of glfw
+  glfwInit();
+  auto window = glfwCreateWindow(width, height, "Sequential N-Body", nullptr, nullptr);
+  glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
+  while (!glfwWindowShouldClose(window))
+  {
+    for (auto frame = 0; frame < active_force_positions.size(); ++frame) {
+      UpdateParticles(active_force_positions[frame]);
+
+      glClear(GL_COLOR_BUFFER_BIT);
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      glOrtho(0.0f, width, height, 0, 0, 1);
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
+
+      for (auto i = 0; i < particles_.size(); ++i) {
+        glPointSize(1.0f);
+        glBegin(GL_POINTS);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glVertex2f(particles_[i].position.x, particles_[i].position.y);
+        glEnd();
+      }
+
+      glfwSwapBuffers(window);
+      glfwPollEvents();
+    }
+    break;
+  }
+  glfwDestroyWindow(window);
+  glfwTerminate();
+}
+
+void mila::nbody::sequential::NBodySequentialWithInputFile::Run() {
+  NBodySequentialWithView::Run();
+}

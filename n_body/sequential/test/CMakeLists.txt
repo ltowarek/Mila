@@ -5,4 +5,6 @@ include_directories(${GTEST_INCLUDE_DIRS} ${N_BODY_SEQUENTIAL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} n_body_sequential_test.cpp)
 target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${N_BODY_SEQUENTIAL_LIBRARIES})
 
+configure_file(test_file.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

@@ -275,3 +275,48 @@ TEST(NBodySequentialWithViewTest, ComplexConstructor) {
   EXPECT_EQ(n_body.min_position(), 10.0f);
   EXPECT_EQ(n_body.max_position(), 11.0f);
 }
+
+TEST(NBodySequentialWithInputFileTest, DefaultConstructor) {
+  mila::nbody::sequential::NBodySequentialWithInputFile n_body;
+
+  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
+  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
+  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
+  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
+  EXPECT_EQ(n_body.damping_force(), 0.8f);
+  EXPECT_EQ(n_body.central_force(), 0.01f);
+  EXPECT_EQ(n_body.center().x, 512.0f);
+  EXPECT_EQ(n_body.center().y, 512.0f);
+  EXPECT_EQ(n_body.number_of_particles(), 500);
+  EXPECT_EQ(n_body.min_position(), 0.0f);
+  EXPECT_EQ(n_body.max_position(), 1024.0f);
+}
+
+TEST(NBodySequentialWithInputFileTest, ComplexConstructor) {
+  mila::nbody::sequential::NBodySequentialWithInputFile n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, mila::nbody::sequential::Vector2D{7.0f, 8.0f}, 9, 10.0f, 11.0f);
+
+  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
+  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
+  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
+  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
+  EXPECT_EQ(n_body.damping_force(), 5.0f);
+  EXPECT_EQ(n_body.central_force(), 6.0f);
+  EXPECT_EQ(n_body.center().x, 7.0f);
+  EXPECT_EQ(n_body.center().y, 8.0f);
+  EXPECT_EQ(n_body.number_of_particles(), 9);
+  EXPECT_EQ(n_body.min_position(), 10.0f);
+  EXPECT_EQ(n_body.max_position(), 11.0f);
+}
+
+TEST(NBodySequentialWithInputFileTest, ParseInputFile) {
+  mila::nbody::sequential::NBodySequentialWithInputFile n_body;
+  std::vector<mila::nbody::sequential::Vector2D> expected_output = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+
+  std::vector<mila::nbody::sequential::Vector2D> output = n_body.ParseInputFile("test_file.txt");
+
+  ASSERT_EQ(expected_output.size(), output.size());
+  for (int i = 0; i < output.size(); ++i) {
+    EXPECT_EQ(expected_output[i].x, output[i].x);
+    EXPECT_EQ(expected_output[i].y, output[i].y);
+  }
+}
