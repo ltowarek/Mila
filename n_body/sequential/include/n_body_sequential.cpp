@@ -162,3 +162,62 @@ std::vector<mila::nbody::sequential::Particle> mila::nbody::sequential::NBodySeq
 void mila::nbody::sequential::NBodySequential::set_particles(std::vector<Particle> particles) {
   particles_ = particles;
 }
+
+mila::nbody::sequential::NBodySequentialWithView::NBodySequentialWithView(): NBodySequentialWithView(300.0f, 100.0f, 4.0f, 50.0f, 0.8f, 0.01f,
+                                                                                                     Vector2D{512.0f, 512.0f}, 500, 0.0f, 1024.0f) {
+}
+
+mila::nbody::sequential::NBodySequentialWithView::NBodySequentialWithView(float active_repulsion_force,
+                                                                          float active_repulsion_min_distance,
+                                                                          float passive_repulsion_force,
+                                                                          float passive_repulsion_min_distance,
+                                                                          float damping_force,
+                                                                          float central_force,
+                                                                          Vector2D center,
+                                                                          int number_of_particles,
+                                                                          float min_position,
+                                                                          float max_position)
+    : NBodySequential(active_repulsion_force, active_repulsion_min_distance, passive_repulsion_force, passive_repulsion_min_distance, damping_force, central_force, center, number_of_particles, min_position, max_position) {
+}
+
+void mila::nbody::sequential::NBodySequentialWithView::Run() {
+  auto width = 1024;
+  auto height = 1024;
+
+  Initialize();
+
+  // TODO: Check output of glfw
+  glfwInit();
+  auto window = glfwCreateWindow(width, height, "Sequential N-Body", nullptr, nullptr);
+  glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
+  while (!glfwWindowShouldClose(window))
+  {
+    auto mouse_position_x = 0.0;
+    auto mouse_position_y = 0.0;
+    glfwGetCursorPos(window, &mouse_position_x, &mouse_position_y);
+    mila::nbody::sequential::Vector2D mouse_position{static_cast<float>(mouse_position_x), static_cast<float>(mouse_position_y)};
+
+    UpdateParticles(mouse_position);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, width, height, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    for (auto i = 0; i < particles_.size(); ++i) {
+      glPointSize(1.0f);
+      glBegin(GL_POINTS);
+      glColor3f(1.0f, 1.0f, 1.0f);
+      glVertex2f(particles_[i].position.x, particles_[i].position.y);
+      glEnd();
+    }
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
+  glfwDestroyWindow(window);
+  glfwTerminate();
+}

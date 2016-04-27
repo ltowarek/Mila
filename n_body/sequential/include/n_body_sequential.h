@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 
+#include <GLFW/glfw3.h>
 #include "n_body_utils.h"
 
 namespace mila {
@@ -57,7 +58,7 @@ class NBodySequential {
   float max_position() const;
   std::vector<Particle> particles() const;
   void set_particles(std::vector<Particle> particles);
- private:
+ protected:
   const float active_repulsion_force_;
   const float active_repulsion_min_distance_;
   const float passive_repulsion_force_;
@@ -69,6 +70,23 @@ class NBodySequential {
   const float min_position_;
   const float max_position_;
   std::vector<Particle> particles_;
+};
+
+class NBodySequentialWithView: public NBodySequential {
+ public:
+  NBodySequentialWithView();
+  NBodySequentialWithView(float active_repulsion_force_,
+                  float active_repulsion_min_distance_,
+                  float passive_repulsion_force_,
+                  float passive_repulsion_min_distance_,
+                  float damping_force_,
+                  float central_force_,
+                  Vector2D center_,
+                  int number_of_particles_,
+                  float min_position_,
+                  float max_position_);
+
+  void Run();
 };
 
 }  // sequential
