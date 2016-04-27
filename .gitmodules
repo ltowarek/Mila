@@ -1,10 +1,6 @@
 [submodule "ocl2json/deps/json11"]
 	path = ocl2json/deps/json11
 	url = https://github.com/dropbox/json11
-[submodule "nbody/deps/GLFW"]
-	path = nbody/deps/GLFW
-	url = https://github.com/glfw/glfw
-	branch = latest
 [submodule "mean_shift/deps/lodepng"]
 	path = mean_shift/deps/lodepng
 	url = https://github.com/lvandeve/lodepng
@@ -14,3 +10,6 @@
 [submodule "deps/clpp"]
 	path = deps/clpp
 	url = https://github.com/matszpk/clpp
+[submodule "n_body/deps/glfw"]
+	path = n_body/deps/glfw
+	url = https://github.com/glfw/glfw.git
