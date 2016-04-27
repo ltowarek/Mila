@@ -101,6 +101,10 @@ std::vector<mila::nbody::sequential::Particle> mila::nbody::sequential::NBodySeq
   return particles;
 }
 
+void mila::nbody::sequential::NBodySequential::Initialize() {
+  particles_ = GenerateParticles(number_of_particles_, min_position_, max_position_);
+}
+
 float mila::nbody::sequential::NBodySequential::active_repulsion_force() const {
   return active_repulsion_force_;
 }
@@ -139,4 +143,8 @@ float mila::nbody::sequential::NBodySequential::min_position() const {
 
 float mila::nbody::sequential::NBodySequential::max_position() const {
   return max_position_;
+}
+
+std::vector<mila::nbody::sequential::Particle> mila::nbody::sequential::NBodySequential::particles() const {
+  return particles_;
 }

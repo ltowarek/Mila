@@ -211,3 +211,11 @@ TEST(NBodySequentialTest, ApplyMotionWithAcceleration) {
   EXPECT_EQ(output.acceleration.x, 0.0f);
   EXPECT_EQ(output.acceleration.y, 0.0f);
 }
+
+TEST(NBodySequentialTest, Initialize) {
+  mila::nbody::sequential::NBodySequential n_body;
+
+  EXPECT_EQ(n_body.particles().size(), 0);
+  n_body.Initialize();
+  EXPECT_EQ(n_body.particles().size(), n_body.number_of_particles());
+}
