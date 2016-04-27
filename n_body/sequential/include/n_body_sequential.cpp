@@ -226,6 +226,10 @@ mila::nbody::sequential::NBodySequentialWithInputFile::NBodySequentialWithInputF
                                                                                                      Vector2D{512.0f, 512.0f}, 500, 0.0f, 1024.0f) {
 }
 
+mila::nbody::sequential::NBodySequentialWithInputFile::NBodySequentialWithInputFile(int number_of_particles): NBodySequentialWithInputFile(300.0f, 100.0f, 4.0f, 50.0f, 0.8f, 0.01f,
+                                                                                                     Vector2D{512.0f, 512.0f}, number_of_particles, 0.0f, 1024.0f) {
+}
+
 mila::nbody::sequential::NBodySequentialWithInputFile::NBodySequentialWithInputFile(float active_repulsion_force,
                                                                           float active_repulsion_min_distance,
                                                                           float passive_repulsion_force,

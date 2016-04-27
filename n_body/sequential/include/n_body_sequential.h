@@ -93,6 +93,7 @@ class NBodySequentialWithView: public NBodySequential {
 class NBodySequentialWithInputFile: public NBodySequentialWithView {
  public:
   NBodySequentialWithInputFile();
+  NBodySequentialWithInputFile(int number_of_particles);
   NBodySequentialWithInputFile(float active_repulsion_force_,
                                float active_repulsion_min_distance_,
                                float passive_repulsion_force_,
