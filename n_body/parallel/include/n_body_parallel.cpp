@@ -67,6 +67,34 @@ std::vector<mila::nbody::parallel::Particle> mila::nbody::parallel::NBodyParalle
   return particles;
 }
 
+void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
+  const auto platforms = clpp::Platform::get();
+  platform_ = platforms.at(platform_id_);
+
+  const auto devices = platform_.getAllDevices();
+  device_ = devices.at(device_id_);
+
+  context_ = clpp::Context(device_);
+  queue_ = clpp::Queue(context_, device_);
+
+  const auto source_file_name = "n_body.cl";
+  const auto kernel_name = std::string("UpdateParticles");
+  auto source_file = mila::utils::ReadFile(source_file_name);
+  auto program = clpp::Program(context_, source_file);
+
+  try {
+    program.build(device_);
+  } catch(const clpp::Error& error) {
+    printf("%s\n", program.getBuildLog(device_).c_str());
+  }
+  kernel_ = clpp::Kernel(program, kernel_name.c_str());
+}
+
+void mila::nbody::parallel::NBodyParallel::Initialize() {
+  particles_ = GenerateParticles(number_of_particles_, min_position_, max_position_);
+  InitializeOpenCL();
+}
+
 float mila::nbody::parallel::NBodyParallel::active_repulsion_force() const {
   return active_repulsion_force_;
 }

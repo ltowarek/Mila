@@ -96,3 +96,11 @@ TEST(NBodyParallelTest, GenerateParticles) {
     EXPECT_EQ(output[i].acceleration.y, 0.0f);
   }
 }
+
+TEST(NBodyParallelTest, Initialize) {
+  mila::nbody::parallel::NBodyParallel n_body;
+
+  EXPECT_EQ(n_body.particles().size(), 0);
+  n_body.Initialize();
+  EXPECT_EQ(n_body.particles().size(), n_body.number_of_particles());
+}

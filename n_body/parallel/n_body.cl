@@ -7,7 +7,7 @@ typedef struct {
 constant float eps = 0.0001f;
 constant float dt = 0.01f;
 
-kernel void nbody(global Body *bodies) {
+kernel void UpdateParticles(global Body *bodies) {
     const int kTid = get_global_id(0);
     const int number_of_bodies = get_global_size(0);
 

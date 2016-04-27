@@ -2,6 +2,7 @@
 #define MILA_N_BODY_PARALLEL_H_
 
 #include "clpp.h"
+#include "utils.h"
 #include "n_body_utils.h"
 
 namespace mila {
@@ -32,6 +33,7 @@ class NBodyParallel {
                 size_t device_id);
 
   std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
+  void Initialize();
 
   size_t platform_id() const;
   size_t device_id() const;
@@ -48,6 +50,8 @@ class NBodyParallel {
   std::vector<Particle> particles() const;
   void set_particles(std::vector<Particle> particles);
  protected:
+  void InitializeOpenCL();
+
   const size_t platform_id_;
   const size_t device_id_;
   const float active_repulsion_force_;
@@ -61,6 +65,11 @@ class NBodyParallel {
   const float min_position_;
   const float max_position_;
   std::vector<Particle> particles_;
+  clpp::Platform platform_;
+  clpp::Device device_;
+  clpp::Context context_;
+  clpp::Queue queue_;
+  clpp::Kernel kernel_;
 };
 
 }  // parallel
