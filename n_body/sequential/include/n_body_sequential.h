@@ -21,14 +21,19 @@ struct Particle {
   Vector2D acceleration;
 };
 
-std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
 
 class NBodySequential {
  public:
   NBodySequential();
   NBodySequential(float precision_);
 
+  std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
   float Distance(Vector2D vector1, Vector2D vector2);
+  Particle ApplyCentralForce(Vector2D center, float force_value, Particle particle);
+  Particle ApplyDampingForce(float force_value, Particle particle);
+  Particle ApplyMotion(Particle particle);
+  Particle ApplyRepulsionForce(float force_value, float min_distance, Vector2D position, Particle particle);
+  Particle ApplyRepulsionForceBetweenParticles(float force_value, float min_distance, Particle particle, std::vector<Particle> &particles);
 
   float precision() const;
  private:
