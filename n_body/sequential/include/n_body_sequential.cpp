@@ -105,6 +105,16 @@ void mila::nbody::sequential::NBodySequential::Initialize() {
   particles_ = GenerateParticles(number_of_particles_, min_position_, max_position_);
 }
 
+void mila::nbody::sequential::NBodySequential::UpdateParticles(Vector2D active_repulsion_force_position) {
+  for (auto i = 0; i < particles_.size(); ++i) {
+    particles_[i] = ApplyRepulsionForce(active_repulsion_force_, active_repulsion_min_distance_, active_repulsion_force_position, particles_[i]);
+    particles_[i] = ApplyCentralForce(center_, central_force_, particles_[i]);
+    particles_[i] = ApplyRepulsionForceBetweenParticles(passive_repulsion_force_, passive_repulsion_min_distance_, particles_[i], particles_);
+    particles_[i] = ApplyDampingForce(damping_force_, particles_[i]);
+    particles_[i] = ApplyMotion(particles_[i]);
+  }
+}
+
 float mila::nbody::sequential::NBodySequential::active_repulsion_force() const {
   return active_repulsion_force_;
 }
@@ -147,4 +157,8 @@ float mila::nbody::sequential::NBodySequential::max_position() const {
 
 std::vector<mila::nbody::sequential::Particle> mila::nbody::sequential::NBodySequential::particles() const {
   return particles_;
+}
+
+void mila::nbody::sequential::NBodySequential::set_particles(std::vector<Particle> particles) {
+  particles_ = particles;
 }

@@ -43,6 +43,7 @@ class NBodySequential {
   Particle ApplyRepulsionForce(float force_value, float min_distance, Vector2D position, Particle particle);
   Particle ApplyRepulsionForceBetweenParticles(float force_value, float min_distance, Particle particle, std::vector<Particle> &particles);
   void Initialize();
+  void UpdateParticles(Vector2D active_repulsion_force_position);
 
   float active_repulsion_force() const;
   float active_repulsion_min_distance() const;
@@ -55,6 +56,7 @@ class NBodySequential {
   float min_position() const;
   float max_position() const;
   std::vector<Particle> particles() const;
+  void set_particles(std::vector<Particle> particles);
  private:
   const float active_repulsion_force_;
   const float active_repulsion_min_distance_;

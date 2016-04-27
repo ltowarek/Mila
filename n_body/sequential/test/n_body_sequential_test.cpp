@@ -219,3 +219,27 @@ TEST(NBodySequentialTest, Initialize) {
   n_body.Initialize();
   EXPECT_EQ(n_body.particles().size(), n_body.number_of_particles());
 }
+
+TEST(NBodySequentialTest, UpdateParticles) {
+  mila::nbody::sequential::NBodySequential n_body;
+  std::vector<mila::nbody::sequential::Particle> expected_particles = {
+                           {{13.42111f, 316.12225f}, {12.42111f, 314.12225f}, {0.0f, 0.0f}},
+                           {{95.21749f, 129.99371f}, {85.21749f, 109.99370f}, {0.0f, 0.0f}}
+                       };
+  n_body.set_particles({
+                           {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}},
+                           {{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}}
+                       });
+
+  n_body.UpdateParticles(mila::nbody::sequential::Vector2D{1.0f, 1.0f});
+
+  ASSERT_EQ(n_body.particles().size(), expected_particles.size());
+  for (int i = 0; i < n_body.particles().size(); ++i) {
+    EXPECT_NEAR(n_body.particles()[i].position.x, expected_particles[i].position.x, 1e-5f);
+    EXPECT_NEAR(n_body.particles()[i].position.y, expected_particles[i].position.y, 1e-5f);
+    EXPECT_NEAR(n_body.particles()[i].velocity.x, expected_particles[i].velocity.x, 1e-5f);
+    EXPECT_NEAR(n_body.particles()[i].velocity.y, expected_particles[i].velocity.y, 1e-5f);
+    EXPECT_NEAR(n_body.particles()[i].acceleration.x, expected_particles[i].acceleration.x, 1e-5f);
+    EXPECT_NEAR(n_body.particles()[i].acceleration.y, expected_particles[i].acceleration.y, 1e-5f);
+  }
+}
