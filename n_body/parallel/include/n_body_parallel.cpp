@@ -234,6 +234,60 @@ mila::nbody::parallel::NBodyParallelWithView::NBodyParallelWithView(float active
                                                                                       device_id) {
 }
 
+mila::nbody::parallel::NBodyParallelWithInputFile::NBodyParallelWithInputFile() : NBodyParallelWithInputFile(300.0f,
+                                                                                              100.0f,
+                                                                                              4.0f,
+                                                                                              50.0f,
+                                                                                              0.8f,
+                                                                                              0.01f,
+                                                                                              cl_float2{512.0f, 512.0f},
+                                                                                              500,
+                                                                                              0.0f,
+                                                                                              1024.0f,
+                                                                                              0,
+                                                                                              0) {
+}
+
+mila::nbody::parallel::NBodyParallelWithInputFile::NBodyParallelWithInputFile(int number_of_particles, size_t platform_id, size_t device_id)
+    : NBodyParallelWithInputFile(300.0f,
+                            100.0f,
+                            4.0f,
+                            50.0f,
+                            0.8f,
+                            0.01f,
+                            cl_float2{512.0f, 512.0f},
+                            number_of_particles,
+                            0.0f,
+                            1024.0f,
+                            platform_id,
+                            device_id) {
+}
+
+mila::nbody::parallel::NBodyParallelWithInputFile::NBodyParallelWithInputFile(float active_repulsion_force,
+                                                                    float active_repulsion_min_distance,
+                                                                    float passive_repulsion_force,
+                                                                    float passive_repulsion_min_distance,
+                                                                    float damping_force,
+                                                                    float central_force,
+                                                                    cl_float2 center,
+                                                                    int number_of_particles,
+                                                                    float min_position,
+                                                                    float max_position,
+                                                                    size_t platform_id,
+                                                                    size_t device_id) : NBodyParallelWithView(active_repulsion_force,
+                                                                                                              active_repulsion_min_distance,
+                                                                                                              passive_repulsion_force,
+                                                                                                              passive_repulsion_min_distance,
+                                                                                                              damping_force,
+                                                                                                              central_force,
+                                                                                                              center,
+                                                                                                              number_of_particles,
+                                                                                                              min_position,
+                                                                                                              max_position,
+                                                                                                              platform_id,
+                                                                                                              device_id) {
+}
+
 void mila::nbody::parallel::NBodyParallelWithView::Run() {
   auto width = 1024;
   auto height = 1024;
@@ -274,4 +328,59 @@ void mila::nbody::parallel::NBodyParallelWithView::Run() {
   }
   glfwDestroyWindow(window);
   glfwTerminate();
+}
+
+std::vector<cl_float2> mila::nbody::parallel::NBodyParallelWithInputFile::ParseInputFile(const std::string &input_file) {
+  auto output = std::vector<cl_float2>();
+  std::ifstream file(input_file);
+  auto x = int{0};
+  auto y = int{0};
+  auto semicolon = char{};
+  while (file >> x >> semicolon >> y) {
+    output.push_back({static_cast<float>(x), static_cast<float>(y)});
+  }
+  return output;
+}
+
+void mila::nbody::parallel::NBodyParallelWithInputFile::Run(const std::string &input_file) {
+  auto width = 1024;
+  auto height = 1024;
+
+  Initialize();
+  auto active_force_positions = ParseInputFile(input_file);
+
+  // TODO: Check output of glfw
+  glfwInit();
+  auto window = glfwCreateWindow(width, height, "Sequential N-Body", nullptr, nullptr);
+  glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
+
+  for (auto frame = 0; frame < active_force_positions.size() && !glfwWindowShouldClose(window); ++frame) {
+    UpdateParticles(active_force_positions[frame]);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, width, height, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    for (auto i = 0; i < particles_.size(); ++i) {
+      glPointSize(1.0f);
+      glBegin(GL_POINTS);
+      glColor3f(1.0f, 1.0f, 1.0f);
+      glVertex2f(particles_[i].position.x, particles_[i].position.y);
+      glEnd();
+    }
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
+
+  glfwDestroyWindow(window);
+  glfwTerminate();
+}
+
+void mila::nbody::parallel::NBodyParallelWithInputFile::Run() {
+  NBodyParallelWithView::Run();
 }

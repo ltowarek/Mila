@@ -97,6 +97,28 @@ class NBodyParallelWithView: public NBodyParallel {
   virtual void Run();
 };
 
+class NBodyParallelWithInputFile: public NBodyParallelWithView {
+ public:
+  NBodyParallelWithInputFile();
+  NBodyParallelWithInputFile(int number_of_particles, size_t platform_id, size_t device_id);
+  NBodyParallelWithInputFile(float active_repulsion_force,
+                             float active_repulsion_min_distance,
+                             float passive_repulsion_force,
+                             float passive_repulsion_min_distance,
+                             float damping_force,
+                             float central_force,
+                             cl_float2 center,
+                             int number_of_particles,
+                             float min_position,
+                             float max_position,
+                             size_t platform_id,
+                             size_t device_id);
+
+  std::vector<cl_float2> ParseInputFile(const std::string &input_file);
+  virtual void Run(const std::string &input_file);
+  virtual void Run() override;
+};
+
 }  // parallel
 }  // nbody
 }  // mila
