@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "clpp.h"
+#include "GLFW/glfw3.h"
 #include "utils.h"
 #include "n_body_utils.h"
 
@@ -74,6 +75,26 @@ class NBodyParallel {
   clpp::Context context_;
   clpp::Queue queue_;
   clpp::Kernel kernel_;
+};
+
+class NBodyParallelWithView: public NBodyParallel {
+ public:
+  NBodyParallelWithView();
+  NBodyParallelWithView(int number_of_particles, size_t platform_id, size_t device_id);
+  NBodyParallelWithView(float active_repulsion_force,
+                        float active_repulsion_min_distance,
+                        float passive_repulsion_force,
+                        float passive_repulsion_min_distance,
+                        float damping_force,
+                        float central_force,
+                        cl_float2 center,
+                        int number_of_particles,
+                        float min_position,
+                        float max_position,
+                        size_t platform_id,
+                        size_t device_id);
+
+  virtual void Run();
 };
 
 }  // parallel
