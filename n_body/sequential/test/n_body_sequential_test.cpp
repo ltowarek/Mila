@@ -56,12 +56,34 @@ TEST(NBodySequentialTest, GenerateParticles) {
 
 TEST(NBodySequentialTest, DefaultConstructor) {
   mila::nbody::sequential::NBodySequential n_body;
-  EXPECT_EQ(n_body.precision(), 1e-5f);
+
+  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
+  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
+  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
+  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
+  EXPECT_EQ(n_body.damping_force(), 0.8f);
+  EXPECT_EQ(n_body.central_force(), 0.01f);
+  EXPECT_EQ(n_body.center().x, 512.0f);
+  EXPECT_EQ(n_body.center().y, 512.0f);
+  EXPECT_EQ(n_body.number_of_particles(), 500);
+  EXPECT_EQ(n_body.min_position(), 0.0f);
+  EXPECT_EQ(n_body.max_position(), 1024.0f);
 }
 
-TEST(NBodySequentialTest, PrecisionConstructor) {
-  mila::nbody::sequential::NBodySequential n_body(1e-7);
-  EXPECT_EQ(n_body.precision(), 1e-7f);
+TEST(NBodySequentialTest, ComplexConstructor) {
+  mila::nbody::sequential::NBodySequential n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, mila::nbody::sequential::Vector2D{7.0f, 8.0f}, 9, 10.0f, 11.0f);
+
+  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
+  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
+  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
+  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
+  EXPECT_EQ(n_body.damping_force(), 5.0f);
+  EXPECT_EQ(n_body.central_force(), 6.0f);
+  EXPECT_EQ(n_body.center().x, 7.0f);
+  EXPECT_EQ(n_body.center().y, 8.0f);
+  EXPECT_EQ(n_body.number_of_particles(), 9);
+  EXPECT_EQ(n_body.min_position(), 10.0f);
+  EXPECT_EQ(n_body.max_position(), 11.0f);
 }
 
 TEST(NBodySequentialTest, ApplyCentralForceZeroDistance) {

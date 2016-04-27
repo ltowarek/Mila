@@ -25,7 +25,16 @@ struct Particle {
 class NBodySequential {
  public:
   NBodySequential();
-  NBodySequential(float precision_);
+  NBodySequential(float active_repulsion_force_,
+                  float active_repulsion_min_distance_,
+                  float passive_repulsion_force_,
+                  float passive_repulsion_min_distance_,
+                  float damping_force_,
+                  float central_force_,
+                  Vector2D center_,
+                  int number_of_particles_,
+                  float min_position_,
+                  float max_position_);
 
   std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
   Particle ApplyCentralForce(Vector2D center, float force_value, Particle particle);
@@ -34,9 +43,27 @@ class NBodySequential {
   Particle ApplyRepulsionForce(float force_value, float min_distance, Vector2D position, Particle particle);
   Particle ApplyRepulsionForceBetweenParticles(float force_value, float min_distance, Particle particle, std::vector<Particle> &particles);
 
-  float precision() const;
+  float active_repulsion_force() const;
+  float active_repulsion_min_distance() const;
+  float passive_repulsion_force() const;
+  float passive_repulsion_min_distance() const;
+  float damping_force() const;
+  float central_force() const;
+  Vector2D center() const;
+  int number_of_particles() const;
+  float min_position() const;
+  float max_position() const;
  private:
-  const float precision_;
+  const float active_repulsion_force_;
+  const float active_repulsion_min_distance_;
+  const float passive_repulsion_force_;
+  const float passive_repulsion_min_distance_;
+  const float damping_force_;
+  const float central_force_;
+  const Vector2D center_;
+  const int number_of_particles_;
+  const float min_position_;
+  const float max_position_;
 };
 
 }  // sequential

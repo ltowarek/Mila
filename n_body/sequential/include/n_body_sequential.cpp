@@ -1,13 +1,25 @@
 #include "n_body_sequential.h"
 
-mila::nbody::sequential::NBodySequential::NBodySequential(): NBodySequential(1e-5f) {
+mila::nbody::sequential::NBodySequential::NBodySequential(): NBodySequential(300.0f, 100.0f, 4.0f, 50.0f, 0.8f, 0.01f,
+                                                                             Vector2D{512.0f, 512.0f}, 500, 0.0f, 1024.0f) {
 }
 
-mila::nbody::sequential::NBodySequential::NBodySequential(float precision_): precision_(precision_) {
-}
-
-float mila::nbody::sequential::NBodySequential::precision() const {
-  return precision_;
+mila::nbody::sequential::NBodySequential::NBodySequential(float active_repulsion_force,
+                float active_repulsion_min_distance,
+                float passive_repulsion_force,
+                float passive_repulsion_min_distance,
+                float damping_force,
+                float central_force,
+                Vector2D center,
+                int number_of_particles,
+                float min_position,
+                float max_position)
+    : active_repulsion_force_(active_repulsion_force),
+      active_repulsion_min_distance_(active_repulsion_min_distance),
+      passive_repulsion_force_(passive_repulsion_force),
+      passive_repulsion_min_distance_(passive_repulsion_min_distance), damping_force_(damping_force),
+      central_force_(central_force), center_(center), number_of_particles_(number_of_particles),
+      min_position_(min_position), max_position_(max_position) {
 }
 
 mila::nbody::sequential::Particle mila::nbody::sequential::NBodySequential::ApplyCentralForce(Vector2D center,
@@ -87,4 +99,44 @@ std::vector<mila::nbody::sequential::Particle> mila::nbody::sequential::NBodySeq
     particles.push_back(particle);
   }
   return particles;
+}
+
+float mila::nbody::sequential::NBodySequential::active_repulsion_force() const {
+  return active_repulsion_force_;
+}
+
+float mila::nbody::sequential::NBodySequential::active_repulsion_min_distance() const {
+  return active_repulsion_min_distance_;
+}
+
+float mila::nbody::sequential::NBodySequential::passive_repulsion_force() const {
+  return passive_repulsion_force_;
+}
+
+float mila::nbody::sequential::NBodySequential::passive_repulsion_min_distance() const {
+  return passive_repulsion_min_distance_;
+}
+
+float mila::nbody::sequential::NBodySequential::damping_force() const {
+  return damping_force_;
+}
+
+float mila::nbody::sequential::NBodySequential::central_force() const {
+  return central_force_;
+}
+
+mila::nbody::sequential::Vector2D mila::nbody::sequential::NBodySequential::center() const {
+  return center_;
+}
+
+int mila::nbody::sequential::NBodySequential::number_of_particles() const {
+  return number_of_particles_;
+}
+
+float mila::nbody::sequential::NBodySequential::min_position() const {
+  return min_position_;
+}
+
+float mila::nbody::sequential::NBodySequential::max_position() const {
+  return max_position_;
 }
