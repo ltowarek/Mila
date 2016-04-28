@@ -65,8 +65,6 @@ mila::nbody::sequential::Particle mila::nbody::sequential::NBodySequential::Appl
       auto inverted_distance_squared = 1.0f / distance_squared;
       output.acceleration.x += distance_vector.x * force_value * inverted_distance_squared;
       output.acceleration.y += distance_vector.y * force_value * inverted_distance_squared;
-      particles[i].acceleration.x -= distance_vector.x * force_value * inverted_distance_squared;
-      particles[i].acceleration.y -= distance_vector.y * force_value * inverted_distance_squared;
     }
   }
   return output;

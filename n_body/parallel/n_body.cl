@@ -42,7 +42,6 @@ Particle ApplyRepulsionForceBetweenParticles(Particle particle, global Particle 
       }
       float inverted_distance_squared = 1.0f / distance_squared;
       output.acceleration += distance_vector * PASSIVE_REPULSION_FORCE_VALUE * inverted_distance_squared;
-      particles[i].acceleration -= distance_vector * PASSIVE_REPULSION_FORCE_VALUE * inverted_distance_squared;
     }
   }
   return output;
