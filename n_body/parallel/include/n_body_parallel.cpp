@@ -351,7 +351,7 @@ void mila::nbody::parallel::NBodyParallelWithInputFile::Run(const std::string &i
 
   // TODO: Check output of glfw
   glfwInit();
-  auto window = glfwCreateWindow(width, height, "Sequential N-Body", nullptr, nullptr);
+  auto window = glfwCreateWindow(width, height, "Parallel N-Body", nullptr, nullptr);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
