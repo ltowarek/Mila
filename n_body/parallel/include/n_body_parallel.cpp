@@ -112,7 +112,7 @@ void mila::nbody::parallel::NBodyParallel::Initialize() {
 }
 
 void mila::nbody::parallel::NBodyParallel::UpdateParticles(cl_float2 active_repulsion_force_position) {
-  auto input_particles_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, particles_.size() * sizeof(particles_.at(0)), particles_.data());
+  auto input_particles_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, particles_.size() * sizeof(particles_.at(0)), particles_.data());
   auto output_particles_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, particles_.size() * sizeof(particles_.at(0)));
   auto force_position_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(active_repulsion_force_position), &active_repulsion_force_position);
 
