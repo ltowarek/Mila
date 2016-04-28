@@ -180,6 +180,14 @@ size_t mila::nbody::parallel::NBodyParallel::device_id() const {
   return device_id_;
 }
 
+clpp::Platform mila::nbody::parallel::NBodyParallel::platform() const {
+  return platform_;
+}
+
+clpp::Device mila::nbody::parallel::NBodyParallel::device() const {
+  return device_;
+}
+
 mila::nbody::parallel::NBodyParallelWithView::NBodyParallelWithView() : NBodyParallelWithView(300.0f,
                                                                       100.0f,
                                                                       4.0f,

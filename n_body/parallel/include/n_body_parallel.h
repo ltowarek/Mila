@@ -54,6 +54,8 @@ class NBodyParallel {
   float max_position() const;
   std::vector<Particle> particles() const;
   void set_particles(std::vector<Particle> particles);
+  clpp::Platform platform() const;
+  clpp::Device device() const;
  protected:
   std::string PrepareBuildOptions();
 

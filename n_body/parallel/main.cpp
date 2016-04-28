@@ -32,6 +32,8 @@ int main(int argc, char **argv) {
     auto duration = n_body_initial.results().at(n_body_initial.main_result());
     printf("Initial results\n");
     printf("Duration [us]: %lld\n", duration);
+    printf("Platform: %s\n", n_body_initial.platform().getName().c_str());
+    printf("Device: %s\n", n_body_initial.device().getName().c_str());
     printf("Input file: %s\n", config.input_file.c_str());
     printf("Number of particles: %d\n", config.number_of_particles);
 
