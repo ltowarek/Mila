@@ -5,17 +5,18 @@ import subprocess
 if __name__ == '__main__':
     cases = [
         'n_body_sequential.exe test_input_100.txt 200 10',
-        'n_body_parallel.exe test_input_100.txt 200 0 0 10',
         'n_body_sequential.exe test_input_100.txt 400 10',
-        'n_body_parallel.exe test_input_100.txt 400 0 0 10',
         'n_body_sequential.exe test_input_100.txt 800 10',
-        'n_body_parallel.exe test_input_100.txt 800 0 0 10',
         'n_body_sequential.exe test_input_100.txt 1600 10',
-        'n_body_parallel.exe test_input_100.txt 1600 0 0 10',
         'n_body_sequential.exe test_input_100.txt 3200 10',
-        'n_body_parallel.exe test_input_100.txt 3200 0 0 10',
         'n_body_sequential.exe test_input_100.txt 6400 10',
-        'n_body_parallel.exe test_input_100.txt 6400 0 0 10'
+        
+        'n_body_parallel.exe test_input_100.txt 200 1 1 10',
+        'n_body_parallel.exe test_input_100.txt 400 1 1 10',
+        'n_body_parallel.exe test_input_100.txt 800 1 1 10',
+        'n_body_parallel.exe test_input_100.txt 1600 1 1 10',
+        'n_body_parallel.exe test_input_100.txt 3200 1 1 10',
+        'n_body_parallel.exe test_input_100.txt 6400 1 1 10'
     ]
 
     results = []
@@ -84,7 +85,7 @@ if __name__ == '__main__':
                         'Kowariancja': coefficient_of_variation,
                         'CMD': case})
 
-    with open('results.csv', 'wt', encoding='utf-8', newline='') as results_file:
+    with open('results_n_body.csv', 'wt', encoding='utf-8', newline='') as results_file:
         csv_writer = csv.DictWriter(results_file,
                                     ['Nazwa urządzenia', 'Plik wejściowy', 'Liczba klatek', 'Liczba cząsteczek', 'Średnia[us]', 'Mediana[us]', 'Standardowe odchylenie[us]', 'Kowariancja', 'CMD'])
         csv_writer.writeheader()

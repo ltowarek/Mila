@@ -4,41 +4,43 @@ import subprocess
 
 if __name__ == '__main__':
     cases = [
-        'bbp_sequential.exe 100 0 20',
         'bbp_parallel.exe 100 0 0 0 20',
-        'bbp_sequential.exe 200 0 20',
         'bbp_parallel.exe 200 0 0 0 20',
-        'bbp_sequential.exe 300 0 20',
         'bbp_parallel.exe 300 0 0 0 20',
-        'bbp_sequential.exe 400 0 20',
         'bbp_parallel.exe 400 0 0 0 20',
-        'bbp_sequential.exe 500 0 20',
         'bbp_parallel.exe 500 0 0 0 20',
-        'bbp_sequential.exe 600 0 20',
         'bbp_parallel.exe 600 0 0 0 20',
-        'bbp_sequential.exe 700 0 20',
         'bbp_parallel.exe 700 0 0 0 20',
-        'bbp_sequential.exe 800 0 20',
         'bbp_parallel.exe 800 0 0 0 20',
-        'bbp_sequential.exe 900 0 20',
         'bbp_parallel.exe 900 0 0 0 20',
-        'bbp_sequential.exe 1000 0 20',
         'bbp_parallel.exe 1000 0 0 0 20',
 
-        'bbp_sequential.exe 500 0 20',
         'bbp_parallel.exe 500 0 0 0 20',
-        'bbp_sequential.exe 500 10 20',
         'bbp_parallel.exe 500 10 0 0 20',
-        'bbp_sequential.exe 500 100 20',
         'bbp_parallel.exe 500 100 0 0 20',
-        'bbp_sequential.exe 500 200 20',
         'bbp_parallel.exe 500 200 0 0 20',
-        'bbp_sequential.exe 500 300 20',
         'bbp_parallel.exe 500 300 0 0 20',
-        'bbp_sequential.exe 500 400 20',
         'bbp_parallel.exe 500 400 0 0 20',
-        'bbp_sequential.exe 500 500 20',
         'bbp_parallel.exe 500 500 0 0 20',
+
+        'bbp_sequential.exe 100 0 20',
+        'bbp_sequential.exe 200 0 20',
+        'bbp_sequential.exe 300 0 20',
+        'bbp_sequential.exe 500 0 20',
+        'bbp_sequential.exe 400 0 20',
+        'bbp_sequential.exe 600 0 20',
+        'bbp_sequential.exe 700 0 20',
+        'bbp_sequential.exe 800 0 20',
+        'bbp_sequential.exe 900 0 20',
+        'bbp_sequential.exe 1000 0 20',
+
+        'bbp_sequential.exe 500 0 20',
+        'bbp_sequential.exe 500 10 20',
+        'bbp_sequential.exe 500 200 20',
+        'bbp_sequential.exe 500 100 20',
+        'bbp_sequential.exe 500 300 20',
+        'bbp_sequential.exe 500 400 20',
+        'bbp_sequential.exe 500 500 20',
     ]
 
     results = []
@@ -101,7 +103,7 @@ if __name__ == '__main__':
                         'Kowariancja': coefficient_of_variation,
                         'CMD': case})
 
-    with open('results.csv', 'wt', encoding='utf-8', newline='') as results_file:
+    with open('results_bbp.csv', 'wt', encoding='utf-8', newline='') as results_file:
         csv_writer = csv.DictWriter(results_file,
                                     ['Nazwa urządzenia', 'Liczba cyfr', 'Pozycja początkowa', 'Średnia[us]', 'Mediana[us]', 'Standardowe odchylenie[us]', 'Kowariancja', 'CMD'])
         csv_writer.writeheader()
