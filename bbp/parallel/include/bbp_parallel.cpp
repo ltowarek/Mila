@@ -69,7 +69,7 @@ void mila::bbp::parallel::BBP::Initialize() {
   kernel_ = clpp::Kernel(program, kernel_name.c_str());
 }
 
-std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, size_t starting_position) {
+std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, int starting_position) {
   Initialize();
   auto output = std::vector<cl_float>(number_of_digits, 0.0f);
 

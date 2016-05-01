@@ -23,7 +23,7 @@ class BBP {
 
   virtual void Initialize();
   virtual std::string Run(size_t number_of_digits, size_t starting_position);
-  std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position);
+  std::vector<float> ComputeDigits(size_t number_of_digits, int starting_position);
 
   float precision() const;
   size_t platform_id() const;

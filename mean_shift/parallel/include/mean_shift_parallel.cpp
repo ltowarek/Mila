@@ -126,7 +126,7 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShift::Run(const std::vect
 
   do {
     queue_.enqueueCopyBuffer(shifted_points_buffer, actual_points_buffer, 0, 0, output.size() * sizeof(output.at(0)));
-    kernel_.setArgs(actual_points_buffer, original_points_buffer, output.size(), bandwidth, shifted_points_buffer, distances_buffer);
+    kernel_.setArgs(actual_points_buffer, original_points_buffer, static_cast<int>(output.size()), bandwidth, shifted_points_buffer, distances_buffer);
     queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
     queue_.readBuffer(distances_buffer, 0, distances.size() * sizeof(distances.at(0)), distances.data());
     difference_distance = *std::max_element(distances.begin(), distances.end());
