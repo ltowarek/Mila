@@ -1,4 +1,4 @@
-# Mila [![Build Status](https://travis-ci.org/ltowarek/Mila.svg?branch=master)](https://travis-ci.org/ltowarek/Mila)
+# Mila [![Build Status](https://travis-ci.org/ltowarek/Mila.svg?branch=develop)](https://travis-ci.org/ltowarek/Mila)[![Build status](https://ci.appveyor.com/api/projects/status/vkyyrl3je9wdfk0n/branch/develop?svg=true)](https://ci.appveyor.com/project/ltowarek/mila/branch/develop)
 Mila is a OpenCL benchmark tool
 
 ## Projects
