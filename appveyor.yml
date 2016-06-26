@@ -15,5 +15,5 @@ install:
 build_script:
   - mkdir build
   - cd build
-  - cmake .. -G "Visual Studio 14 Win64" -DOpenCL_INCLUDE_DIR="C:\\opencl\\inc" -DOpenCL_LIBRARIES="C:\\opencl\\build\\bin\\OpenCL.dll" -DOpenCL_LIBRARY="C:\\opencl\\build\\bin\\OpenCL.dll"
+  - cmake .. -G "Visual Studio 14" -DOpenCL_INCLUDE_DIR="C:\\opencl\\inc" -DOpenCL_LIBRARIES="C:\\opencl\\build\\OpenCL.lib" -DOpenCL_LIBRARY="C:\\opencl\\build\\OpenCL.lib"
   - cmake --build .
