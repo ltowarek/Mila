@@ -1,0 +1,19 @@
+version: 0.2.0+{build}
+
+image: Visual Studio 2015
+
+install:
+  - cmake --version
+  - git submodule update --init --recursive
+  - C:\\"Program Files (x86)"\\"Microsoft Visual Studio 14.0"\\VC\\vcvarsall.bat"
+  - git clone https://github.com/KhronosGroup/OpenCL-ICD-Loader "C:\\opencl"
+  - git clone https://github.com/KhronosGroup/OpenCL-Headers "C:\\opencl\\inc\\CL"
+  - ps: pushd "C:\\opencl"
+  - "C:\\opencl\\build_using_cmake.bat"
+  - ps: popd
+
+build_script:
+  - mkdir build
+  - cd build
+  - cmake .. -G "Visual Studio 14" -DOpenCL_INCLUDE_DIR="C:\\opencl\\inc" -DOpenCL_LIBRARIES="C:\\opencl\\build\\OpenCL.lib" -DOpenCL_LIBRARY="C:\\opencl\\build\\OpenCL.lib"
+  - cmake --build .
