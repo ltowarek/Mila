@@ -36,8 +36,5 @@ To successfully build all Mila projects run the following commands:
     Open Mila.sln in Visual Studio 14 and build all projects
     ctest (optional)
 
-Note: If you are seeing linker errors during compilation then please change the runtime library in GTest projects to match
-this in Mila projects.
-
 ## Issues and feature requests
 Feel free to report all bugs and feature requests in [YouTrack](http://mila.myjetbrains.com/youtrack/issues)
