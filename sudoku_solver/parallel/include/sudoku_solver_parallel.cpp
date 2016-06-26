@@ -106,7 +106,7 @@ void mila::sudokusolver::parallel::SudokuSolver::GeneratePossibleSolutionsInPlac
   auto number_of_new_grids = int{0};
   auto number_of_new_grids_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(number_of_new_grids), &number_of_new_grids);
 
-  auto global_work_size = std::vector<int>{number_of_threads_};
+  auto global_work_size = std::vector<size_t>{number_of_threads_};
 
   for (auto i = 0; i < number_of_cells_to_fill; ++i) {
     // TODO: Replace with fillBuffer from ocl1.2
@@ -159,7 +159,7 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudokuInPlace(
   auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
   auto is_solved_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved);
 
-  auto global_work_size = {number_of_threads_};
+  auto global_work_size = clpp::Size3{number_of_threads_};
 
   dfs_kernel_.setArgs(grids_buffer_, number_of_grids_buffer_, empty_cells_buffer_, numbers_of_empty_cells_per_grid_buffer_, output_buffer, is_solved_buffer);
   queue_.enqueueNDRangeKernel(dfs_kernel_, global_work_size).wait();
@@ -186,7 +186,7 @@ std::vector<int> mila::sudokusolver::parallel::SudokuSolver::SolveSudoku(std::ve
   auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
   auto is_solved_buffer = clpp::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(is_solved), &is_solved);
 
-  auto global_work_size = {number_of_threads_};
+  auto global_work_size = clpp::Size3{number_of_threads_};
 
   dfs_kernel_.setArgs(grids_buffer, number_of_grids_buffer, empty_cells_buffer, numbers_of_empty_cells_per_grid_buffer, output_buffer, is_solved_buffer);
   queue_.enqueueNDRangeKernel(dfs_kernel_, global_work_size).wait();
