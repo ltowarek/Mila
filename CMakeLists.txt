@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.4)
 project(Mila)
 
+set(MILA_VERSION_MAJOR 0)
+set(MILA_VERSION_MINOR 2)
+set(MILA_VERSION_PATCH 1)
+
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
 set(GTEST_INCLUDE_DIRS ${GTEST_ROOT}/include ${GTEST_ROOT})
