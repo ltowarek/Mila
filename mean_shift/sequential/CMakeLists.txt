@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 project(mean_shift_sequential)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 include_directories(${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
 set(MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
