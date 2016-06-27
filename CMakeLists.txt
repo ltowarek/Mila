@@ -4,6 +4,10 @@ project(Mila)
 set(MILA_VERSION_MAJOR 0)
 set(MILA_VERSION_MINOR 2)
 set(MILA_VERSION_PATCH 1)
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h"
+)
 
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
