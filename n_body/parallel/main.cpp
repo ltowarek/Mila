@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "utils.h"
+#include "version.h"
 #include "n_body_parallel_profiler.h"
 
 struct parameters {
@@ -27,6 +28,8 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     auto config = ParseCommandLine(argc, argv);
+    printf("%s\n", mila::version::PrintVersion().c_str());
+
     auto n_body_initial = mila::nbody::parallel::NBodyParallelWithInputFileProfiler(config.number_of_particles, config.platform_id, config.device_id);
     n_body_initial.Run(config.input_file);
     auto duration = n_body_initial.results().at(n_body_initial.main_result());

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "version.h"
 #include "sudoku_solver_parallel_profiler.h"
 
 struct parameters {
@@ -24,6 +25,8 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     auto config = ParseCommandLine(argc, argv);
+    printf("%s\n", mila::version::PrintVersion().c_str());
+
     auto sudoku_solver_initial = mila::sudokusolver::parallel::SudokuSolverBasedOnFilesProfiler(config.platform_id, config.device_id);
     sudoku_solver_initial.Run(config.input_file, config.output_file, config.number_of_filled_cells);
     auto duration = sudoku_solver_initial.results().at(sudoku_solver_initial.main_result());

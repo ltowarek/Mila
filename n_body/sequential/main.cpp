@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "utils.h"
+#include "version.h"
 #include "n_body_sequential_profiler.h"
 
 struct parameters {
@@ -23,6 +24,8 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
+  printf("%s\n", mila::version::PrintVersion().c_str());
+
   auto n_body_initial = mila::nbody::sequential::NBodySequentialWithInputFileProfiler(config.number_of_particles);
   n_body_initial.Run(config.input_file);
   auto duration = n_body_initial.results().at(n_body_initial.main_result());

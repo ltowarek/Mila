@@ -3,6 +3,7 @@
 #include <string>
 
 #include "utils.h"
+#include "version.h"
 #include "bbp_parallel_profiler.h"
 
 struct parameters {
@@ -26,6 +27,8 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
+  printf("%s\n", mila::version::PrintVersion().c_str());
+
   auto bbp_initial = mila::bbp::parallel::BBPProfiler(config.platform_id, config.device_id);
   std::string output = bbp_initial.Run(config.number_of_digits, config.starting_position);
   auto duration = bbp_initial.results().at(bbp_initial.main_result());

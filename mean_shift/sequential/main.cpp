@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "utils.h"
+#include "version.h"
 #include "mean_shift_sequential_profiler.h"
 
 struct parameters {
@@ -25,6 +26,8 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     auto config = ParseCommandLine(argc, argv);
+    printf("%s\n", mila::version::PrintVersion().c_str());
+
     auto mean_shift_initial = mila::meanshift::sequential::MeanShiftImageProcessingProfiler();
     mean_shift_initial.Run(config.input_file, config.output_file, config.bandwidth);
     auto duration = mean_shift_initial.results().at(mean_shift_initial.main_result());

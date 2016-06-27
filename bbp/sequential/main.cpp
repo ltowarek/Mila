@@ -4,6 +4,7 @@
 #include <string>
 
 #include "utils.h"
+#include "version.h"
 #include "bbp_sequential_profiler.h"
 
 struct parameters {
@@ -23,6 +24,8 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
+  printf("%s\n", mila::version::PrintVersion().c_str());
+
   auto bbp_initial = mila::bbp::sequential::BBPProfiler();
   std::string output = bbp_initial.Run(config.number_of_digits, config.starting_position);
   auto duration = bbp_initial.results().at(bbp_initial.main_result());
