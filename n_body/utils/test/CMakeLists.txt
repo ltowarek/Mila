@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.4)
 project(n_body_utils_test)
 
 include_directories(${GTEST_INCLUDE_DIRS} ${N_BODY_UTILS_INCLUDE_DIRS})

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.4)
 project(bbp_sequential_test)
 
 include_directories(${GTEST_INCLUDE_DIRS} ${BBP_SEQUENTIAL_INCLUDE_DIRS})

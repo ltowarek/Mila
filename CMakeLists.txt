@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.4)
 project(Mila)
 
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
