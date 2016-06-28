@@ -97,13 +97,15 @@ TEST(BBPSequentialTest, ModularExponentiation) {
 TEST(BBPSequentialProfilerTest, DefaultConstructor) {
   mila::bbp::sequential::BBPProfiler bbp;
   EXPECT_EQ(bbp.precision(), 1e-5f);
-  EXPECT_EQ(bbp.main_result(), "Run");
+  EXPECT_EQ(bbp.main_result(), "Digits per second");
+  EXPECT_EQ(bbp.main_duration(), "Run");
 }
 
 TEST(BBPSequentialProfilerTest, Constructor) {
   mila::bbp::sequential::BBPProfiler bbp(1e-7f);
   EXPECT_EQ(bbp.precision(), 1e-7f);
-  EXPECT_EQ(bbp.main_result(), "Run");
+  EXPECT_EQ(bbp.main_result(), "Digits per second");
+  EXPECT_EQ(bbp.main_duration(), "Run");
 }
 
 TEST(BBPSequentialProfilerTest, Run) {
@@ -127,6 +129,19 @@ TEST(BBPSequentialProfilerTest, Run) {
 TEST(BBPSequentialProfilerTest, RunWithProfiling) {
   mila::bbp::sequential::BBPProfiler bbp;
   EXPECT_EQ(bbp.results().count("Run"), 0);
+  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
   EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
   EXPECT_EQ(bbp.results().count("Run"), 1);
+  EXPECT_EQ(bbp.results().count("Digits per second"), 1);
+}
+
+TEST(BBPSequentialProfilerTest, GetDigitsPerSecond) {
+  mila::bbp::sequential::BBPProfiler bbp;
+  auto one_second = std::chrono::seconds(1);
+  EXPECT_NEAR(bbp.GetDigitsPerSecond(100, one_second), 100.0f, 1e-5);
+  auto one_microsecond = std::chrono::duration<float, std::micro>(1.0f);
+  EXPECT_NEAR(bbp.GetDigitsPerSecond(100, one_microsecond), 100000000.0f, 1e05);
+  EXPECT_NEAR(bbp.GetDigitsPerSecond(1, one_microsecond), 1000000.0f, 1e-5);
+  auto sample_duration = std::chrono::duration<float>(0.243811563f);
+  EXPECT_NEAR(bbp.GetDigitsPerSecond(540, sample_duration), 2214.825225496f, 1e-5f);
 }

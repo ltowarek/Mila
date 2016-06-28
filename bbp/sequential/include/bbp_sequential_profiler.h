@@ -15,11 +15,16 @@ class BBPProfiler : public BBP {
 
   std::string Run(size_t number_of_digits, size_t starting_position) override;
 
+  float GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration);
+
   std::string main_result() const;
-  std::map<std::string, int64_t> results() const;
+  std::string main_duration() const;
+  std::map<std::string, float> results() const;
  private:
+
   const std::string main_result_;
-  std::map<std::string, int64_t> results_;
+  const std::string main_duration_;
+  std::map<std::string, float> results_;
 };
 };  // sequential
 };  // bbp
