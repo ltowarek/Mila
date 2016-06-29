@@ -20,7 +20,6 @@ class BBPProfiler : public BBP {
   std::string main_duration() const;
   std::map<std::string, float> results() const;
  private:
-
   const std::string main_result_;
   const std::string main_duration_;
   std::map<std::string, float> results_;
