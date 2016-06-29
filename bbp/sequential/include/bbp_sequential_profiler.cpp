@@ -30,12 +30,8 @@ std::string mila::bbp::sequential::BBPProfiler::Run(size_t number_of_digits, siz
   auto duration = std::chrono::duration<float>(end_time - start_time);
   auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
   results_.insert(std::pair<std::string, float>("Run", duration_us));
-  results_.insert(std::pair<std::string, float>("Digits per second", GetDigitsPerSecond(number_of_digits, duration)));
+  results_.insert(std::pair<std::string, float>("Digits per second", mila::bbp::utils::GetDigitsPerSecond(number_of_digits, duration)));
 
   return output;
 }
 
-float mila::bbp::sequential::BBPProfiler::GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration) {
-  auto digits_per_second = (duration.count() > 0.0f) ? static_cast<float>(number_of_digits) / duration.count() : 0.0f;
-  return digits_per_second;
-}

@@ -20,3 +20,7 @@ std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(const std::vect
   return digits;
 }
 
+float mila::bbp::utils::GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration) {
+  auto digits_per_second = (duration.count() > 0.0f) ? static_cast<float>(number_of_digits) / duration.count() : 0.0f;
+  return digits_per_second;
+}

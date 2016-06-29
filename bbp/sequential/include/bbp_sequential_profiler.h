@@ -15,7 +15,6 @@ class BBPProfiler : public BBP {
 
   std::string Run(size_t number_of_digits, size_t starting_position) override;
 
-  float GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration);
 
   std::string main_result() const;
   std::string main_duration() const;

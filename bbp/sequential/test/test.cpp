@@ -135,13 +135,3 @@ TEST(BBPSequentialProfilerTest, RunWithProfiling) {
   EXPECT_EQ(bbp.results().count("Digits per second"), 1);
 }
 
-TEST(BBPSequentialProfilerTest, GetDigitsPerSecond) {
-  mila::bbp::sequential::BBPProfiler bbp;
-  auto one_second = std::chrono::seconds(1);
-  EXPECT_NEAR(bbp.GetDigitsPerSecond(100, one_second), 100.0f, 1e-5);
-  auto one_microsecond = std::chrono::duration<float, std::micro>(1.0f);
-  EXPECT_NEAR(bbp.GetDigitsPerSecond(100, one_microsecond), 100000000.0f, 1e05);
-  EXPECT_NEAR(bbp.GetDigitsPerSecond(1, one_microsecond), 1000000.0f, 1e-5);
-  auto sample_duration = std::chrono::duration<float>(0.243811563f);
-  EXPECT_NEAR(bbp.GetDigitsPerSecond(540, sample_duration), 2214.825225496f, 1e-5f);
-}
