@@ -25,41 +25,45 @@ Parallel implementation of the BBP formula accepts as an input the following par
 Example input and output of the sequential implementation which computes 100 digits of pi starting from 500-th digit with 2 iterations:
 
     bbp_sequential 100 500 2
+    Mila version: 0.3.0
     Initial results
-    Duration [us]: 107241
+    Digits per second: 2041.769897
+    Duration [us]: 48977.000000
     Number of Digits: 100
     Starting Position: 500
     PI in hex: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
     Iterations
-    Iteration: 0, Duration [us]: 88984
-    Iteration: 1, Duration [us]: 94996
+    Iteration: 0, Digits per second: 2027.782349, Duration [us]: 49314.000000
+    Iteration: 1, Digits per second: 2130.613770, Duration [us]: 46934.000000
     Statistics
-    Mean: 91990.000000
-    Median: 91990.000000
-    Variance: 18072072.000000
-    Standard Deviation: 4251.125968
-    Coefficient of Variation: 0.046213
+    Mean: 2079.197998
+    Median: 2079.197998
+    Variance: 5287.150391
+    Standard Deviation: 72.712791
+    Coefficient of Variation: 0.034972
 
 ### Parallel
 Example input and output of the parallel implementation which computes 100 digits of pi starting from 500-th digit on OpenCL platform 0, device 0 and with 2 iterations:
 
     bbp_parallel 100 500 0 0 2
+    Mila version: 0.3.0
     Initial results
-    Duration [us]: 760707
+    Digits per second: 1094.009521
+    Duration [us]: 91406.000000
     Platform: NVIDIA CUDA
     Device: GeForce GTX 960
     Number of Digits: 100
     Starting Position: 500
     PI in hex: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
     Iterations
-    Iteration: 0, Duration [us]: 92535
-    Iteration: 1, Duration [us]: 83312
+    Iteration: 0, Digits per second: 1349.754883, Duration [us]: 74087.000000
+    Iteration: 1, Digits per second: 1533.922485, Duration [us]: 65192.000000
     Statistics
-    Mean: 87923.500000
-    Median: 87923.500000
-    Variance: 42531864.000000
-    Standard Deviation: 6521.645805
-    Coefficient of Variation: 0.074174
+    Mean: 1441.838623
+    Median: 1441.838623
+    Variance: 16958.851562
+    Standard Deviation: 130.226151
+    Coefficient of Variation: 0.090320
 
 ## References
 1. http://www.davidhbailey.com/dhbpapers/bbp-alg.pdf
