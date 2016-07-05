@@ -4,6 +4,7 @@
 #include <chrono>
 #include <map>
 #include "bbp_sequential.h"
+#include "utils.h"
 
 namespace mila {
 namespace bbp {

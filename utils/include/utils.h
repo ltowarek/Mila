@@ -7,6 +7,7 @@
 #include <numeric>
 #include <string>
 #include <vector>
+#include <chrono>
 
 namespace mila {
 namespace utils {
@@ -17,6 +18,7 @@ float Variance(const std::vector<float>& values);
 float StandardDeviation(const std::vector<float>& values);
 float CoefficientOfVariation(const std::vector<float>& values);
 std::string ReadFile(const std::string &file);
+float GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration);
 
 };  // utils
 }  // mila

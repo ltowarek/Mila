@@ -27,12 +27,3 @@ TEST(BBPUtilsTest, ConvertFractionsToHex) {
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[1], "43F672");
 }
 
-TEST(BBPUtilsTest, GetDigitsPerSecond) {
-  auto one_second = std::chrono::seconds(1);
-  EXPECT_NEAR(mila::bbp::utils::GetDigitsPerSecond(100, one_second), 100.0f, 1e-5);
-  auto one_microsecond = std::chrono::duration<float, std::micro>(1.0f);
-  EXPECT_NEAR(mila::bbp::utils::GetDigitsPerSecond(100, one_microsecond), 100000000.0f, 1e05);
-  EXPECT_NEAR(mila::bbp::utils::GetDigitsPerSecond(1, one_microsecond), 1000000.0f, 1e-5);
-  auto sample_duration = std::chrono::duration<float>(0.243811563f);
-  EXPECT_NEAR(mila::bbp::utils::GetDigitsPerSecond(540, sample_duration), 2214.825225496f, 1e-5f);
-}

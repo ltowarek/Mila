@@ -45,3 +45,8 @@ std::string mila::utils::ReadFile(const std::string &file) {
   auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   return content;
 }
+
+float mila::utils::GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration) {
+  auto digits_per_second = (duration.count() > 0.0f) ? static_cast<float>(number_of_digits) / duration.count() : 0.0f;
+  return digits_per_second;
+}
