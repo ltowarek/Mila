@@ -30,9 +30,11 @@ int main(int argc, char **argv) {
 
   auto mean_shift_initial = mila::meanshift::sequential::MeanShiftImageProcessingProfiler();
   mean_shift_initial.Run(config.input_file, config.output_file, config.bandwidth);
-  auto duration = mean_shift_initial.results().at(mean_shift_initial.main_result());
+  auto result = mean_shift_initial.results().at(mean_shift_initial.main_result());
+  auto duration = mean_shift_initial.results().at(mean_shift_initial.main_duration());
   printf("Initial results\n");
-  printf("Duration [us]: %lld\n", duration);
+  printf("%s: %f\n", mean_shift_initial.main_result().c_str(), result);
+  printf("Duration [us]: %f\n", duration);
   printf("Input file: %s\n", config.input_file.c_str());
   printf("Output file: %s\n", config.output_file.c_str());
   printf("Bandwidth: %f\n", config.bandwidth);
@@ -43,7 +45,7 @@ int main(int argc, char **argv) {
     auto mean_shift = mila::meanshift::sequential::MeanShiftImageProcessingProfiler();
     mean_shift.Run(config.input_file, config.output_file, config.bandwidth);
     duration = mean_shift.results().at(mean_shift.main_result());
-    printf("Iteration: %d, Duration [us]: %lld\n", i, duration);
+    printf("Iteration: %lu, %s: %f, Duration [us]: %f\n", i, mean_shift.main_result().c_str(), result, duration);
     results[i] = duration;
   }
 
