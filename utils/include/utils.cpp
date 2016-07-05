@@ -46,7 +46,7 @@ std::string mila::utils::ReadFile(const std::string &file) {
   return content;
 }
 
-float mila::utils::GetDigitsPerSecond(size_t number_of_digits, std::chrono::duration<float> duration) {
-  auto digits_per_second = (duration.count() > 0.0f) ? static_cast<float>(number_of_digits) / duration.count() : 0.0f;
-  return digits_per_second;
+float mila::utils::GetValuePerSecond(size_t value, std::chrono::duration<float> duration) {
+  auto value_per_second = (duration.count() > 0.0f) ? static_cast<float>(value) / duration.count() : 0.0f;
+  return value_per_second;
 }
