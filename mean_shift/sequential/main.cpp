@@ -44,7 +44,8 @@ int main(int argc, char **argv) {
   for (size_t i = 0; i < config.number_of_iterations; ++i) {
     auto mean_shift = mila::meanshift::sequential::MeanShiftImageProcessingProfiler();
     mean_shift.Run(config.input_file, config.output_file, config.bandwidth);
-    duration = mean_shift.results().at(mean_shift.main_result());
+    result = mean_shift.results().at(mean_shift.main_result());
+    duration = mean_shift.results().at(mean_shift.main_duration());
     printf("Iteration: %lu, %s: %f, Duration [us]: %f\n", i, mean_shift.main_result().c_str(), result, duration);
     results[i] = duration;
   }
