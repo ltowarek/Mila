@@ -27,41 +27,45 @@ Parallel implementation of the mean shift algorithm accepts as an input the foll
 Example input and output of the sequential implementation which uses mean shift with 25.0 bandwidth and 2 iterations:
 
     mean_shift_sequential test_image.png test_image_output.png 25.0 2
+    Mila version: 0.3.0
     Initial results
-    Duration [us]: 6724879
+    Pixels per second: 163.291626
+    Duration [us]: 1837203.000000
     Input file: test_image.png
     Output file: test_image_output.png
-    Iterations
     Bandwidth: 25.000000
-    Iteration: 0, Duration [us]: 6553131
-    Iteration: 1, Duration [us]: 6547231
+    Iterations
+    Iteration: 0, Pixels per second: 165.736603, Duration [us]: 1810101.000000
+    Iteration: 1, Pixels per second: 165.032837, Duration [us]: 1817820.000000
     Statistics
-    Mean: 6550181.000000
-    Median: 6550181.000000
-    Variance: 17405000.000000
-    Standard Deviation: 4171.930009
-    Coefficient of Variation: 0.000637
+    Mean: 1813960.500000
+    Median: 1813960.500000
+    Variance: 29791480.000000
+    Standard Deviation: 5458.157227
+    Coefficient of Variation: 0.003009
 
 ### Parallel
 Example input and output of the parallel implementation which uses mean shift with 25.0 bandwidth on OpenCL platform 0, device 0 and with 2 iterations:
 
     mean_shift_parallel test_image.png test_image_output.png 25.0 0 0 2
+    Mila version: 0.3.0
     Initial results
-    Duration [us]: 562988
+    Pixels per second: 316.364685
+    Duration [us]: 948272.000000
     Platform: NVIDIA CUDA
     Device: GeForce GTX 960
     Input file: test_image.png
     Output file: test_image_output.png
     Bandwidth: 25.000000
     Iterations
-    Iteration: 0, Duration [us]: 235837
-    Iteration: 1, Duration [us]: 242808
+    Iteration: 0, Pixels per second: 1795.554688, Duration [us]: 167079.000000
+    Iteration: 1, Pixels per second: 1793.945190, Duration [us]: 167229.000000
     Statistics
-    Mean: 239322.500000
-    Median: 239322.500000
-    Variance: 24297420.000000
-    Standard Deviation: 4929.241321
-    Coefficient of Variation: 0.020597
+    Mean: 167154.000000
+    Median: 167154.000000
+    Variance: 11250.000000
+    Standard Deviation: 106.066017
+    Coefficient of Variation: 0.000635
 
 ## References
 1. https://spin.atomicobject.com/2015/05/26/mean-shift-clustering/
