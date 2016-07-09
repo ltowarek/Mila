@@ -356,6 +356,7 @@ void mila::nbody::parallel::NBodyParallelWithInputFile::Run(const std::string &i
 
   Initialize();
   auto active_force_positions = ParseInputFile(input_file);
+  number_of_frames_ = active_force_positions.size();
 
   // TODO: Check output of glfw
   glfwInit();

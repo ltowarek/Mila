@@ -51,21 +51,31 @@ mila::nbody::parallel::NBodyParallelWithInputFileProfiler::NBodyParallelWithInpu
                                                                                                                              min_position,
                                                                                                                              max_position,
                                                                                                                              platform_id,
-                                                                                                                             device_id), main_result_("Run") {
+                                                                                                                             device_id),
+                                                                                                  main_result_("Frames per second"),
+                                                                                                  main_duration_("Run") {
 }
 
 void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::Run(const std::string &input_file) {
   auto start_time = std::chrono::high_resolution_clock::now();
   NBodyParallelWithInputFile::Run(input_file);
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-  results_.insert(std::pair<std::string, int64_t>("Run", duration));
+
+  auto duration = std::chrono::duration<float>(end_time - start_time);
+  auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+  results_.insert(std::pair<std::string, float>("Run", duration_us));
+  results_.insert(std::pair<std::string, float>("Interactions per second", mila::utils::GetValuePerSecond((number_of_particles_ * number_of_particles_), duration)));
+  results_.insert(std::pair<std::string, float>("Frames per second", mila::utils::GetValuePerSecond(number_of_frames_, duration)));
 }
 
 std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::main_result() const {
   return main_result_;
 }
 
-std::map<std::string, int64_t> mila::nbody::parallel::NBodyParallelWithInputFileProfiler::results() const {
+std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::main_duration() const {
+  return main_duration_;
+}
+
+std::map<std::string, float> mila::nbody::parallel::NBodyParallelWithInputFileProfiler::results() const {
   return results_;
 }

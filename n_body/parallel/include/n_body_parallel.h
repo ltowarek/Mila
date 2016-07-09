@@ -119,6 +119,8 @@ class NBodyParallelWithInputFile: public NBodyParallelWithView {
   std::vector<cl_float2> ParseInputFile(const std::string &input_file);
   virtual void Run(const std::string &input_file);
   virtual void Run() override;
+ protected:
+  size_t number_of_frames_;
 };
 
 }  // parallel

@@ -30,10 +30,12 @@ class NBodyParallelWithInputFileProfiler: public NBodyParallelWithInputFile {
   void Run(const std::string &input_file) override;
 
   std::string main_result() const;
-  std::map<std::string, int64_t> results() const;
+  std::string main_duration() const;
+  std::map<std::string, float> results() const;
  private:
   const std::string main_result_;
-  std::map<std::string, int64_t> results_;
+  const std::string main_duration_;
+  std::map<std::string, float> results_;
 };
 
 }  // parallel

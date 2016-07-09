@@ -34,9 +34,11 @@ int main(int argc, char **argv) {
                                                                                   config.platform_id,
                                                                                   config.device_id);
   n_body_initial.Run(config.input_file);
-  auto duration = n_body_initial.results().at(n_body_initial.main_result());
+  auto result = n_body_initial.results().at(n_body_initial.main_result());
+  auto duration = n_body_initial.results().at(n_body_initial.main_duration());
   printf("Initial results\n");
-  printf("Duration [us]: %lld\n", duration);
+  printf("%s: %f\n", n_body_initial.main_result().c_str(), result);
+  printf("Duration [us]: %f\n", duration);
   printf("Platform: %s\n", n_body_initial.platform().getName().c_str());
   printf("Device: %s\n", n_body_initial.device().getName().c_str());
   printf("Input file: %s\n", config.input_file.c_str());
@@ -49,8 +51,9 @@ int main(int argc, char **argv) {
                                                                             config.platform_id,
                                                                             config.device_id);
     n_body.Run(config.input_file);
-    duration = n_body.results().at(n_body.main_result());
-    printf("Iteration: %d, Duration [us]: %lld\n", i, duration);
+    result = n_body.results().at(n_body.main_result());
+    duration = n_body.results().at(n_body.main_duration());
+    printf("Iteration: %lu, %s: %f, Duration [us]: %f\n", i, n_body.main_result().c_str(), result, duration);
     results[i] = duration;
   }
 
