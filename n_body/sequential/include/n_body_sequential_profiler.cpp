@@ -18,21 +18,39 @@ mila::nbody::sequential::NBodySequentialWithInputFileProfiler::NBodySequentialWi
                                                                                     int number_of_particles,
                                                                                     float min_position,
                                                                                     float max_position)
-    : NBodySequentialWithInputFile(active_repulsion_force, active_repulsion_min_distance, passive_repulsion_force, passive_repulsion_min_distance, damping_force, central_force, center, number_of_particles, min_position, max_position), main_result_("Run") {
+    : NBodySequentialWithInputFile(active_repulsion_force,
+                                   active_repulsion_min_distance,
+                                   passive_repulsion_force,
+                                   passive_repulsion_min_distance,
+                                   damping_force,
+                                   central_force,
+                                   center,
+                                   number_of_particles,
+                                   min_position,
+                                   max_position),
+      main_result_("Interactions per second"),
+      main_duration_("Run") {
 }
 
 void mila::nbody::sequential::NBodySequentialWithInputFileProfiler::Run(const std::string &input_file) {
   auto start_time = std::chrono::high_resolution_clock::now();
   NBodySequentialWithInputFile::Run(input_file);
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-  results_.insert(std::pair<std::string, int64_t>("Run", duration));
+
+  auto duration = std::chrono::duration<float>(end_time - start_time);
+  auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+  results_.insert(std::pair<std::string, float>("Run", duration_us));
+  results_.insert(std::pair<std::string, float>("Interactions per second", mila::utils::GetValuePerSecond((number_of_particles_ * number_of_particles_), duration)));
 }
 
 std::string mila::nbody::sequential::NBodySequentialWithInputFileProfiler::main_result() const {
   return main_result_;
 }
 
-std::map<std::string, int64_t> mila::nbody::sequential::NBodySequentialWithInputFileProfiler::results() const {
+std::string mila::nbody::sequential::NBodySequentialWithInputFileProfiler::main_duration() const {
+  return main_duration_;
+}
+
+std::map<std::string, float> mila::nbody::sequential::NBodySequentialWithInputFileProfiler::results() const {
   return results_;
 }
