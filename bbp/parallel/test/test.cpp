@@ -173,3 +173,8 @@ TEST(BBPParallelProfilerTest, GetDeviceStatistics) {
   EXPECT_EQ(expected_statistics.read_buffer, statistics.read_buffer);
   EXPECT_EQ(expected_statistics.enqueue_nd_range, statistics.enqueue_nd_range);
 }
+
+TEST(BBPParallelPRofilerTest, GetStringWithAllStatistics) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_STREQ("Build kernel: 0 us, Read Buffer: 0 us, Enqueue ND range: 0 us", statistics.GetStringWithAllStatistics().c_str());
+}

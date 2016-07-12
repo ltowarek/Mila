@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #include "clpp.h"
@@ -19,6 +20,14 @@ struct DeviceStatistics {
   std::chrono::microseconds build_kernel = std::chrono::microseconds(0);
   std::chrono::microseconds enqueue_nd_range = std::chrono::microseconds(0);
   std::chrono::microseconds read_buffer = std::chrono::microseconds(0);
+
+  inline std::string GetStringWithAllStatistics() {
+    std::stringstream stream;
+    stream << "Build kernel: " << build_kernel.count() << " us" <<
+              ", Read Buffer: " << read_buffer.count() << " us" <<
+              ", Enqueue ND range: " << enqueue_nd_range.count() << " us";
+    return stream.str();
+  }
 };
 
 class BBP {
