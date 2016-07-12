@@ -159,8 +159,8 @@ TEST(BBPParallelProfilerTest, TimersComparision) {
   auto cpp_duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
   auto ocl_duration = (event.getProfilingCommandEnd() - event.getProfilingCommandStart()) / 1000;
 
-  printf("OCL duration [us]: %lld\n", ocl_duration);
-  printf("CPP duration [us]: %lld\n", cpp_duration);
+  printf("OCL duration [us]: %lu\n", ocl_duration);
+  printf("CPP duration [us]: %lu\n", cpp_duration);
 
   EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Milisecond precision
 }
