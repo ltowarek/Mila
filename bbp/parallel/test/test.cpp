@@ -164,3 +164,12 @@ TEST(BBPParallelProfilerTest, TimersComparision) {
 
   EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Milisecond precision
 }
+
+TEST(BBPParallelProfilerTest, GetDeviceStatistics) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  auto expected_statistics = mila::bbp::parallel::DeviceStatistics();
+  auto statistics = bbp.GetDeviceStatistics();
+  EXPECT_EQ(expected_statistics.build_kernel, statistics.build_kernel);
+  EXPECT_EQ(expected_statistics.read_buffer, statistics.read_buffer);
+  EXPECT_EQ(expected_statistics.enqueue_nd_range, statistics.enqueue_nd_range);
+}

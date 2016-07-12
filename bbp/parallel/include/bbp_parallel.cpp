@@ -95,3 +95,7 @@ std::string mila::bbp::parallel::BBP::Run(size_t number_of_digits, size_t starti
   }
   return output;
 }
+
+mila::bbp::parallel::DeviceStatistics mila::bbp::parallel::BBP::GetDeviceStatistics() {
+  return mila::bbp::parallel::DeviceStatistics();
+}

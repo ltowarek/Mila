@@ -14,6 +14,13 @@
 namespace mila {
 namespace bbp {
 namespace parallel {
+
+struct DeviceStatistics {
+  std::chrono::microseconds build_kernel = std::chrono::microseconds(0);
+  std::chrono::microseconds enqueue_nd_range = std::chrono::microseconds(0);
+  std::chrono::microseconds read_buffer = std::chrono::microseconds(0);
+};
+
 class BBP {
  public:
   BBP();
@@ -24,6 +31,7 @@ class BBP {
   virtual void Initialize();
   virtual std::string Run(size_t number_of_digits, size_t starting_position);
   std::vector<float> ComputeDigits(size_t number_of_digits, int starting_position);
+  DeviceStatistics GetDeviceStatistics();
 
   float precision() const;
   size_t platform_id() const;
