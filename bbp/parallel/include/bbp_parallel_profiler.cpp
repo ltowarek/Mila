@@ -34,6 +34,8 @@ std::string mila::bbp::parallel::BBPProfiler::Run(size_t number_of_digits, size_
   results_.insert(std::pair<std::string, float>("Digits per second",
                                                 mila::utils::GetValuePerSecond(number_of_digits, duration)));
 
+  GetProfilingInfo();
+
   return output;
 }
 
@@ -49,3 +51,35 @@ std::map<std::string, float> mila::bbp::parallel::BBPProfiler::results() const {
   return results_;
 }
 
+void mila::bbp::parallel::BBPProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
+  auto start_time = std::chrono::high_resolution_clock::now();
+  BBP::BuildProgram(program, device);
+  auto end_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration<float>(end_time - start_time);
+  auto duration_us = static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+  device_statistics_.SetBuildKernelAsMicroseconds(duration_us);
+}
+
+size_t mila::bbp::parallel::BBPProfiler::GetBuildKernelAsMicroseconds() {
+  return device_statistics_.GetBuildKernelAsMicroseconds();
+}
+
+size_t mila::bbp::parallel::BBPProfiler::GetReadBufferAsMicroseconds() {
+  return device_statistics_.GetReadBufferAsMicroseconds();
+}
+
+size_t mila::bbp::parallel::BBPProfiler::GetEnqueueNDRangeAsMicroseconds() {
+  return device_statistics_.GetEnqueueNDRangeAsMicroseconds();
+}
+
+void mila::bbp::parallel::BBPProfiler::GetProfilingInfo() {
+  if (events_.read_buffer != nullptr) {
+    device_statistics_.SetReadBufferAsMicroseconds(
+        events_.read_buffer.getProfilingCommandEnd() - events_.read_buffer.getProfilingCommandStart());
+  }
+  if (events_.enqueue_nd_range != nullptr) {
+    device_statistics_.SetEnqueueNDRangeAsMicroseconds(
+        events_.enqueue_nd_range.getProfilingCommandEnd() - events_.enqueue_nd_range.getProfilingCommandStart());
+  }
+}

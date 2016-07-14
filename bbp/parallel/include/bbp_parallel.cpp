@@ -54,18 +54,15 @@ void mila::bbp::parallel::BBP::Initialize() {
   device_ = devices.at(device_id_);
 
   context_ = clpp::Context(device_);
-  queue_ = clpp::Queue(context_, device_);
+  queue_ = clpp::Queue(context_, device_, CL_QUEUE_PROFILING_ENABLE);
 
   const auto source_file_name = "bbp.cl";
   const auto kernel_name = std::string("bbp");
   auto source_file = mila::utils::ReadFile(source_file_name);
   auto program = clpp::Program(context_, source_file);
 
-  try {
-    program.build(device_);
-  } catch(const clpp::Error& error) {
-    printf("%s\n", program.getBuildLog(device_).c_str());
-  }
+  BuildProgram(program, device_);
+
   kernel_ = clpp::Kernel(program, kernel_name.c_str());
 }
 
@@ -80,8 +77,8 @@ std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digi
   auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
   kernel_.setArgs(starting_position, output_buffer);
   auto global_work_size = std::vector<size_t>{number_of_digits};
-  queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
-  queue_.readBuffer(output_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
+  events_.enqueue_nd_range = queue_.enqueueNDRangeKernel(kernel_, global_work_size);
+  events_.read_buffer = queue_.enqueueReadBuffer(output_buffer, 0, output.size() * sizeof(output.at(0)), output.data(), {events_.enqueue_nd_range});
 
   return output;
 }
@@ -96,6 +93,10 @@ std::string mila::bbp::parallel::BBP::Run(size_t number_of_digits, size_t starti
   return output;
 }
 
-mila::bbp::parallel::DeviceStatistics mila::bbp::parallel::BBP::GetDeviceStatistics() {
-  return mila::bbp::parallel::DeviceStatistics();
+void mila::bbp::parallel::BBP::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
+  try {
+    program.build(device);
+  } catch(const clpp::Error& error) {
+    printf("%s\n", program.getBuildLog(device).c_str());
+  }
 }

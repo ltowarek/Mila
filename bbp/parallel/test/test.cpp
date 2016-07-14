@@ -122,6 +122,24 @@ TEST(BBPParallelProfilerTest, InitializeWithProfiling) {
   EXPECT_EQ(bbp.results().count("Initialize"), 1);
 }
 
+TEST(BBPParallelProfilerTest, GetBuildKernelAsMicroseconds) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Initialize();
+  EXPECT_GT(bbp.GetBuildKernelAsMicroseconds(), 0);
+}
+
+TEST(BBPParallelProfilerTest, GetReadBufferAsMicroseconds) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_GT(bbp.GetReadBufferAsMicroseconds(), 0);
+}
+
+TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_GT(bbp.GetEnqueueNDRangeAsMicroseconds(), 0);
+}
+
 TEST(BBPParallelProfilerTest, TimersComparision) {
   const auto platforms = clpp::Platform::get();
   auto platform = platforms.at(0);
@@ -162,19 +180,58 @@ TEST(BBPParallelProfilerTest, TimersComparision) {
   printf("OCL duration [us]: %lu\n", ocl_duration);
   printf("CPP duration [us]: %lu\n", cpp_duration);
 
-  EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Milisecond precision
+  EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Millisecond precision
 }
 
-TEST(BBPParallelProfilerTest, GetDeviceStatistics) {
-  auto bbp = mila::bbp::parallel::BBPProfiler();
-  auto expected_statistics = mila::bbp::parallel::DeviceStatistics();
-  auto statistics = bbp.GetDeviceStatistics();
-  EXPECT_EQ(expected_statistics.build_kernel, statistics.build_kernel);
-  EXPECT_EQ(expected_statistics.read_buffer, statistics.read_buffer);
-  EXPECT_EQ(expected_statistics.enqueue_nd_range, statistics.enqueue_nd_range);
-}
-
-TEST(BBPParallelPRofilerTest, GetStringWithAllStatistics) {
+TEST(DeviceStatisticsTest, GetDeviceStatisticsAsString) {
   auto statistics = mila::bbp::parallel::DeviceStatistics();
-  EXPECT_STREQ("Build kernel: 0 us, Read Buffer: 0 us, Enqueue ND range: 0 us", statistics.GetStringWithAllStatistics().c_str());
+  EXPECT_STREQ("Build kernel: 0 us, Read buffer: 0 us, Enqueue ND range: 0 us", statistics.GetDeviceStatisticsAsString().c_str());
+}
+
+TEST(DeviceStatisticsTest, GetBuildKernelAsString) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_STREQ("Build kernel: 0 us", statistics.GetBuildKernelAsString().c_str());
+}
+
+TEST(DeviceStatisticsTest, GetBuildKernelAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_EQ(std::chrono::microseconds(0).count(), statistics.GetBuildKernelAsMicroseconds());
+}
+
+TEST(DeviceStatisticsTest, SetBuildKernelAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  statistics.SetBuildKernelAsMicroseconds(1000);
+  EXPECT_EQ(std::chrono::microseconds(1000).count(), statistics.GetBuildKernelAsMicroseconds());
+}
+
+TEST(DeviceStatisticsTest, GetReadBufferAsString) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_STREQ("Read buffer: 0 us", statistics.GetReadBufferAsString().c_str());
+}
+
+TEST(DeviceStatisticsTest, GetReadBufferAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_EQ(std::chrono::microseconds(0).count(), statistics.GetReadBufferAsMicroseconds());
+}
+
+TEST(DeviceStatisticsTest, SetReadBufferAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  statistics.SetReadBufferAsMicroseconds(1000);
+  EXPECT_EQ(std::chrono::microseconds(1000).count(), statistics.GetReadBufferAsMicroseconds());
+}
+
+TEST(DeviceStatisticsTest, GetEnqueueNDRangeAsString) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_STREQ("Enqueue ND range: 0 us", statistics.GetEnqueueNDRangeAsString().c_str());
+}
+
+TEST(DeviceStatisticsTest, GetEnqueueNDRangeAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  EXPECT_EQ(std::chrono::microseconds(0).count(), statistics.GetEnqueueNDRangeAsMicroseconds());
+}
+
+TEST(DeviceStatisticsTest, SetEnqueueNDRangeAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::DeviceStatistics();
+  statistics.SetEnqueueNDRangeAsMicroseconds(1000);
+  EXPECT_EQ(std::chrono::microseconds(1000).count(), statistics.GetEnqueueNDRangeAsMicroseconds());
 }
