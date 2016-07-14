@@ -75,11 +75,15 @@ size_t mila::bbp::parallel::BBPProfiler::GetEnqueueNDRangeAsMicroseconds() {
 
 void mila::bbp::parallel::BBPProfiler::GetProfilingInfo() {
   if (events_.read_buffer != nullptr) {
-    device_statistics_.SetReadBufferAsMicroseconds(
-        events_.read_buffer.getProfilingCommandEnd() - events_.read_buffer.getProfilingCommandStart());
+    device_statistics_.SetReadBufferAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.read_buffer));
   }
   if (events_.enqueue_nd_range != nullptr) {
-    device_statistics_.SetEnqueueNDRangeAsMicroseconds(
-        events_.enqueue_nd_range.getProfilingCommandEnd() - events_.enqueue_nd_range.getProfilingCommandStart());
+    device_statistics_.SetEnqueueNDRangeAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.enqueue_nd_range));
   }
+}
+
+size_t mila::bbp::parallel::BBPProfiler::GetProfilingInfoAsMicroseconds(clpp::Event event) {
+  auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
+  auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
+  return static_cast<size_t>(microseconds.count());
 }

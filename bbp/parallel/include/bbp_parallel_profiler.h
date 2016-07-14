@@ -26,6 +26,7 @@ class BBPProfiler : public BBP {
  private:
   void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
   void GetProfilingInfo();
+  size_t GetProfilingInfoAsMicroseconds(clpp::Event);
 
   const std::string main_result_;
   const std::string main_duration_;
