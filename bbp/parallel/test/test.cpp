@@ -183,55 +183,55 @@ TEST(BBPParallelProfilerTest, TimersComparision) {
   EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Millisecond precision
 }
 
-TEST(DeviceStatisticsTest, GetDeviceStatisticsAsString) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
-  EXPECT_STREQ("Build kernel: 0 us, Read buffer: 0 us, Enqueue ND range: 0 us", statistics.GetDeviceStatisticsAsString().c_str());
+TEST(OpenCLStatisticsTest, GetOpenCLStatisticsAsString) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
+  EXPECT_STREQ("Build kernel: 0 us, Read buffer: 0 us, Enqueue ND range: 0 us", statistics.GetOpenCLStatisticsAsString().c_str());
 }
 
-TEST(DeviceStatisticsTest, GetBuildKernelAsString) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, GetBuildKernelAsString) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   EXPECT_STREQ("Build kernel: 0 us", statistics.GetBuildKernelAsString().c_str());
 }
 
-TEST(DeviceStatisticsTest, GetBuildKernelAsMicroseconds) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, GetBuildKernelAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   EXPECT_EQ(std::chrono::microseconds(0).count(), statistics.GetBuildKernelAsMicroseconds());
 }
 
-TEST(DeviceStatisticsTest, SetBuildKernelAsMicroseconds) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, SetBuildKernelAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   statistics.SetBuildKernelAsMicroseconds(1000);
   EXPECT_EQ(std::chrono::microseconds(1000).count(), statistics.GetBuildKernelAsMicroseconds());
 }
 
-TEST(DeviceStatisticsTest, GetReadBufferAsString) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, GetReadBufferAsString) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   EXPECT_STREQ("Read buffer: 0 us", statistics.GetReadBufferAsString().c_str());
 }
 
-TEST(DeviceStatisticsTest, GetReadBufferAsMicroseconds) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, GetReadBufferAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   EXPECT_EQ(std::chrono::microseconds(0).count(), statistics.GetReadBufferAsMicroseconds());
 }
 
-TEST(DeviceStatisticsTest, SetReadBufferAsMicroseconds) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, SetReadBufferAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   statistics.SetReadBufferAsMicroseconds(1000);
   EXPECT_EQ(std::chrono::microseconds(1000).count(), statistics.GetReadBufferAsMicroseconds());
 }
 
-TEST(DeviceStatisticsTest, GetEnqueueNDRangeAsString) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, GetEnqueueNDRangeAsString) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   EXPECT_STREQ("Enqueue ND range: 0 us", statistics.GetEnqueueNDRangeAsString().c_str());
 }
 
-TEST(DeviceStatisticsTest, GetEnqueueNDRangeAsMicroseconds) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, GetEnqueueNDRangeAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   EXPECT_EQ(std::chrono::microseconds(0).count(), statistics.GetEnqueueNDRangeAsMicroseconds());
 }
 
-TEST(DeviceStatisticsTest, SetEnqueueNDRangeAsMicroseconds) {
-  auto statistics = mila::bbp::parallel::DeviceStatistics();
+TEST(OpenCLStatisticsTest, SetEnqueueNDRangeAsMicroseconds) {
+  auto statistics = mila::bbp::parallel::OpenCLStatistics();
   statistics.SetEnqueueNDRangeAsMicroseconds(1000);
   EXPECT_EQ(std::chrono::microseconds(1000).count(), statistics.GetEnqueueNDRangeAsMicroseconds());
 }

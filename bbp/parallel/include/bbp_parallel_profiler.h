@@ -31,7 +31,7 @@ class BBPProfiler : public BBP {
   const std::string main_result_;
   const std::string main_duration_;
   std::map<std::string, float> results_;
-  DeviceStatistics device_statistics_;
+  OpenCLStatistics device_statistics_;
 };
 };  // parallel
 };  // bbp

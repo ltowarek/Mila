@@ -16,7 +16,7 @@ namespace mila {
 namespace bbp {
 namespace parallel {
 
-class DeviceStatistics {
+class OpenCLStatistics {
  public:
   inline size_t GetBuildKernelAsMicroseconds() {
     return static_cast<size_t>(build_kernel_.count());
@@ -54,7 +54,7 @@ class DeviceStatistics {
     return GetStatisticsAsString("Enqueue ND range", static_cast<size_t>(enqueue_nd_range_.count()));
   }
 
-  inline std::string GetDeviceStatisticsAsString() {
+  inline std::string GetOpenCLStatisticsAsString() {
     std::stringstream stream;
     stream << GetBuildKernelAsString() << ", " << GetReadBufferAsString() << ", " << GetEnqueueNDRangeAsString();
     return stream.str();
