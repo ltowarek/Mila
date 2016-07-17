@@ -48,22 +48,30 @@ Example input and output of the parallel implementation which computes 100 digit
     bbp_parallel 100 500 0 0 2
     Mila version: 0.3.0
     Initial results
-    Digits per second: 1094.009521
-    Duration [us]: 91406.000000
+    Digits per second: 1214.828369
+    Duration: 82316.000000 us
     Platform: NVIDIA CUDA
     Device: GeForce GTX 960
     Number of Digits: 100
     Starting Position: 500
     PI in hex: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
     Iterations
-    Iteration: 0, Digits per second: 1349.754883, Duration [us]: 74087.000000
-    Iteration: 1, Digits per second: 1533.922485, Duration [us]: 65192.000000
+    Iteration: 0
+    Host statistics:
+    Duration: 75768.000000 us, Digits per second: 1319.804932
+    OpenCL statistics:
+    Build kernel: 387 us, Read buffer: 3 us, Enqueue ND range: 6345 us
+    Iteration: 1
+    Host statistics:
+    Duration: 73619.000000 us, Digits per second: 1358.330566
+    OpenCL statistics:
+    Build kernel: 405 us, Read buffer: 3 us, Enqueue ND range: 5669 us
     Statistics
-    Mean: 1441.838623
-    Median: 1441.838623
-    Variance: 16958.851562
-    Standard Deviation: 130.226151
-    Coefficient of Variation: 0.090320
+    Mean: 1339.067749
+    Median: 1339.067749
+    Variance: 742.112244
+    Standard Deviation: 27.241737
+    Coefficient of Variation: 0.020344
 
 ## References
 1. http://www.davidhbailey.com/dhbpapers/bbp-alg.pdf
