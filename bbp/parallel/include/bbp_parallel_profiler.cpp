@@ -73,6 +73,10 @@ size_t mila::bbp::parallel::BBPProfiler::GetEnqueueNDRangeAsMicroseconds() {
   return device_statistics_.GetEnqueueNDRangeAsMicroseconds();
 }
 
+std::string mila::bbp::parallel::BBPProfiler::GetOpenCLStatisticsAsString() {
+  return device_statistics_.GetOpenCLStatisticsAsString();
+}
+
 void mila::bbp::parallel::BBPProfiler::GetProfilingInfo() {
   if (events_.read_buffer != nullptr) {
     device_statistics_.SetReadBufferAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.read_buffer));

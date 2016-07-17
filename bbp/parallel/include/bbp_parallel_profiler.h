@@ -19,6 +19,7 @@ class BBPProfiler : public BBP {
   size_t GetBuildKernelAsMicroseconds();
   size_t GetReadBufferAsMicroseconds();
   size_t GetEnqueueNDRangeAsMicroseconds();
+  std::string GetOpenCLStatisticsAsString();
 
   std::string main_result() const;
   std::string main_duration() const;

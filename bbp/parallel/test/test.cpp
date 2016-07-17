@@ -140,6 +140,11 @@ TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
   EXPECT_GT(bbp.GetEnqueueNDRangeAsMicroseconds(), 0);
 }
 
+TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsString) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  EXPECT_STREQ("Build kernel: 0 us, Read buffer: 0 us, Enqueue ND range: 0 us", bbp.GetOpenCLStatisticsAsString().c_str());
+}
+
 TEST(BBPParallelProfilerTest, TimersComparision) {
   const auto platforms = clpp::Platform::get();
   auto platform = platforms.at(0);

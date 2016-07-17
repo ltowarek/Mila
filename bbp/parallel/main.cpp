@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
   auto duration = bbp_initial.results().at(bbp_initial.main_duration());
   printf("Initial results\n");
   printf("%s: %f\n", bbp_initial.main_result().c_str(), result);
-  printf("Duration [us]: %f\n", duration);
+  printf("Duration: %f us\n", duration);
   printf("Platform: %s\n", bbp_initial.platform().getName().c_str());
   printf("Device: %s\n", bbp_initial.device().getName().c_str());
   printf("Number of Digits: %lu\n", config.number_of_digits);
@@ -49,7 +49,11 @@ int main(int argc, char **argv) {
     bbp.Run(config.number_of_digits, config.starting_position);
     result = bbp.results().at(bbp.main_result());
     duration = bbp.results().at(bbp.main_duration());
-    printf("Iteration: %lu, %s: %f, Duration [us]: %f\n", i, bbp.main_result().c_str(), result, duration);
+    printf("Iteration: %lu\n", i);
+    printf("Host statistics:\n");
+    printf("Duration: %f us, %s: %f\n", duration, bbp_initial.main_result().c_str(), result);
+    printf("OpenCL statistics:\n");
+    printf("%s\n", bbp.GetOpenCLStatisticsAsString().c_str());
     results[i] = result;
   }
 
