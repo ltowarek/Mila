@@ -50,22 +50,30 @@ Example input and output of the parallel implementation which uses mean shift wi
     mean_shift_parallel test_image.png test_image_output.png 25.0 0 0 2
     Mila version: 0.3.0
     Initial results
-    Pixels per second: 316.364685
-    Duration [us]: 948272.000000
+    Pixels per second: 1221.169800
+    Duration [us]: 245666.000000
     Platform: NVIDIA CUDA
     Device: GeForce GTX 960
     Input file: test_image.png
     Output file: test_image_output.png
     Bandwidth: 25.000000
     Iterations
-    Iteration: 0, Pixels per second: 1795.554688, Duration [us]: 167079.000000
-    Iteration: 1, Pixels per second: 1793.945190, Duration [us]: 167229.000000
+    Iteration: 0
+    Host statistics:
+    Duration: 193581.000000 us, Pixels per second: 1549.733276
+    OpenCL statistics:
+    Build kernel: 107 us, Copy buffer: 1098 us, Read buffer: 108427 us, Enqueue ND range: 507 us
+    Iteration: 1
+    Host statistics:
+    Duration: 182951.000000 us, Pixels per second: 1639.774658
+    OpenCL statistics:
+    Build kernel: 108 us, Copy buffer: 1202 us, Read buffer: 103034 us, Enqueue ND range: 505 us
     Statistics
-    Mean: 167154.000000
-    Median: 167154.000000
-    Variance: 11250.000000
-    Standard Deviation: 106.066017
-    Coefficient of Variation: 0.000635
+    Mean: 188266.000000
+    Median: 188266.000000
+    Variance: 56498448.000000
+    Standard Deviation: 7516.544922
+    Coefficient of Variation: 0.039925
 
 ## References
 1. https://spin.atomicobject.com/2015/05/26/mean-shift-clustering/
