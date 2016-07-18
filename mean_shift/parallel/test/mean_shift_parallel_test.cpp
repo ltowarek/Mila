@@ -431,6 +431,13 @@ TEST(MeanShiftParallelProfilerTest, Run) {
   }
 }
 
+TEST(MeanShiftParallelProfilerTest, InitializeWithProfiling) {
+  mila::meanshift::parallel::MeanShiftProfiler mean_shift;
+  EXPECT_EQ(mean_shift.results().count("Initialize"), 0);
+  mean_shift.Initialize();
+  EXPECT_EQ(mean_shift.results().count("Initialize"), 1);
+}
+
 TEST(MeanShiftParallelProfilerTest, RunWithProfiling) {
   mila::meanshift::parallel::MeanShiftProfiler mean_shift;
 
@@ -446,6 +453,69 @@ TEST(MeanShiftParallelProfilerTest, RunWithProfiling) {
   mean_shift.Run(points, bandwidth);
   EXPECT_EQ(mean_shift.results().count("Run"), 1);
   EXPECT_EQ(mean_shift.results().count("Points per second"), 1);
+}
+
+TEST(MeanShiftParallelProfilerTest, GetBuildKernelAsMicroseconds) {
+  auto mean_shift = mila::meanshift::parallel::MeanShiftProfiler();
+  mean_shift.Initialize();
+  EXPECT_GT(mean_shift.GetBuildKernelAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftParallelProfilerTest, GetCopyBufferAsMicroseconds) {
+  std::vector<cl_float4> points = {{0.0f, 1.0f, 0.0f, 0.0f},
+                                   {2.0f, 3.0f, 0.0f, 0.0f},
+                                   {10.0f, 11.0f, 0.0f, 0.0f},
+                                   {12.0f, 13.0f, 0.0f, 0.0f}
+  };
+  float bandwidth = 3.0f;
+
+  auto meanshift = mila::meanshift::parallel::MeanShiftProfiler();
+  meanshift.Run(points, bandwidth);
+  EXPECT_GT(meanshift.GetCopyBufferAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftParallelProfilerTest, GetReadBufferAsMicroseconds) {
+  std::vector<cl_float4> points = {{0.0f, 1.0f, 0.0f, 0.0f},
+                                   {2.0f, 3.0f, 0.0f, 0.0f},
+                                   {10.0f, 11.0f, 0.0f, 0.0f},
+                                   {12.0f, 13.0f, 0.0f, 0.0f}
+  };
+  float bandwidth = 3.0f;
+
+  auto meanshift = mila::meanshift::parallel::MeanShiftProfiler();
+  meanshift.Run(points, bandwidth);
+  EXPECT_GT(meanshift.GetReadBufferAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
+  std::vector<cl_float4> points = {{0.0f, 1.0f, 0.0f, 0.0f},
+                                   {2.0f, 3.0f, 0.0f, 0.0f},
+                                   {10.0f, 11.0f, 0.0f, 0.0f},
+                                   {12.0f, 13.0f, 0.0f, 0.0f}
+  };
+  float bandwidth = 3.0f;
+
+  auto meanshift = mila::meanshift::parallel::MeanShiftProfiler();
+  meanshift.Run(points, bandwidth);
+  EXPECT_GT(meanshift.GetEnqueueNDRangeAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftParallelProfilerTest, GetOpenCLStatisticsAsString) {
+  auto meanshift = mila::meanshift::parallel::MeanShiftProfiler();
+  EXPECT_STREQ("", meanshift.GetOpenCLStatisticsAsString().c_str());
+}
+
+TEST(MeanShiftParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
+  std::vector<cl_float4> points = {{0.0f, 1.0f, 0.0f, 0.0f},
+                                   {2.0f, 3.0f, 0.0f, 0.0f},
+                                   {10.0f, 11.0f, 0.0f, 0.0f},
+                                   {12.0f, 13.0f, 0.0f, 0.0f}
+  };
+  float bandwidth = 3.0f;
+
+  auto meanshift = mila::meanshift::parallel::MeanShiftProfiler();
+  meanshift.Run(points, bandwidth);
+  EXPECT_STRNE("", meanshift.GetOpenCLStatisticsAsString().c_str());
 }
 
 TEST(MeanShiftParallelImageProcessingTest, DefaultConstructor) {
@@ -644,4 +714,55 @@ TEST(MeanShiftParallelImageProcessingProfilerTest, RunWithImageWithProfiling) {
   mean_shift.Run(input_file, output_file, bandwidth);
   EXPECT_EQ(mean_shift.results().count("RunWithImage"), 1);
   EXPECT_EQ(mean_shift.results().count("Pixels per second"), 1);
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, GetBuildKernelAsMicroseconds) {
+  mila::meanshift::parallel::MeanShiftImageProcessingProfiler mean_shift;
+  mean_shift.Initialize();
+  EXPECT_GT(mean_shift.GetBuildKernelAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, GetCopyBufferAsMicroseconds) {
+  mila::meanshift::parallel::MeanShiftImageProcessingProfiler mean_shift;
+  std::string input_file = "test_image.png";
+  std::string output_file = "test_image_output.png";
+  float bandwidth = 25.0f;
+
+  mean_shift.Run(input_file, output_file, bandwidth);
+  EXPECT_GT(mean_shift.GetCopyBufferAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, GetReadBufferAsMicroseconds) {
+  mila::meanshift::parallel::MeanShiftImageProcessingProfiler mean_shift;
+  std::string input_file = "test_image.png";
+  std::string output_file = "test_image_output.png";
+  float bandwidth = 25.0f;
+
+  mean_shift.Run(input_file, output_file, bandwidth);
+  EXPECT_GT(mean_shift.GetReadBufferAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
+  mila::meanshift::parallel::MeanShiftImageProcessingProfiler mean_shift;
+  std::string input_file = "test_image.png";
+  std::string output_file = "test_image_output.png";
+  float bandwidth = 25.0f;
+
+  mean_shift.Run(input_file, output_file, bandwidth);
+  EXPECT_GT(mean_shift.GetEnqueueNDRangeAsMicroseconds(), 0);
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, GetOpenCLStatisticsAsString) {
+  auto mean_shift = mila::meanshift::parallel::MeanShiftImageProcessingProfiler();
+  EXPECT_STREQ("", mean_shift.GetOpenCLStatisticsAsString().c_str());
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
+  mila::meanshift::parallel::MeanShiftImageProcessingProfiler mean_shift;
+  std::string input_file = "test_image.png";
+  std::string output_file = "test_image_output.png";
+  float bandwidth = 25.0f;
+
+  mean_shift.Run(input_file, output_file, bandwidth);
+  EXPECT_STRNE("", mean_shift.GetOpenCLStatisticsAsString().c_str());
 }

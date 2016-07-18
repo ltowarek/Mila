@@ -16,6 +16,12 @@ std::string ReadFile(const std::string &file);
 float GetValuePerSecond(size_t value, std::chrono::duration<float> duration);
 
 template<typename T>
+T Sum(const std::vector<T> &values) {
+  auto sum = std::accumulate(values.begin(), values.end(), 0.0f);
+  return static_cast<T>(sum);
+}
+
+template<typename T>
 T Median(const std::vector<T> &values) {
   auto tmp_values = values;
   std::sort(tmp_values.begin(), tmp_values.end());
@@ -30,7 +36,7 @@ T Median(const std::vector<T> &values) {
 
 template<typename T>
 T Mean(const std::vector<T> &values) {
-  auto sum = std::accumulate(values.begin(), values.end(), 0.0f);
+  auto sum = Sum(values);
   auto mean = sum / values.size();
   return static_cast<T>(mean);
 }

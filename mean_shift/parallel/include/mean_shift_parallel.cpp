@@ -100,7 +100,7 @@ void mila::meanshift::parallel::MeanShift::Initialize() {
   device_ = devices.at(device_id_);
 
   context_ = clpp::Context(device_);
-  queue_ = clpp::Queue(context_, device_);
+  queue_ = clpp::Queue(context_, device_, CL_QUEUE_PROFILING_ENABLE);
 
   const auto source_file_name = "mean_shift.cl";
   const auto kernel_name = std::string("MeanShift");

@@ -48,6 +48,11 @@ TEST(UtilsTest, Median) {
   EXPECT_NEAR(mila::utils::Median(values), 3.0f, 1e-5);
 }
 
+TEST(UtilsTest, Sum) {
+  std::vector<float> values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
+  EXPECT_NEAR(mila::utils::Sum(values), 55.0f, 1e-5);
+}
+
 TEST(UtilsTest, ReadFile) {
   // TODO: Replace real file with mocked data
   EXPECT_STREQ(mila::utils::ReadFile("test.txt").c_str(), "Test file content");

@@ -39,6 +39,65 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShiftProfiler::Run(const s
   auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
   results_.insert(std::pair<std::string, float>("Run", duration_us));
   results_.insert(std::pair<std::string, float>("Points per second", mila::utils::GetValuePerSecond(points.size(), duration)));
+
+  GetProfilingInfo();
+
+  return output;
+}
+
+void mila::meanshift::parallel::MeanShiftProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
+  auto start_time = std::chrono::high_resolution_clock::now();
+  MeanShift::BuildProgram(program, device);
+  auto end_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration<float>(end_time - start_time);
+  auto duration_us = static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+  device_statistics_.SetBuildKernelAsMicroseconds(duration_us);
+}
+
+size_t mila::meanshift::parallel::MeanShiftProfiler::GetBuildKernelAsMicroseconds() {
+  return device_statistics_.GetBuildKernelAsMicroseconds();
+}
+
+size_t mila::meanshift::parallel::MeanShiftProfiler::GetCopyBufferAsMicroseconds() {
+  return device_statistics_.GetCopyBufferAsMicroseconds();
+}
+
+size_t mila::meanshift::parallel::MeanShiftProfiler::GetReadBufferAsMicroseconds() {
+  return device_statistics_.GetReadBufferAsMicroseconds();
+}
+
+size_t mila::meanshift::parallel::MeanShiftProfiler::GetEnqueueNDRangeAsMicroseconds() {
+  return device_statistics_.GetEnqueueNDRangeAsMicroseconds();
+}
+
+std::string mila::meanshift::parallel::MeanShiftProfiler::GetOpenCLStatisticsAsString() {
+  return device_statistics_.GetOpenCLStatisticsAsString();
+}
+
+void mila::meanshift::parallel::MeanShiftProfiler::GetProfilingInfo() {
+  if (!events_.copy_buffer.empty()) {
+    device_statistics_.SetCopyBufferAsMicroseconds(mila::utils::Sum(GetProfilingInfoAsMicroseconds(events_.copy_buffer)));
+  }
+  if (!events_.read_buffer_with_distances.empty()) {
+    device_statistics_.SetReadBufferAsMicroseconds(mila::utils::Sum(GetProfilingInfoAsMicroseconds(events_.read_buffer_with_distances)));
+  }
+  if (!events_.enqueue_nd_range.empty()) {
+    device_statistics_.SetEnqueueNDRangeAsMicroseconds(mila::utils::Sum(GetProfilingInfoAsMicroseconds(events_.enqueue_nd_range)));
+  }
+}
+
+size_t mila::meanshift::parallel::MeanShiftProfiler::GetProfilingInfoAsMicroseconds(clpp::Event event) {
+  auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
+  auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
+  return static_cast<size_t>(microseconds.count());
+}
+
+std::vector<size_t> mila::meanshift::parallel::MeanShiftProfiler::GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events) {
+  auto output = std::vector<size_t>();
+  for (int i = 0; i < events.size(); ++i) {
+    output.push_back(GetProfilingInfoAsMicroseconds(events[i]));
+  }
   return output;
 }
 
@@ -112,6 +171,64 @@ void mila::meanshift::parallel::MeanShiftImageProcessingProfiler::Run(const std:
   auto channels_per_pixel = 4;
   results_.insert(std::pair<std::string, float>("RunWithImage", duration_us));
   results_.insert(std::pair<std::string, float>("Pixels per second", mila::utils::GetValuePerSecond(number_of_points_ / channels_per_pixel, duration)));
+
+  GetProfilingInfo();
+}
+
+void mila::meanshift::parallel::MeanShiftImageProcessingProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
+  auto start_time = std::chrono::high_resolution_clock::now();
+  MeanShift::BuildProgram(program, device);
+  auto end_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration<float>(end_time - start_time);
+  auto duration_us = static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+  device_statistics_.SetBuildKernelAsMicroseconds(duration_us);
+}
+
+size_t mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetBuildKernelAsMicroseconds() {
+  return device_statistics_.GetBuildKernelAsMicroseconds();
+}
+
+size_t mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetCopyBufferAsMicroseconds() {
+  return device_statistics_.GetCopyBufferAsMicroseconds();
+}
+
+size_t mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetReadBufferAsMicroseconds() {
+  return device_statistics_.GetReadBufferAsMicroseconds();
+}
+
+size_t mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetEnqueueNDRangeAsMicroseconds() {
+  return device_statistics_.GetEnqueueNDRangeAsMicroseconds();
+}
+
+std::string mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetOpenCLStatisticsAsString() {
+  return device_statistics_.GetOpenCLStatisticsAsString();
+}
+
+void mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetProfilingInfo() {
+  if (!events_.copy_buffer.empty()) {
+    device_statistics_.SetCopyBufferAsMicroseconds(mila::utils::Sum(GetProfilingInfoAsMicroseconds(events_.copy_buffer)));
+  }
+  if (!events_.read_buffer_with_distances.empty()) {
+    device_statistics_.SetReadBufferAsMicroseconds(mila::utils::Sum(GetProfilingInfoAsMicroseconds(events_.read_buffer_with_distances)));
+  }
+  if (!events_.enqueue_nd_range.empty()) {
+    device_statistics_.SetEnqueueNDRangeAsMicroseconds(mila::utils::Sum(GetProfilingInfoAsMicroseconds(events_.enqueue_nd_range)));
+  }
+}
+
+size_t mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetProfilingInfoAsMicroseconds(clpp::Event event) {
+  auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
+  auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
+  return static_cast<size_t>(microseconds.count());
+}
+
+std::vector<size_t> mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events) {
+  auto output = std::vector<size_t>();
+  for (int i = 0; i < events.size(); ++i) {
+    output.push_back(GetProfilingInfoAsMicroseconds(events[i]));
+  }
+  return output;
 }
 
 std::string mila::meanshift::parallel::MeanShiftImageProcessingProfiler::main_result() const {

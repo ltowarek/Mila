@@ -32,7 +32,7 @@ class MeanShift {
   clpp::Context context() const;
   clpp::Queue queue() const;
   clpp::Kernel kernel() const;
- private:
+ protected:
   virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device);
   void UpdateEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
 

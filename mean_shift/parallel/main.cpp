@@ -53,7 +53,11 @@ int main(int argc, char **argv) {
     mean_shift.Run(config.input_file, config.output_file, config.bandwidth);
     result = mean_shift.results().at(mean_shift.main_result());
     duration = mean_shift.results().at(mean_shift.main_duration());
-    printf("Iteration: %lu, %s: %f, Duration [us]: %f\n", i, mean_shift.main_result().c_str(), result, duration);
+    printf("Iteration: %lu\n", i);
+    printf("Host statistics:\n");
+    printf("Duration: %f us, %s: %f\n", duration, mean_shift.main_result().c_str(), result);
+    printf("OpenCL statistics:\n");
+    printf("%s\n", mean_shift.GetOpenCLStatisticsAsString().c_str());
     results[i] = duration;
   }
 
@@ -66,4 +70,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-

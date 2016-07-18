@@ -12,6 +12,18 @@ std::string mila::statistics::OpenCLStatistics::GetBuildKernelAsString() {
   return GetStatisticsAsString("Build kernel", static_cast<size_t>(build_kernel_.count()));
 }
 
+size_t mila::statistics::OpenCLStatistics::GetCopyBufferAsMicroseconds() {
+  return static_cast<size_t>(copy_buffer_.count());
+}
+
+void mila::statistics::OpenCLStatistics::SetCopyBufferAsMicroseconds(size_t microseconds) {
+  copy_buffer_ = std::chrono::microseconds(microseconds);
+}
+
+std::string mila::statistics::OpenCLStatistics::GetCopyBufferAsString() {
+  return GetStatisticsAsString("Copy buffer", static_cast<size_t>(copy_buffer_.count()));
+}
+
 size_t mila::statistics::OpenCLStatistics::GetReadBufferAsMicroseconds() {
   return static_cast<size_t>(read_buffer_.count());
 }
@@ -38,7 +50,18 @@ std::string mila::statistics::OpenCLStatistics::GetEnqueueNDRangeAsString() {
 
 std::string mila::statistics::OpenCLStatistics::GetOpenCLStatisticsAsString() {
   std::stringstream stream;
-  stream << GetBuildKernelAsString() << ", " << GetReadBufferAsString() << ", " << GetEnqueueNDRangeAsString();
+  if (build_kernel_.count() > 0) {
+    stream << GetBuildKernelAsString() << ", ";
+  }
+  if (copy_buffer_.count() > 0) {
+    stream << GetCopyBufferAsString() << ", ";
+  }
+  if (read_buffer_.count() > 0) {
+    stream << GetReadBufferAsString() << ", ";
+  }
+  if (enqueue_nd_range_.count() > 0) {
+    stream << GetEnqueueNDRangeAsString();
+  }
   return stream.str();
 }
 

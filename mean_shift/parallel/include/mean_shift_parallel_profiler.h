@@ -5,6 +5,8 @@
 #include <map>
 
 #include "mean_shift_parallel.h"
+#include "statistics.h"
+#include "utils.h"
 
 namespace mila {
 namespace meanshift {
@@ -18,11 +20,22 @@ class MeanShiftProfiler: public MeanShift {
 
   void Initialize() override;
   std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
+  size_t GetBuildKernelAsMicroseconds();
+  size_t GetCopyBufferAsMicroseconds();
+  size_t GetReadBufferAsMicroseconds();
+  size_t GetEnqueueNDRangeAsMicroseconds();
+  std::string GetOpenCLStatisticsAsString();
 
   std::string main_result() const;
   std::string main_duration() const;
   std::map<std::string, float> results() const;
  private:
+  void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
+  void GetProfilingInfo();
+  size_t GetProfilingInfoAsMicroseconds(clpp::Event event);
+  std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events);
+
+  mila::statistics::OpenCLStatistics device_statistics_;
   const std::string main_result_;
   const std::string main_duration_;
   std::map<std::string, float> results_;
@@ -37,11 +50,22 @@ class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
   void Initialize() override;
   virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
   virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
+  size_t GetBuildKernelAsMicroseconds();
+  size_t GetCopyBufferAsMicroseconds();
+  size_t GetReadBufferAsMicroseconds();
+  size_t GetEnqueueNDRangeAsMicroseconds();
+  std::string GetOpenCLStatisticsAsString();
 
   std::string main_result() const;
   std::string main_duration() const;
   std::map<std::string, float> results() const;
  private:
+  void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
+  void GetProfilingInfo();
+  size_t GetProfilingInfoAsMicroseconds(clpp::Event);
+  std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events);
+
+  mila::statistics::OpenCLStatistics device_statistics_;
   const std::string main_result_;
   const std::string main_duration_;
   size_t number_of_points_;

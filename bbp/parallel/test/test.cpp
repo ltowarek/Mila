@@ -142,7 +142,13 @@ TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
 
 TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsString) {
   auto bbp = mila::bbp::parallel::BBPProfiler();
-  EXPECT_STREQ("Build kernel: 0 us, Read buffer: 0 us, Enqueue ND range: 0 us", bbp.GetOpenCLStatisticsAsString().c_str());
+  EXPECT_STREQ("", bbp.GetOpenCLStatisticsAsString().c_str());
+}
+
+TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_STRNE("", bbp.GetOpenCLStatisticsAsString().c_str());
 }
 
 TEST(BBPParallelProfilerTest, TimersComparision) {
