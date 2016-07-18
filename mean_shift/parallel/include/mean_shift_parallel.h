@@ -33,6 +33,17 @@ class MeanShift {
   clpp::Queue queue() const;
   clpp::Kernel kernel() const;
  private:
+  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device);
+  void UpdateEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
+
+  struct Events {
+    std::vector<clpp::Event> copy_buffer;
+    std::vector<clpp::Event> read_buffer_with_distances;
+    std::vector<clpp::Event> enqueue_nd_range;
+    clpp::Event read_buffer_with_output;
+  };
+
+  Events events_;
   const float precision_;
   const size_t max_iterations_;
   const size_t platform_id_;

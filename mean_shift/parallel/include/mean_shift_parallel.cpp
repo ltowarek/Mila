@@ -84,6 +84,14 @@ clpp::Kernel mila::meanshift::parallel::MeanShift::kernel() const {
   return kernel_;
 }
 
+void mila::meanshift::parallel::MeanShift::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
+  try {
+    program.build(device);
+  } catch(const clpp::Error& error) {
+    printf("%s\n", program.getBuildLog(device).c_str());
+  }
+}
+
 void mila::meanshift::parallel::MeanShift::Initialize() {
   const auto platforms = clpp::Platform::get();
   platform_ = platforms.at(platform_id_);
@@ -99,11 +107,7 @@ void mila::meanshift::parallel::MeanShift::Initialize() {
   auto source_file = mila::utils::ReadFile(source_file_name);
   auto program = clpp::Program(context_, source_file);
 
-  try {
-    program.build(device_);
-  } catch(const clpp::Error& error) {
-    printf("%s\n", program.getBuildLog(device_).c_str());
-  }
+  BuildProgram(program, device_);
   kernel_ = clpp::Kernel(program, kernel_name.c_str());
 }
 
@@ -125,17 +129,26 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShift::Run(const std::vect
   auto iteration = size_t{0};
 
   do {
-    queue_.enqueueCopyBuffer(shifted_points_buffer, actual_points_buffer, 0, 0, output.size() * sizeof(output.at(0)));
+    auto copy_buffer_event = queue_.enqueueCopyBuffer(shifted_points_buffer, actual_points_buffer, 0, 0, output.size() * sizeof(output.at(0)));
     kernel_.setArgs(actual_points_buffer, original_points_buffer, static_cast<int>(output.size()), bandwidth, shifted_points_buffer, distances_buffer);
-    queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
-    queue_.readBuffer(distances_buffer, 0, distances.size() * sizeof(distances.at(0)), distances.data());
+    auto enqueue_nd_range_event = queue_.enqueueNDRangeKernel(kernel_, global_work_size, std::vector<clpp::Event>{copy_buffer_event});
+    auto read_buffer_event = queue_.enqueueReadBuffer(distances_buffer, 0, distances.size() * sizeof(distances.at(0)), distances.data(), {enqueue_nd_range_event});
+    queue_.finish();
     difference_distance = *std::max_element(distances.begin(), distances.end());
+    UpdateEvents(copy_buffer_event, enqueue_nd_range_event, read_buffer_event);
     ++iteration;
   } while ((difference_distance > precision_) && (iteration < max_iterations_));
 
-  queue_.readBuffer(shifted_points_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
+  events_.read_buffer_with_output = queue_.enqueueReadBuffer(shifted_points_buffer, 0, output.size() * sizeof(output.at(0)), output.data());
+  queue_.finish();
 
   return output;
+}
+
+void mila::meanshift::parallel::MeanShift::UpdateEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range) {
+  events_.copy_buffer.push_back(copy_buffer);
+  events_.read_buffer_with_distances.push_back(read_buffer);
+  events_.enqueue_nd_range.push_back(enqueue_nd_range);
 }
 
 mila::meanshift::parallel::MeanShiftImageProcessing::MeanShiftImageProcessing(): MeanShift() {
@@ -173,5 +186,4 @@ void mila::meanshift::parallel::MeanShiftImageProcessing::Run(const std::string 
   auto output_data = ConvertPointsToVector(output_points);
 
   output_image.Write(output_data, input_image.width(), input_image.height());
-
 }
