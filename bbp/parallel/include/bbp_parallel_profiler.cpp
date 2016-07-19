@@ -35,6 +35,7 @@ std::string mila::bbp::parallel::BBPProfiler::Run(size_t number_of_digits, size_
                                                 mila::utils::GetValuePerSecond(number_of_digits, duration)));
 
   GetProfilingInfo();
+  bandwidth_ = ComputeBandwidthAsGBPS(number_of_digits, GetEnqueueNDRangeAsMicroseconds());
 
   return output;
 }
@@ -90,4 +91,18 @@ size_t mila::bbp::parallel::BBPProfiler::GetProfilingInfoAsMicroseconds(clpp::Ev
   auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
   auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
   return static_cast<size_t>(microseconds.count());
+}
+
+float mila::bbp::parallel::BBPProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, float microseconds) {
+  auto gb_per_s = 0.0f;
+  if (microseconds > 0) {
+    auto read_writes = 1;
+    auto micro_to_giga = 1e3f;
+    gb_per_s = number_of_work_items * sizeof(cl_float) * read_writes / microseconds / micro_to_giga;
+  }
+  return gb_per_s;
+}
+
+float mila::bbp::parallel::BBPProfiler::GetBandwidth() {
+  return bandwidth_;
 }

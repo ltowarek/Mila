@@ -22,6 +22,7 @@ class BBPProfiler : public BBP {
   size_t GetReadBufferAsMicroseconds();
   size_t GetEnqueueNDRangeAsMicroseconds();
   std::string GetOpenCLStatisticsAsString();
+  float GetBandwidth();
 
   std::string main_result() const;
   std::string main_duration() const;
@@ -30,11 +31,13 @@ class BBPProfiler : public BBP {
   void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
   void GetProfilingInfo();
   size_t GetProfilingInfoAsMicroseconds(clpp::Event);
+  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
 
   const std::string main_result_;
   const std::string main_duration_;
   std::map<std::string, float> results_;
   mila::statistics::OpenCLStatistics device_statistics_;
+  float bandwidth_;
 };
 };  // parallel
 };  // bbp

@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     duration = bbp.results().at(bbp.main_duration());
     printf("Iteration: %lu\n", i);
     printf("Host statistics:\n");
-    printf("Duration: %f us, %s: %f\n", duration, bbp.main_result().c_str(), result);
+    printf("Duration: %f us, %s: %f, Bandwidth: %f GB/s\n", duration, bbp.main_result().c_str(), result, bbp.GetBandwidth());
     printf("OpenCL statistics:\n");
     printf("%s\n", bbp.GetOpenCLStatisticsAsString().c_str());
     results[i] = result;

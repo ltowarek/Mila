@@ -151,6 +151,12 @@ TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
   EXPECT_STRNE("", bbp.GetOpenCLStatisticsAsString().c_str());
 }
 
+TEST(BBPParallelProfilerTest, GetBandwidth) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_GT(bbp.GetBandwidth(), 0);
+}
+
 TEST(BBPParallelProfilerTest, TimersComparision) {
   const auto platforms = clpp::Platform::get();
   auto platform = platforms.at(0);
