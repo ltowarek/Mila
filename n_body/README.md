@@ -47,21 +47,29 @@ Example input and output of the parallel implementation which uses 500 particles
     n_body_parallel sample_input.txt 500 0 0 2
     Mila version: 0.3.0
     Initial results
-    Frames per second: 58.178684
-    Duration [us]: 22344954.000000
+    Frames per second: 58.941357
+    Duration [us]: 22055820.000000
     Platform: NVIDIA CUDA
     Device: GeForce GTX 960
     Input file: sample_input.txt
     Number of particles: 500
     Iterations
-    Iteration: 0, Frames per second: 59.000820, Duration [us]: 22033592.000000
-    Iteration: 1, Frames per second: 59.098583, Duration [us]: 21997142.000000
+    Iteration: 0
+    Host statistics:
+    Duration: 22017296.000000 us, Frames per second: 59.044491
+    OpenCL statistics:
+    Build kernel: 97 us, Read buffer: 10 us, Enqueue ND range: 170 us
+    Iteration: 1
+    Host statistics:
+    Duration: 22008700.000000 us, Frames per second: 59.067551
+    OpenCL statistics:
+    Build kernel: 83 us, Read buffer: 10 us, Enqueue ND range: 162 us
     Statistics
-    Mean: 22015368.000000
-    Median: 22015368.000000
-    Variance: 664301248.000000
-    Standard Deviation: 25774.042969
-    Coefficient of Variation: 0.001171
+    Mean: 22012998.000000
+    Median: 22012998.000000
+    Variance: 36945608.000000
+    Standard Deviation: 6078.290039
+    Coefficient of Variation: 0.000276
 
 ## References
 1. https://vimeo.com/7298380

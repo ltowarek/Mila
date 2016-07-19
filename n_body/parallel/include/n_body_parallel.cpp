@@ -54,7 +54,7 @@ mila::nbody::parallel::NBodyParallel::NBodyParallel(float active_repulsion_force
                                                                         device_id_(device_id) {
 }
 
-std::vector<mila::nbody::parallel::Particle> mila::nbody::parallel::NBodyParallel::GenerateParticles(int number_of_particles,
+std::vector<mila::nbody::parallel::Particle> mila::nbody::parallel::NBodyParallel::GenerateParticles(size_t number_of_particles,
                                                                               float min,
                                                                               float max) {
   auto particles = std::vector<mila::nbody::parallel::Particle>();
@@ -81,6 +81,14 @@ std::string mila::nbody::parallel::NBodyParallel::PrepareBuildOptions() {
   return string_stream.str();
 }
 
+void mila::nbody::parallel::NBodyParallel::BuildProgram(const clpp::Program &program, const clpp::Device &device, const std::string &build_options) {
+  try {
+    program.build(device, build_options.c_str());
+  } catch(const clpp::Error& error) {
+    printf("%s\n", program.getBuildLog(device).c_str());
+  }
+}
+
 void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
   const auto platforms = clpp::Platform::get();
   platform_ = platforms.at(platform_id_);
@@ -89,7 +97,7 @@ void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
   device_ = devices.at(device_id_);
 
   context_ = clpp::Context(device_);
-  queue_ = clpp::Queue(context_, device_);
+  queue_ = clpp::Queue(context_, device_, CL_QUEUE_PROFILING_ENABLE);
 
   const auto source_file_name = "n_body.cl";
   const auto kernel_name = std::string("UpdateParticles");
@@ -97,12 +105,7 @@ void mila::nbody::parallel::NBodyParallel::InitializeOpenCL() {
   auto program = clpp::Program(context_, source_file);
 
   auto build_options = PrepareBuildOptions();
-
-  try {
-    program.build(device_, build_options.c_str());
-  } catch(const clpp::Error& error) {
-    printf("%s\n", program.getBuildLog(device_).c_str());
-  }
+  BuildProgram(program, device_, build_options);
   kernel_ = clpp::Kernel(program, kernel_name.c_str());
 }
 
@@ -119,9 +122,10 @@ void mila::nbody::parallel::NBodyParallel::UpdateParticles(cl_float2 active_repu
   auto global_work_size = std::vector<size_t>{particles_.size()};
 
   kernel_.setArgs(input_particles_buffer, output_particles_buffer, force_position_buffer);
-  queue_.enqueueNDRangeKernel(kernel_, global_work_size).wait();
+  events_.enqueue_nd_range = queue_.enqueueNDRangeKernel(kernel_, global_work_size);
 
-  queue_.readBuffer(output_particles_buffer, 0, particles_.size() * sizeof(particles_.at(0)), particles_.data());
+  events_.read_buffer = queue_.enqueueReadBuffer(output_particles_buffer, 0, particles_.size() * sizeof(particles_.at(0)), particles_.data(), {events_.enqueue_nd_range});
+  queue_.finish();
 }
 
 float mila::nbody::parallel::NBodyParallel::active_repulsion_force() const {
@@ -152,7 +156,7 @@ cl_float2 mila::nbody::parallel::NBodyParallel::center() const {
   return center_;
 }
 
-int mila::nbody::parallel::NBodyParallel::number_of_particles() const {
+size_t mila::nbody::parallel::NBodyParallel::number_of_particles() const {
   return number_of_particles_;
 }
 

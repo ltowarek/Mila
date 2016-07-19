@@ -267,7 +267,7 @@ TEST(NBodyParallelWithInputFileProfilerTest, DefaultConstructor) {
   EXPECT_EQ(n_body.max_position(), 1024.0f);
   EXPECT_EQ(n_body.platform_id(), 0);
   EXPECT_EQ(n_body.device_id(), 0);
-  EXPECT_EQ(n_body.main_result(), "Run");
+  EXPECT_EQ(n_body.main_result(), "Frames per second");
 }
 
 TEST(NBodyParallelWithInputFileProfilerTest, NumberOfParticlesConstructor) {
@@ -286,7 +286,7 @@ TEST(NBodyParallelWithInputFileProfilerTest, NumberOfParticlesConstructor) {
   EXPECT_EQ(n_body.max_position(), 1024.0f);
   EXPECT_EQ(n_body.platform_id(), 1);
   EXPECT_EQ(n_body.device_id(), 2);
-  EXPECT_EQ(n_body.main_result(), "Run");
+  EXPECT_EQ(n_body.main_result(), "Frames per second");
 }
 
 TEST(NBodyParallelWithInputFileProfilerTest, ComplexConstructor) {
@@ -305,7 +305,7 @@ TEST(NBodyParallelWithInputFileProfilerTest, ComplexConstructor) {
   EXPECT_EQ(n_body.max_position(), 11.0f);
   EXPECT_EQ(n_body.platform_id(), 12);
   EXPECT_EQ(n_body.device_id(), 13);
-  EXPECT_EQ(n_body.main_result(), "Run");
+  EXPECT_EQ(n_body.main_result(), "Frames per second");
 }
 
 TEST(NBodyParallelWithInputFileProfilerTest, RunWithProfiler) {
@@ -318,4 +318,33 @@ TEST(NBodyParallelWithInputFileProfilerTest, RunWithProfiler) {
   EXPECT_EQ(n_body.results().count("Run"), 1);
   EXPECT_EQ(n_body.results().count("Interactions per second"), 1);
   EXPECT_EQ(n_body.results().count("Frames per second"), 1);
+}
+
+TEST(NBodyParallelWithInputFileProfilerTest, GetBuildKernelAsMicroseconds) {
+  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
+  n_body.Initialize();
+  EXPECT_GT(n_body.GetBuildKernelAsMicroseconds(), 0);
+}
+
+TEST(NBodyParallelWithInputFileProfilerTest, GetReadBufferAsMicroseconds) {
+  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
+  n_body.Run("test_file.txt");
+  EXPECT_GT(n_body.GetReadBufferAsMicroseconds(), 0);
+}
+
+TEST(NBodyParallelWithInputFileProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
+  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
+  n_body.Run("test_file.txt");
+  EXPECT_GT(n_body.GetEnqueueNDRangeAsMicroseconds(), 0);
+}
+
+TEST(NBodyParallelWithInputFileProfilerTest, GetOpenCLStatisticsAsString) {
+  auto n_body = mila::nbody::parallel::NBodyParallelWithInputFileProfiler();
+  EXPECT_STREQ("", n_body.GetOpenCLStatisticsAsString().c_str());
+}
+
+TEST(NBodyParallelWithInputFileProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
+  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
+  n_body.Run("test_file.txt");
+  EXPECT_STRNE("", n_body.GetOpenCLStatisticsAsString().c_str());
 }

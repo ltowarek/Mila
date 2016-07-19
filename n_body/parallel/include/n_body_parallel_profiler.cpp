@@ -56,6 +56,16 @@ mila::nbody::parallel::NBodyParallelWithInputFileProfiler::NBodyParallelWithInpu
                                                                                                   main_duration_("Run") {
 }
 
+void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device, const std::string& build_options) {
+  auto start_time = std::chrono::high_resolution_clock::now();
+  NBodyParallelWithInputFile::BuildProgram(program, device, build_options);
+  auto end_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration<float>(end_time - start_time);
+  auto duration_us = static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+  device_statistics_.SetBuildKernelAsMicroseconds(duration_us);
+}
+
 void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::Run(const std::string &input_file) {
   auto start_time = std::chrono::high_resolution_clock::now();
   NBodyParallelWithInputFile::Run(input_file);
@@ -66,6 +76,39 @@ void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::Run(const std::s
   results_.insert(std::pair<std::string, float>("Run", duration_us));
   results_.insert(std::pair<std::string, float>("Interactions per second", mila::utils::GetValuePerSecond((number_of_particles_ * number_of_particles_), duration)));
   results_.insert(std::pair<std::string, float>("Frames per second", mila::utils::GetValuePerSecond(number_of_frames_, duration)));
+
+  GetProfilingInfo();
+}
+
+size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetBuildKernelAsMicroseconds() {
+  return device_statistics_.GetBuildKernelAsMicroseconds();
+}
+
+size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetReadBufferAsMicroseconds() {
+  return device_statistics_.GetReadBufferAsMicroseconds();
+}
+
+size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetEnqueueNDRangeAsMicroseconds() {
+  return device_statistics_.GetEnqueueNDRangeAsMicroseconds();
+}
+
+std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetOpenCLStatisticsAsString() {
+  return device_statistics_.GetOpenCLStatisticsAsString();
+}
+
+void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetProfilingInfo() {
+  if (events_.read_buffer != nullptr) {
+    device_statistics_.SetReadBufferAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.read_buffer));
+  }
+  if (events_.enqueue_nd_range != nullptr) {
+    device_statistics_.SetEnqueueNDRangeAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.enqueue_nd_range));
+  }
+}
+
+size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetProfilingInfoAsMicroseconds(clpp::Event event) {
+  auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
+  auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
+  return static_cast<size_t>(microseconds.count());
 }
 
 std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::main_result() const {
