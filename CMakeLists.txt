@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4)
 project(Mila)
 
 set(MILA_VERSION_MAJOR 0)
-set(MILA_VERSION_MINOR 3)
+set(MILA_VERSION_MINOR 4)
 set(MILA_VERSION_PATCH 0)
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h.in"
