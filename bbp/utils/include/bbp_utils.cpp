@@ -19,4 +19,3 @@ std::vector<std::string> mila::bbp::utils::ConvertFractionsToHex(const std::vect
   }
   return digits;
 }
-

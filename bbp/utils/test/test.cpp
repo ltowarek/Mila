@@ -26,3 +26,4 @@ TEST(BBPUtilsTest, ConvertFractionsToHex) {
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[0], "243F11");
   EXPECT_EQ(mila::bbp::utils::ConvertFractionsToHex(fractions, 6)[1], "43F672");
 }
+

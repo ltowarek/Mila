@@ -54,7 +54,7 @@ class NBodySequential {
   float damping_force() const;
   float central_force() const;
   Vector2D center() const;
-  int number_of_particles() const;
+  size_t number_of_particles() const;
   float min_position() const;
   float max_position() const;
   std::vector<Particle> particles() const;
@@ -67,7 +67,7 @@ class NBodySequential {
   const float damping_force_;
   const float central_force_;
   const Vector2D center_;
-  const int number_of_particles_;
+  const size_t number_of_particles_;
   const float min_position_;
   const float max_position_;
   std::vector<Particle> particles_;
@@ -108,6 +108,8 @@ class NBodySequentialWithInputFile: public NBodySequentialWithView {
   std::vector<Vector2D> ParseInputFile(const std::string &input_file);
   virtual void Run(const std::string &input_file);
   virtual void Run() override;
+ protected:
+  size_t number_of_frames_;
 };
 
 }  // sequential

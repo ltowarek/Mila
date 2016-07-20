@@ -449,14 +449,16 @@ TEST(MeanShiftSequentialProfilerTest, DefaultConstructor) {
   mila::meanshift::sequential::MeanShiftProfiler mean_shift;
   EXPECT_EQ(mean_shift.precision(), 1e-5f);
   EXPECT_EQ(mean_shift.max_iterations(), 100);
-  EXPECT_EQ(mean_shift.main_result(), "Run");
+  EXPECT_EQ(mean_shift.main_result(), "Points per second");
+  EXPECT_EQ(mean_shift.main_duration(), "Run");
 }
 
 TEST(MeanShiftSequentialProfilerTest, Constructor) {
   mila::meanshift::sequential::MeanShiftProfiler mean_shift(1e-7f, 123);
   EXPECT_EQ(mean_shift.precision(), 1e-7f);
   EXPECT_EQ(mean_shift.max_iterations(), 123);
-  EXPECT_EQ(mean_shift.main_result(), "Run");
+  EXPECT_EQ(mean_shift.main_result(), "Points per second");
+  EXPECT_EQ(mean_shift.main_duration(), "Run");
 }
 
 TEST(MeanShiftSequentialProfilerTest, Run) {
@@ -493,8 +495,10 @@ TEST(MeanShiftSequentialProfilerTest, RunWithProfiling) {
   };
   float bandwidth = 3.0f;
 
+  EXPECT_EQ(mean_shift.results().count("Points per second"), 0);
   EXPECT_EQ(mean_shift.results().count("Run"), 0);
   mean_shift.Run(points, bandwidth);
+  EXPECT_EQ(mean_shift.results().count("Points per second"), 1);
   EXPECT_EQ(mean_shift.results().count("Run"), 1);
 }
 
@@ -559,14 +563,16 @@ TEST(MeanShiftSequentialImageProcessingProfilerTest, DefaultConstructor) {
   mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
   EXPECT_EQ(mean_shift.precision(), 1e-5f);
   EXPECT_EQ(mean_shift.max_iterations(), 100);
-  EXPECT_EQ(mean_shift.main_result(), "RunWithImage");
+  EXPECT_EQ(mean_shift.main_result(), "Pixels per second");
+  EXPECT_EQ(mean_shift.main_duration(), "RunWithImage");
 }
 
 TEST(MeanShiftSequentialImageProcessingProfilerTest, Constructor) {
   mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift(1e-7f, 123);
   EXPECT_EQ(mean_shift.precision(), 1e-7f);
   EXPECT_EQ(mean_shift.max_iterations(), 123);
-  EXPECT_EQ(mean_shift.main_result(), "RunWithImage");
+  EXPECT_EQ(mean_shift.main_result(), "Pixels per second");
+  EXPECT_EQ(mean_shift.main_duration(), "RunWithImage");
 }
 
 TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithoutImage) {
@@ -625,8 +631,10 @@ TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithoutImageWithProfilin
   float bandwidth = 3.0f;
 
   EXPECT_EQ(mean_shift.results().count("RunWithoutImage"), 0);
+  EXPECT_EQ(mean_shift.results().count("Points per second"), 0);
   mean_shift.Run(points, bandwidth);
   EXPECT_EQ(mean_shift.results().count("RunWithoutImage"), 1);
+  EXPECT_EQ(mean_shift.results().count("Points per second"), 1);
 }
 
 TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImageWithProfiling) {
@@ -636,6 +644,8 @@ TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImageWithProfiling) 
   float bandwidth = 25.0f;
 
   EXPECT_EQ(mean_shift.results().count("RunWithImage"), 0);
+  EXPECT_EQ(mean_shift.results().count("Pixels per second"), 0);
   mean_shift.Run(input_file, output_file, bandwidth);
   EXPECT_EQ(mean_shift.results().count("RunWithImage"), 1);
+  EXPECT_EQ(mean_shift.results().count("Pixels per second"), 1);
 }

@@ -1,5 +1,5 @@
 # Mila [![Build Status](https://travis-ci.org/ltowarek/Mila.svg?branch=develop)](https://travis-ci.org/ltowarek/Mila)[![Build status](https://ci.appveyor.com/api/projects/status/vkyyrl3je9wdfk0n/branch/develop?svg=true)](https://ci.appveyor.com/project/ltowarek/mila/branch/develop)
-Mila is a OpenCL benchmark tool
+Mila is a cross-platform OpenCL benchmark tool
 
 ## Projects
 Currently Mila has 3 projects which produce stable results:
@@ -12,6 +12,7 @@ Currently Mila has 3 projects which produce stable results:
 Mila needs the following dependencies to work correctly:
 
 1. OpenCL device with the latest driver installed;
+1. OpenGL;
 1. CMake 3.4+;
 1. The remaining dependencies will be downloaded during `git clone --recursive` step.
 

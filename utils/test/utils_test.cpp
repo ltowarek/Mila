@@ -48,8 +48,23 @@ TEST(UtilsTest, Median) {
   EXPECT_NEAR(mila::utils::Median(values), 3.0f, 1e-5);
 }
 
+TEST(UtilsTest, Sum) {
+  std::vector<float> values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
+  EXPECT_NEAR(mila::utils::Sum(values), 55.0f, 1e-5);
+}
+
 TEST(UtilsTest, ReadFile) {
   // TODO: Replace real file with mocked data
   EXPECT_STREQ(mila::utils::ReadFile("test.txt").c_str(), "Test file content");
   EXPECT_STREQ(mila::utils::ReadFile("fake_file").c_str(), "");
+}
+
+TEST(UtilsTest, GetDigitsPerSecond) {
+  auto one_second = std::chrono::seconds(1);
+  EXPECT_NEAR(mila::utils::GetValuePerSecond(100, one_second), 100.0f, 1e-5);
+  auto one_microsecond = std::chrono::duration<float, std::micro>(1.0f);
+  EXPECT_NEAR(mila::utils::GetValuePerSecond(100, one_microsecond), 100000000.0f, 1e05);
+  EXPECT_NEAR(mila::utils::GetValuePerSecond(1, one_microsecond), 1000000.0f, 1e-5);
+  auto sample_duration = std::chrono::duration<float>(0.243811563f);
+  EXPECT_NEAR(mila::utils::GetValuePerSecond(540, sample_duration), 2214.825225496f, 1e-5f);
 }

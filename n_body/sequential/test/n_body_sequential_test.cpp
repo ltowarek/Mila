@@ -393,6 +393,10 @@ TEST(NBodySequentialWithInputFileProfilerTest, RunWithProfiler) {
   mila::nbody::sequential::NBodySequentialWithInputFileProfiler n_body;
 
   EXPECT_EQ(n_body.results().count("Run"), 0);
+  EXPECT_EQ(n_body.results().count("Interactions per second"), 0);
+  EXPECT_EQ(n_body.results().count("Frames per second"), 0);
   n_body.Run("test_file.txt");
   EXPECT_EQ(n_body.results().count("Run"), 1);
+  EXPECT_EQ(n_body.results().count("Interactions per second"), 1);
+  EXPECT_EQ(n_body.results().count("Frames per second"), 1);
 }

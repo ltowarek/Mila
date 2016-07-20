@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.4)
 project(sudoku_solver_utils_test)
 
 include_directories(${GTEST_INCLUDE_DIRS} ${SUDOKU_SOLVER_UTILS_INCLUDE_DIRS})

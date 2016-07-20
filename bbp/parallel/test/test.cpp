@@ -74,6 +74,20 @@ TEST(BBPParallelTest, Run) {
   EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
 }
 
+TEST(BBPParallelProfilerTest, DefaultConstructor) {
+  mila::bbp::parallel::BBPProfiler bbp;
+  EXPECT_EQ(bbp.precision(), 1e-5f);
+  EXPECT_EQ(bbp.main_result(), "Digits per second");
+  EXPECT_EQ(bbp.main_duration(), "Run");
+}
+
+TEST(BBPParallelProfilerTest, Constructor) {
+  mila::bbp::parallel::BBPProfiler bbp(1e-7f);
+  EXPECT_EQ(bbp.precision(), 1e-7f);
+  EXPECT_EQ(bbp.main_result(), "Digits per second");
+  EXPECT_EQ(bbp.main_duration(), "Run");
+}
+
 TEST(BBPParallelProfilerTest, Run) {
   mila::bbp::parallel::BBPProfiler bbp;
   EXPECT_EQ(bbp.Run(0, 0), "");
@@ -95,8 +109,10 @@ TEST(BBPParallelProfilerTest, Run) {
 TEST(BBPParallelProfilerTest, RunWithProfiling) {
   mila::bbp::parallel::BBPProfiler bbp;
   EXPECT_EQ(bbp.results().count("Run"), 0);
+  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
   EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
   EXPECT_EQ(bbp.results().count("Run"), 1);
+  EXPECT_EQ(bbp.results().count("Digits per second"), 1);
 }
 
 TEST(BBPParallelProfilerTest, InitializeWithProfiling) {
@@ -104,6 +120,41 @@ TEST(BBPParallelProfilerTest, InitializeWithProfiling) {
   EXPECT_EQ(bbp.results().count("Initialize"), 0);
   bbp.Initialize();
   EXPECT_EQ(bbp.results().count("Initialize"), 1);
+}
+
+TEST(BBPParallelProfilerTest, GetBuildKernelAsMicroseconds) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Initialize();
+  EXPECT_GT(bbp.GetBuildKernelAsMicroseconds(), 0);
+}
+
+TEST(BBPParallelProfilerTest, GetReadBufferAsMicroseconds) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_GT(bbp.GetReadBufferAsMicroseconds(), 0);
+}
+
+TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_GT(bbp.GetEnqueueNDRangeAsMicroseconds(), 0);
+}
+
+TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsString) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  EXPECT_STREQ("", bbp.GetOpenCLStatisticsAsString().c_str());
+}
+
+TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_STRNE("", bbp.GetOpenCLStatisticsAsString().c_str());
+}
+
+TEST(BBPParallelProfilerTest, GetBandwidth) {
+  auto bbp = mila::bbp::parallel::BBPProfiler();
+  bbp.Run(24, 516);
+  EXPECT_GT(bbp.GetBandwidth(), 0);
 }
 
 TEST(BBPParallelProfilerTest, TimersComparision) {
@@ -143,8 +194,9 @@ TEST(BBPParallelProfilerTest, TimersComparision) {
   auto cpp_duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
   auto ocl_duration = (event.getProfilingCommandEnd() - event.getProfilingCommandStart()) / 1000;
 
-  printf("OCL duration [us]: %lld\n", ocl_duration);
-  printf("CPP duration [us]: %lld\n", cpp_duration);
+  printf("OCL duration [us]: %lu\n", ocl_duration);
+  printf("CPP duration [us]: %lu\n", cpp_duration);
 
-  EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Milisecond precision
+  EXPECT_NEAR(ocl_duration, cpp_duration, 1000);  // Millisecond precision
 }
+

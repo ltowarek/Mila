@@ -5,6 +5,7 @@
 #include <map>
 
 #include "n_body_parallel.h"
+#include "statistics.h"
 
 namespace mila {
 namespace nbody {
@@ -28,12 +29,26 @@ class NBodyParallelWithInputFileProfiler: public NBodyParallelWithInputFile {
                                      size_t device_id);
 
   void Run(const std::string &input_file) override;
+  size_t GetBuildKernelAsMicroseconds();
+  size_t GetReadBufferAsMicroseconds();
+  size_t GetEnqueueNDRangeAsMicroseconds();
+  std::string GetOpenCLStatisticsAsString();
+  float GetBandwidth();
 
   std::string main_result() const;
-  std::map<std::string, int64_t> results() const;
+  std::string main_duration() const;
+  std::map<std::string, float> results() const;
  private:
+  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device, const std::string& build_options) override;
+  void GetProfilingInfo();
+  size_t GetProfilingInfoAsMicroseconds(clpp::Event);
+  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
+
+  mila::statistics::OpenCLStatistics device_statistics_;
   const std::string main_result_;
-  std::map<std::string, int64_t> results_;
+  const std::string main_duration_;
+  std::map<std::string, float> results_;
+  float bandwidth_;
 };
 
 }  // parallel

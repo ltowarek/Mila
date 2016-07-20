@@ -97,13 +97,15 @@ TEST(BBPSequentialTest, ModularExponentiation) {
 TEST(BBPSequentialProfilerTest, DefaultConstructor) {
   mila::bbp::sequential::BBPProfiler bbp;
   EXPECT_EQ(bbp.precision(), 1e-5f);
-  EXPECT_EQ(bbp.main_result(), "Run");
+  EXPECT_EQ(bbp.main_result(), "Digits per second");
+  EXPECT_EQ(bbp.main_duration(), "Run");
 }
 
 TEST(BBPSequentialProfilerTest, Constructor) {
   mila::bbp::sequential::BBPProfiler bbp(1e-7f);
   EXPECT_EQ(bbp.precision(), 1e-7f);
-  EXPECT_EQ(bbp.main_result(), "Run");
+  EXPECT_EQ(bbp.main_result(), "Digits per second");
+  EXPECT_EQ(bbp.main_duration(), "Run");
 }
 
 TEST(BBPSequentialProfilerTest, Run) {
@@ -127,6 +129,9 @@ TEST(BBPSequentialProfilerTest, Run) {
 TEST(BBPSequentialProfilerTest, RunWithProfiling) {
   mila::bbp::sequential::BBPProfiler bbp;
   EXPECT_EQ(bbp.results().count("Run"), 0);
+  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
   EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
   EXPECT_EQ(bbp.results().count("Run"), 1);
+  EXPECT_EQ(bbp.results().count("Digits per second"), 1);
 }
+

@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #include "clpp.h"
@@ -14,6 +15,7 @@
 namespace mila {
 namespace bbp {
 namespace parallel {
+
 class BBP {
  public:
   BBP();
@@ -33,8 +35,15 @@ class BBP {
   clpp::Context context() const;
   clpp::Queue queue() const;
   clpp::Kernel kernel() const;
- private:
+ protected:
+  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device);
 
+  struct Events {
+    clpp::Event read_buffer;
+    clpp::Event enqueue_nd_range;
+  };
+
+  Events events_;
   const float precision_;
   size_t platform_id_;
   size_t device_id_;

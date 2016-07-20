@@ -35,7 +35,7 @@ class NBodyParallel {
                 size_t platform_id,
                 size_t device_id);
 
-  std::vector<Particle> GenerateParticles(int number_of_particles, float min, float max);
+  std::vector<Particle> GenerateParticles(size_t number_of_particles, float min, float max);
   void InitializeOpenCL();
   void Initialize();
   void UpdateParticles(cl_float2 active_repulsion_force_position);
@@ -49,7 +49,7 @@ class NBodyParallel {
   float damping_force() const;
   float central_force() const;
   cl_float2 center() const;
-  int number_of_particles() const;
+  size_t number_of_particles() const;
   float min_position() const;
   float max_position() const;
   std::vector<Particle> particles() const;
@@ -57,8 +57,15 @@ class NBodyParallel {
   clpp::Platform platform() const;
   clpp::Device device() const;
  protected:
+  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device, const std::string& build_options);
   std::string PrepareBuildOptions();
 
+  struct Events {
+    clpp::Event read_buffer;
+    clpp::Event enqueue_nd_range;
+  };
+
+  Events events_;
   const size_t platform_id_;
   const size_t device_id_;
   const float active_repulsion_force_;
@@ -68,7 +75,7 @@ class NBodyParallel {
   const float damping_force_;
   const float central_force_;
   const cl_float2 center_;
-  const int number_of_particles_;
+  const size_t number_of_particles_;
   const float min_position_;
   const float max_position_;
   std::vector<Particle> particles_;
@@ -119,6 +126,8 @@ class NBodyParallelWithInputFile: public NBodyParallelWithView {
   std::vector<cl_float2> ParseInputFile(const std::string &input_file);
   virtual void Run(const std::string &input_file);
   virtual void Run() override;
+ protected:
+  size_t number_of_frames_;
 };
 
 }  // parallel

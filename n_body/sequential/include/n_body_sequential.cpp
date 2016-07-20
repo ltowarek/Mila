@@ -141,7 +141,7 @@ mila::nbody::sequential::Vector2D mila::nbody::sequential::NBodySequential::cent
   return center_;
 }
 
-int mila::nbody::sequential::NBodySequential::number_of_particles() const {
+size_t mila::nbody::sequential::NBodySequential::number_of_particles() const {
   return number_of_particles_;
 }
 
@@ -259,6 +259,7 @@ void mila::nbody::sequential::NBodySequentialWithInputFile::Run(const std::strin
 
   Initialize();
   auto active_force_positions = ParseInputFile(input_file);
+  number_of_frames_ = active_force_positions.size();
 
   // TODO: Check output of glfw
   glfwInit();
@@ -266,7 +267,7 @@ void mila::nbody::sequential::NBodySequentialWithInputFile::Run(const std::strin
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
-  for (auto frame = 0; frame < active_force_positions.size() && !glfwWindowShouldClose(window); ++frame) {
+  for (auto frame = 0; frame < number_of_frames_ && !glfwWindowShouldClose(window); ++frame) {
     UpdateParticles(active_force_positions[frame]);
 
     glClear(GL_COLOR_BUFFER_BIT);

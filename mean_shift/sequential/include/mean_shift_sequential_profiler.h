@@ -6,6 +6,7 @@
 #include <string>
 
 #include "mean_shift_sequential.h"
+#include "utils.h"
 
 namespace mila {
 namespace meanshift {
@@ -19,10 +20,12 @@ class MeanShiftProfiler: public MeanShift {
   std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
 
   std::string main_result() const;
-  std::map<std::string, int64_t> results() const;
+  std::string main_duration() const;
+  std::map<std::string, float> results() const;
  private:
   const std::string main_result_;
-  std::map<std::string, int64_t> results_;
+  const std::string main_duration_;
+  std::map<std::string, float> results_;
 };
 
 class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
@@ -34,10 +37,13 @@ class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
   void Run(const std::string &input_file, const std::string &output_file, float bandwidth) override;
 
   std::string main_result() const;
-  std::map<std::string, int64_t> results() const;
+  std::string main_duration() const;
+  std::map<std::string, float> results() const;
  private:
   const std::string main_result_;
-  std::map<std::string, int64_t> results_;
+  const std::string main_duration_;
+  std::map<std::string, float> results_;
+  size_t number_of_points_;
 };
 
 }  // sequential

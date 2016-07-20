@@ -3,6 +3,7 @@
 #include <string>
 
 #include "utils.h"
+#include "version.h"
 #include "bbp_parallel_profiler.h"
 
 struct parameters {
@@ -26,15 +27,19 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
+  printf("%s\n", mila::version::PrintVersion().c_str());
+
   auto bbp_initial = mila::bbp::parallel::BBPProfiler(config.platform_id, config.device_id);
   std::string output = bbp_initial.Run(config.number_of_digits, config.starting_position);
-  auto duration = bbp_initial.results().at(bbp_initial.main_result());
+  auto result = bbp_initial.results().at(bbp_initial.main_result());
+  auto duration = bbp_initial.results().at(bbp_initial.main_duration());
   printf("Initial results\n");
-  printf("Duration [us]: %lld\n", duration);
+  printf("%s: %f\n", bbp_initial.main_result().c_str(), result);
+  printf("Duration: %f us\n", duration);
   printf("Platform: %s\n", bbp_initial.platform().getName().c_str());
   printf("Device: %s\n", bbp_initial.device().getName().c_str());
-  printf("Number of Digits: %d\n", config.number_of_digits);
-  printf("Starting Position: %d\n", config.starting_position);
+  printf("Number of Digits: %lu\n", config.number_of_digits);
+  printf("Starting Position: %lu\n", config.starting_position);
   printf("PI in hex: %s\n", output.c_str());
 
   auto results = std::vector<float>(config.number_of_iterations);
@@ -42,9 +47,14 @@ int main(int argc, char **argv) {
   for (size_t i = 0; i < config.number_of_iterations; ++i) {
     auto bbp = mila::bbp::parallel::BBPProfiler(config.platform_id, config.device_id);
     bbp.Run(config.number_of_digits, config.starting_position);
-    duration = bbp.results().at(bbp.main_result());
-    printf("Iteration: %d, Duration [us]: %lld\n", i, duration);
-    results[i] = duration;
+    result = bbp.results().at(bbp.main_result());
+    duration = bbp.results().at(bbp.main_duration());
+    printf("Iteration: %lu\n", i);
+    printf("Host statistics:\n");
+    printf("Duration: %f us, %s: %f, Bandwidth: %f GB/s\n", duration, bbp.main_result().c_str(), result, bbp.GetBandwidth());
+    printf("OpenCL statistics:\n");
+    printf("%s\n", bbp.GetOpenCLStatisticsAsString().c_str());
+    results[i] = result;
   }
 
   printf("Statistics\n");
