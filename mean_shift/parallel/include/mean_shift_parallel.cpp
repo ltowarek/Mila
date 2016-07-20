@@ -118,7 +118,7 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShift::Run(const std::vect
   auto output = points;
 
   auto original_points_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
-  auto actual_points_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
+  auto current_points_buffer = clpp::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
   auto shifted_points_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR, output.size() * sizeof(output.at(0)), output.data());
 
   auto distances = std::vector<cl_float>(output.size(), 0.0f);
@@ -129,8 +129,8 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShift::Run(const std::vect
   auto iteration = size_t{0};
 
   do {
-    auto copy_buffer_event = queue_.enqueueCopyBuffer(shifted_points_buffer, actual_points_buffer, 0, 0, output.size() * sizeof(output.at(0)));
-    kernel_.setArgs(actual_points_buffer, original_points_buffer, static_cast<int>(output.size()), bandwidth, shifted_points_buffer, distances_buffer);
+    auto copy_buffer_event = queue_.enqueueCopyBuffer(shifted_points_buffer, current_points_buffer, 0, 0, output.size() * sizeof(output.at(0)));
+    kernel_.setArgs(current_points_buffer, original_points_buffer, static_cast<int>(output.size()), bandwidth, shifted_points_buffer, distances_buffer);
     auto enqueue_nd_range_event = queue_.enqueueNDRangeKernel(kernel_, global_work_size, std::vector<clpp::Event>{copy_buffer_event});
     auto read_buffer_event = queue_.enqueueReadBuffer(distances_buffer, 0, distances.size() * sizeof(distances.at(0)), distances.data(), {enqueue_nd_range_event});
     queue_.finish();
