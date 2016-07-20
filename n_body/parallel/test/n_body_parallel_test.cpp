@@ -348,3 +348,10 @@ TEST(NBodyParallelWithInputFileProfilerTest, GetOpenCLStatisticsAsStringWithRun)
   n_body.Run("test_file.txt");
   EXPECT_STRNE("", n_body.GetOpenCLStatisticsAsString().c_str());
 }
+
+TEST(NBodyParallelWithInputFileProfilerTest, GetBandwidth) {
+  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
+  n_body.Run("test_file.txt");
+  auto tmp = n_body.GetBandwidth();
+  EXPECT_GT(n_body.GetBandwidth(), 0);
+}

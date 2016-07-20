@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     duration = n_body.results().at(n_body.main_duration());
     printf("Iteration: %lu\n", i);
     printf("Host statistics:\n");
-    printf("Duration: %f us, %s: %f\n", duration, n_body.main_result().c_str(), result);
+    printf("Duration: %f us, %s: %f, Bandwidth: %f GB/s\n", duration, n_body.main_result().c_str(), result, n_body.GetBandwidth());
     printf("OpenCL statistics:\n");
     printf("%s\n", n_body.GetOpenCLStatisticsAsString().c_str());
     results[i] = duration;

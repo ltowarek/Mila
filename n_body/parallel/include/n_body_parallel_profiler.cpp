@@ -78,6 +78,7 @@ void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::Run(const std::s
   results_.insert(std::pair<std::string, float>("Frames per second", mila::utils::GetValuePerSecond(number_of_frames_, duration)));
 
   GetProfilingInfo();
+  bandwidth_ = ComputeBandwidthAsGBPS(number_of_particles_, GetEnqueueNDRangeAsMicroseconds());
 }
 
 size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetBuildKernelAsMicroseconds() {
@@ -109,6 +110,23 @@ size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetProfilingIn
   auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
   auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
   return static_cast<size_t>(microseconds.count());
+}
+
+float mila::nbody::parallel::NBodyParallelWithInputFileProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, float microseconds) {
+  auto gb_per_s = 0.0f;
+  if (microseconds > 0) {
+    auto current_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items + 1);
+    auto original_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items * 2);
+    auto shifted_points_bytes = sizeof(cl_float4) * number_of_work_items * 2;
+    auto distances_bytes = sizeof(cl_float) * number_of_work_items * 1;
+    auto micro_to_giga = 1e3f;
+    gb_per_s = (current_points_bytes + original_points_bytes + shifted_points_bytes + distances_bytes) / microseconds / micro_to_giga;
+  }
+  return gb_per_s;
+}
+
+float mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetBandwidth() {
+  return bandwidth_;
 }
 
 std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::main_result() const {
