@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     duration = mean_shift.results().at(mean_shift.main_duration());
     printf("Iteration: %lu\n", i);
     printf("Host statistics:\n");
-    printf("Duration: %f us, %s: %f\n", duration, mean_shift.main_result().c_str(), result);
+    printf("Duration: %f us, %s: %f, Bandwidth: %f GB/s\n", duration, mean_shift.main_result().c_str(), result, mean_shift.GetBandwidth());
     printf("OpenCL statistics:\n");
     printf("%s\n", mean_shift.GetOpenCLStatisticsAsString().c_str());
     results[i] = duration;

@@ -25,6 +25,7 @@ class MeanShiftProfiler: public MeanShift {
   size_t GetReadBufferAsMicroseconds();
   size_t GetEnqueueNDRangeAsMicroseconds();
   std::string GetOpenCLStatisticsAsString();
+  float GetBandwidth();
 
   std::string main_result() const;
   std::string main_duration() const;
@@ -34,11 +35,13 @@ class MeanShiftProfiler: public MeanShift {
   void GetProfilingInfo();
   size_t GetProfilingInfoAsMicroseconds(clpp::Event event);
   std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events);
+  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
 
   mila::statistics::OpenCLStatistics device_statistics_;
   const std::string main_result_;
   const std::string main_duration_;
   std::map<std::string, float> results_;
+  float bandwidth_;
 };
 
 class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
@@ -55,6 +58,7 @@ class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
   size_t GetReadBufferAsMicroseconds();
   size_t GetEnqueueNDRangeAsMicroseconds();
   std::string GetOpenCLStatisticsAsString();
+  float GetBandwidth();
 
   std::string main_result() const;
   std::string main_duration() const;
@@ -64,12 +68,14 @@ class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
   void GetProfilingInfo();
   size_t GetProfilingInfoAsMicroseconds(clpp::Event);
   std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events);
+  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
 
   mila::statistics::OpenCLStatistics device_statistics_;
   const std::string main_result_;
   const std::string main_duration_;
   size_t number_of_points_;
   std::map<std::string, float> results_;
+  float bandwidth_;
 };
 
 }  // parallel

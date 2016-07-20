@@ -41,6 +41,7 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShiftProfiler::Run(const s
   results_.insert(std::pair<std::string, float>("Points per second", mila::utils::GetValuePerSecond(points.size(), duration)));
 
   GetProfilingInfo();
+  bandwidth_ = ComputeBandwidthAsGBPS(points.size(), GetEnqueueNDRangeAsMicroseconds());
 
   return output;
 }
@@ -99,6 +100,23 @@ std::vector<size_t> mila::meanshift::parallel::MeanShiftProfiler::GetProfilingIn
     output.push_back(GetProfilingInfoAsMicroseconds(events[i]));
   }
   return output;
+}
+
+float mila::meanshift::parallel::MeanShiftProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, float microseconds) {
+  auto gb_per_s = 0.0f;
+  if (microseconds > 0) {
+    auto current_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items + 1);
+    auto original_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items * 2);
+    auto shifted_points_bytes = sizeof(cl_float4) * number_of_work_items * 2;
+    auto distances_bytes = sizeof(cl_float) * number_of_work_items * 1;
+    auto micro_to_giga = 1e3f;
+    gb_per_s = (current_points_bytes + original_points_bytes + shifted_points_bytes + distances_bytes) / microseconds / micro_to_giga;
+  }
+  return gb_per_s;
+}
+
+float mila::meanshift::parallel::MeanShiftProfiler::GetBandwidth() {
+  return bandwidth_;
 }
 
 std::string mila::meanshift::parallel::MeanShiftProfiler::main_result() const {
@@ -173,6 +191,7 @@ void mila::meanshift::parallel::MeanShiftImageProcessingProfiler::Run(const std:
   results_.insert(std::pair<std::string, float>("Pixels per second", mila::utils::GetValuePerSecond(number_of_points_ / channels_per_pixel, duration)));
 
   GetProfilingInfo();
+  bandwidth_ = ComputeBandwidthAsGBPS(number_of_points_, GetEnqueueNDRangeAsMicroseconds());
 }
 
 void mila::meanshift::parallel::MeanShiftImageProcessingProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
@@ -229,6 +248,23 @@ std::vector<size_t> mila::meanshift::parallel::MeanShiftImageProcessingProfiler:
     output.push_back(GetProfilingInfoAsMicroseconds(events[i]));
   }
   return output;
+}
+
+float mila::meanshift::parallel::MeanShiftImageProcessingProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, float microseconds) {
+  auto gb_per_s = 0.0f;
+  if (microseconds > 0) {
+    auto current_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items + 1);
+    auto original_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items * 2);
+    auto shifted_points_bytes = sizeof(cl_float4) * number_of_work_items * 2;
+    auto distances_bytes = sizeof(cl_float) * number_of_work_items * 1;
+    auto micro_to_giga = 1e3f;
+    gb_per_s = (current_points_bytes + original_points_bytes + shifted_points_bytes + distances_bytes) / microseconds / micro_to_giga;
+  }
+  return gb_per_s;
+}
+
+float mila::meanshift::parallel::MeanShiftImageProcessingProfiler::GetBandwidth() {
+  return bandwidth_;
 }
 
 std::string mila::meanshift::parallel::MeanShiftImageProcessingProfiler::main_result() const {
