@@ -1,52 +1,37 @@
 #include "bbp_parallel.h"
 
-mila::bbp::parallel::BBP::BBP() : precision_(1e-5f), platform_id_(0), device_id_(0) {
-}
+mila::bbp::parallel::GenericOpenCLApplication::GenericOpenCLApplication() : GenericOpenCLApplication(0, 0, nullptr) {
 
-mila::bbp::parallel::BBP::BBP(float precision) : precision_(precision), platform_id_(0), device_id_(0) {
 }
-
-mila::bbp::parallel::BBP::BBP(size_t platform_id, size_t device_id) : precision_(1e-5f),
-                                                                      platform_id_(platform_id),
-                                                                      device_id_(device_id) {
+mila::bbp::parallel::GenericOpenCLApplication::GenericOpenCLApplication(const size_t platform_id,
+                                                                        const size_t device_id,
+                                                                        std::unique_ptr<Logger> logger) : platform_id_(
+    platform_id), device_id_(device_id) {
+  logger_ = std::move(logger);
 }
+mila::bbp::parallel::GenericOpenCLApplication::~GenericOpenCLApplication() {
 
-mila::bbp::parallel::BBP::~BBP() {
 }
-
-float mila::bbp::parallel::BBP::precision() const {
-  return precision_;
+clpp::Program
+mila::bbp::parallel::GenericOpenCLApplication::CreateProgramFromSource(const std::string &source_file_path) const {
+  const auto source_file = mila::utils::ReadFile(source_file_path);
+  return clpp::Program(context_, source_file);
 }
-
-size_t mila::bbp::parallel::BBP::platform_id() const {
-  return platform_id_;
+void mila::bbp::parallel::GenericOpenCLApplication::BuildProgram(const clpp::Program &program,
+                                                                 const clpp::Device &device) const {
+  try {
+    program.build(device);
+  } catch (const clpp::Error &error) {
+    logger_->Critical("%s\n", program.getBuildLog(device).c_str());
+  }
 }
-
-size_t mila::bbp::parallel::BBP::device_id() const {
-  return device_id_;
+clpp::Kernel mila::bbp::parallel::GenericOpenCLApplication::CreateKernel(const std::string &kernel_name,
+                                                                         const std::string &source_file_path) {
+  auto program = CreateProgramFromSource(source_file_path);
+  BuildProgram(program, device_);
+  return clpp::Kernel(program, kernel_name.c_str());
 }
-
-clpp::Platform mila::bbp::parallel::BBP::platform() const {
-  return platform_;
-}
-
-clpp::Device mila::bbp::parallel::BBP::device() const {
-  return device_;
-}
-
-clpp::Context mila::bbp::parallel::BBP::context() const {
-  return context_;
-}
-
-clpp::Queue mila::bbp::parallel::BBP::queue() const {
-  return queue_;
-}
-
-clpp::Kernel mila::bbp::parallel::BBP::kernel() const {
-  return kernel_;
-}
-
-void mila::bbp::parallel::BBP::Initialize() {
+void mila::bbp::parallel::GenericOpenCLApplication::Initialize() {
   const auto platforms = clpp::Platform::get();
   platform_ = platforms.at(platform_id_);
 
@@ -55,48 +40,71 @@ void mila::bbp::parallel::BBP::Initialize() {
 
   context_ = clpp::Context(device_);
   queue_ = clpp::Queue(context_, device_, CL_QUEUE_PROFILING_ENABLE);
-
-  const auto source_file_name = "bbp.cl";
-  const auto kernel_name = std::string("bbp");
-  auto source_file = mila::utils::ReadFile(source_file_name);
-  auto program = clpp::Program(context_, source_file);
-
-  BuildProgram(program, device_);
-
-  kernel_ = clpp::Kernel(program, kernel_name.c_str());
+}
+clpp::Platform mila::bbp::parallel::GenericOpenCLApplication::GetPlatform() const {
+  return platform_;
+}
+std::string mila::bbp::parallel::GenericOpenCLApplication::GetPlatformName() const {
+  return platform_.getName();
+}
+clpp::Device mila::bbp::parallel::GenericOpenCLApplication::GetDevice() const {
+  return device_;
+}
+std::string mila::bbp::parallel::GenericOpenCLApplication::GetDeviceName() const {
+  return device_.getName();
+}
+clpp::Context mila::bbp::parallel::GenericOpenCLApplication::GetContext() const {
+  return context_;
+}
+clpp::Queue mila::bbp::parallel::GenericOpenCLApplication::GetQueue() const {
+  return queue_;
 }
 
-std::vector<float> mila::bbp::parallel::BBP::ComputeDigits(size_t number_of_digits, int starting_position) {
-  Initialize();
+std::string mila::bbp::parallel::GenericBBP::GetDigits(const std::vector<float> &digits) const {
+  const auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
+  auto output = std::string("");
+  for (const auto digit : hex_digits) {
+    output += digit[0];
+  }
+  return output;
+}
+mila::bbp::parallel::GenericBBP::~GenericBBP() {
+
+}
+
+mila::bbp::parallel::ParallelBBP::ParallelBBP() : mila::bbp::parallel::ParallelBBP(nullptr, nullptr) {
+
+}
+mila::bbp::parallel::ParallelBBP::ParallelBBP(std::unique_ptr<OpenCLApplication> ocl_app,
+                                              std::unique_ptr<Logger> logger) :
+    source_file_path_("bbp.cl"),
+    kernel_name_("bbp") {
+  logger_ = std::move(logger);
+  ocl_app_ = std::move(ocl_app);
+}
+mila::bbp::parallel::ParallelBBP::~ParallelBBP() {
+
+}
+void mila::bbp::parallel::ParallelBBP::Initialize() {
+  kernel_ = ocl_app_->CreateKernel(kernel_name_, source_file_path_);
+}
+std::vector<float>
+mila::bbp::parallel::ParallelBBP::ComputeDigits(const size_t number_of_digits, const size_t starting_position) const {
   auto output = std::vector<cl_float>(number_of_digits, 0.0f);
 
   if (number_of_digits == 0) {
     return output;
   }
 
-  auto output_buffer = clpp::Buffer(context_, CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
+  auto output_buffer = clpp::Buffer(ocl_app_->GetContext(), CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
   kernel_.setArgs(starting_position, output_buffer);
-  auto global_work_size = std::vector<size_t>{number_of_digits};
-  events_.enqueue_nd_range = queue_.enqueueNDRangeKernel(kernel_, global_work_size);
-  events_.read_buffer = queue_.enqueueReadBuffer(output_buffer, 0, output.size() * sizeof(output.at(0)), output.data(), {events_.enqueue_nd_range});
+  const auto global_work_size = std::vector<size_t>{number_of_digits};
+  events_.enqueue_nd_range = ocl_app_->GetQueue().enqueueNDRangeKernel(kernel_, global_work_size);
+  events_.read_buffer = ocl_app_->GetQueue().enqueueReadBuffer(output_buffer,
+                                                               0,
+                                                               output.size() * sizeof(output.at(0)),
+                                                               output.data(),
+                                                               {events_.enqueue_nd_range});
 
   return output;
-}
-
-std::string mila::bbp::parallel::BBP::Run(size_t number_of_digits, size_t starting_position) {
-  auto digits = ComputeDigits(number_of_digits, starting_position);
-  auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
-  auto output = std::string("");
-  for (auto digit : hex_digits) {
-    output += digit[0];
-  }
-  return output;
-}
-
-void mila::bbp::parallel::BBP::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
-  try {
-    program.build(device);
-  } catch(const clpp::Error& error) {
-    printf("%s\n", program.getBuildLog(device).c_str());
-  }
 }
