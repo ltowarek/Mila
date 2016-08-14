@@ -125,40 +125,9 @@ mila::ParallelBBP::Events mila::ParallelBBP::GetEvents() const {
 std::unique_ptr<mila::OpenCLApplication>
 mila::OpenCLApplicationFactory::MakeGeneric(const size_t platform_id,
                                             const size_t device_id,
-                                            std::unique_ptr<mila::Logger> logger) {
+                                            std::unique_ptr<Logger> logger) {
   auto ocl_app = new GenericOpenCLApplication(platform_id, device_id, std::move(logger));
   ocl_app->Initialize();
   return std::unique_ptr<OpenCLApplication>(ocl_app);
 }
 
-mila::Profiler::~Profiler() {
-
-}
-
-mila::ChronoProfiler::~ChronoProfiler() {
-
-}
-void mila::ChronoProfiler::Start(const std::string &event_name) {
-  durations_[event_name] =
-      std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>();
-  durations_[event_name].first = std::chrono::high_resolution_clock::now();
-}
-void mila::ChronoProfiler::End(const std::string &event_name) {
-  durations_[event_name].second = std::chrono::high_resolution_clock::now();
-}
-std::chrono::duration<long int, std::micro>
-mila::ChronoProfiler::GetDuration(const std::string &event_name) const {
-  auto duration = std::chrono::microseconds(0);
-  if (durations_.count(event_name) > 0) {
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(
-        durations_.at(event_name).second - durations_.at(event_name).first);
-  }
-  return duration;
-}
-mila::ChronoProfiler::ChronoProfiler() : ChronoProfiler(nullptr) {
-
-}
-mila::ChronoProfiler::ChronoProfiler(std::unique_ptr<mila::Logger> logger)
-    : logger_(std::move(logger)) {
-
-}

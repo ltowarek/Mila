@@ -13,41 +13,9 @@
 
 #include "bbp_utils.h"
 #include "utils.h"
+#include "logger.h"
 
 namespace mila {
-
-class Logger {
- public:
-  virtual ~Logger() = 0;
-  virtual void Critical(const char *message, ...) const = 0;
-  virtual void Error(const char *message, ...) const = 0;
-  virtual void Warning(const char *message, ...) const = 0;
-  virtual void Info(const char *message, ...) const = 0;
-  virtual void Debug(const char *message, ...) const = 0;
-};
-
-class Profiler {
- public:
-  virtual ~Profiler() = 0;
-  virtual void Start(const std::string &event_name) = 0;
-  virtual void End(const std::string &event_name) = 0;
-  virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const = 0;
-};
-
-class ChronoProfiler: public Profiler {
- public:
-  ChronoProfiler();
-  explicit ChronoProfiler(std::unique_ptr<mila::Logger> logger);
-  virtual ~ChronoProfiler() override;
-  virtual void Start(const std::string &event_name) override;
-  virtual void End(const std::string &event_name) override;
-  virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const override;
- private:
-  std::unique_ptr<mila::Logger> logger_;
-  std::map<std::string,
-           std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>>
-      durations_;
-};
 
 class OpenCLApplication {
  public:
@@ -68,7 +36,7 @@ class OpenCLApplication {
 class OpenCLApplicationFactory {
  public:
   std::unique_ptr<mila::OpenCLApplication>
-  MakeGeneric(const size_t platform_id, const size_t device_id, std::unique_ptr<mila::Logger> logger);
+  MakeGeneric(const size_t platform_id, const size_t device_id, std::unique_ptr<Logger> logger);
 };
 
 class GenericOpenCLApplication: public OpenCLApplication {
