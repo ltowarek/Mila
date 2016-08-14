@@ -14,10 +14,10 @@ std::unique_ptr<mila::BBP> CreateBBP<mila::ParallelBBP>() {
 }
 
 template<>
-std::unique_ptr<mila::BBP> CreateBBP<mila::BBPProfiler>() {
+std::unique_ptr<mila::BBP> CreateBBP<mila::GenericBBPProfiler>() {
   auto bbp = CreateBBP<mila::ParallelBBP>();
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
-  return mila::BBPFactory().MakeBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
+  return mila::BBPFactory().MakeGenericBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
 }
 
 template<>
@@ -35,7 +35,7 @@ class BBPTest: public testing::Test {
 };
 
 typedef testing::Types<mila::ParallelBBP,
-                       mila::BBPProfiler,
+                       mila::GenericBBPProfiler,
                        mila::ParallelBBPProfiler> BBPImplementations;
 
 TYPED_TEST_CASE(BBPTest, BBPImplementations);
@@ -73,7 +73,7 @@ std::unique_ptr<mila::BBPProfilerInterface> CreateBBPProfilerInterface();
 
 template<>
 std::unique_ptr<mila::BBPProfilerInterface>
-CreateBBPProfilerInterface<mila::BBPProfiler>() {
+CreateBBPProfilerInterface<mila::GenericBBPProfiler>() {
   auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
   auto bbp = mila::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
@@ -97,7 +97,7 @@ class BBPProfilerInterfaceTest: public testing::Test {
   std::unique_ptr<mila::BBPProfilerInterface> bbp_;
 };
 
-typedef testing::Types<mila::BBPProfiler, mila::ParallelBBPProfiler>
+typedef testing::Types<mila::GenericBBPProfiler, mila::ParallelBBPProfiler>
     BBPProfilerInterfaceImplementations;
 
 TYPED_TEST_CASE(BBPProfilerInterfaceTest, BBPProfilerInterfaceImplementations);
@@ -188,7 +188,7 @@ TEST_F(ParallelBBPProfilerTest, GetResultsAfterComputeDigits) {
 }
 
 //TEST(BBPParallelProfilerTest, RunWithProfiling) {
-//  mila::BBPProfiler bbp;
+//  mila::GenericBBPProfiler bbp;
 //  EXPECT_EQ(bbp.results().count("Run"), 0);
 //  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
 //  EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
@@ -197,43 +197,43 @@ TEST_F(ParallelBBPProfilerTest, GetResultsAfterComputeDigits) {
 //}
 //
 //TEST(BBPParallelProfilerTest, InitializeWithProfiling) {
-//  mila::BBPProfiler bbp;
+//  mila::GenericBBPProfiler bbp;
 //  EXPECT_EQ(bbp.results().count("Initialize"), 0);
 //  bbp.Initialize();
 //  EXPECT_EQ(bbp.results().count("Initialize"), 1);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetBuildKernelAsMicroseconds) {
-//  auto bbp = mila::BBPProfiler();
+//  auto bbp = mila::GenericBBPProfiler();
 //  bbp.Initialize();
 //  EXPECT_GT(bbp.GetBuildKernelAsMicroseconds(), 0);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetReadBufferAsMicroseconds) {
-//  auto bbp = mila::BBPProfiler();
+//  auto bbp = mila::GenericBBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_GT(bbp.GetReadBufferAsMicroseconds(), 0);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
-//  auto bbp = mila::BBPProfiler();
+//  auto bbp = mila::GenericBBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_GT(bbp.GetEnqueueNDRangeAsMicroseconds(), 0);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsString) {
-//  auto bbp = mila::BBPProfiler();
+//  auto bbp = mila::GenericBBPProfiler();
 //  EXPECT_STREQ("", bbp.GetOpenCLStatisticsAsString().c_str());
 //}
 //
 //TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
-//  auto bbp = mila::BBPProfiler();
+//  auto bbp = mila::GenericBBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_STRNE("", bbp.GetOpenCLStatisticsAsString().c_str());
 //}
 //
 //TEST(BBPParallelProfilerTest, GetBandwidth) {
-//  auto bbp = mila::BBPProfiler();
+//  auto bbp = mila::GenericBBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_GT(bbp.GetBandwidth(), 0);
 //}

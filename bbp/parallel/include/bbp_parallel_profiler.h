@@ -37,9 +37,9 @@ class BBPFactory {
   MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
                std::unique_ptr<mila::Logger> logger);
   std::unique_ptr<mila::BBP>
-  MakeBBPProfiler(std::unique_ptr<mila::BBP> bbp,
-                  std::unique_ptr<mila::Profiler> profiler,
-                  std::unique_ptr<mila::Logger> logger
+  MakeGenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
+                         std::unique_ptr<mila::Profiler> profiler,
+                         std::unique_ptr<mila::Logger> logger
   );
   std::unique_ptr<mila::BBP>
   MakeParallelBBPProfiler(std::unique_ptr<mila::OpenCLApplication> ocl_app,
@@ -73,13 +73,13 @@ class OpenCLApplicationProfiler: public OpenCLApplication {
   std::unique_ptr<OpenCLApplication> app_;
 };
 
-class BBPProfiler: public BBPProfilerInterface {
+class GenericBBPProfiler: public BBPProfilerInterface {
  public:
-  BBPProfiler();
-  BBPProfiler(std::unique_ptr<mila::BBP> bbp,
-              std::unique_ptr<mila::Profiler> profiler,
-              std::unique_ptr<mila::Logger> logger);
-  virtual ~BBPProfiler() override;
+  GenericBBPProfiler();
+  GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
+                     std::unique_ptr<mila::Profiler> profiler,
+                     std::unique_ptr<mila::Logger> logger);
+  virtual ~GenericBBPProfiler() override;
 
   virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
   virtual std::string GetDigits(const std::vector<float> &digits) const override;

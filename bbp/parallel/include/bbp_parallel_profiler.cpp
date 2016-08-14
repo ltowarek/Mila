@@ -44,33 +44,33 @@ mila::BBPProfilerInterface::~BBPProfilerInterface() {
 
 }
 
-mila::BBPProfiler::BBPProfiler() : BBPProfiler(nullptr, nullptr, nullptr) {
+mila::GenericBBPProfiler::GenericBBPProfiler() : GenericBBPProfiler(nullptr, nullptr, nullptr) {
 
 }
-mila::BBPProfiler::BBPProfiler(std::unique_ptr<mila::BBP> bbp,
+mila::GenericBBPProfiler::GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
                                std::unique_ptr<mila::Profiler> profiler,
                                std::unique_ptr<mila::Logger> logger)
     : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(std::move(logger)), number_of_digits_(0) {
 
 }
-mila::BBPProfiler::~BBPProfiler() {
+mila::GenericBBPProfiler::~GenericBBPProfiler() {
 
 }
 std::vector<float>
-mila::BBPProfiler::ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) {
+mila::GenericBBPProfiler::ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) {
   number_of_digits_ = number_of_digits;
   profiler_->Start("ComputeDigits");
   auto output = bbp_->ComputeDigits(number_of_digits, starting_position);
   profiler_->End("ComputeDigits");
   return output;
 }
-std::string mila::BBPProfiler::GetDigits(const std::vector<float> &digits) const {
+std::string mila::GenericBBPProfiler::GetDigits(const std::vector<float> &digits) const {
   return bbp_->GetDigits(digits);
 }
-std::chrono::duration<float, std::micro> mila::BBPProfiler::ComputeDigitsDuration() const {
+std::chrono::duration<float, std::micro> mila::GenericBBPProfiler::ComputeDigitsDuration() const {
   return profiler_->GetDuration("ComputeDigits");
 }
-float mila::BBPProfiler::GetDigitsPerSecond() const {
+float mila::GenericBBPProfiler::GetDigitsPerSecond() const {
   return mila::utils::GetValuePerSecond(number_of_digits_, ComputeDigitsDuration());
 }
 
@@ -82,10 +82,10 @@ mila::BBPFactory::MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
   return std::unique_ptr<mila::BBP>(bbp);
 }
 std::unique_ptr<mila::BBP>
-mila::BBPFactory::MakeBBPProfiler(std::unique_ptr<mila::BBP> bbp,
-                                  std::unique_ptr<mila::Profiler> profiler,
-                                  std::unique_ptr<mila::Logger> logger) {
-  return std::unique_ptr<mila::BBP>(new mila::BBPProfiler(std::move(bbp),
+mila::BBPFactory::MakeGenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
+                                         std::unique_ptr<mila::Profiler> profiler,
+                                         std::unique_ptr<mila::Logger> logger) {
+  return std::unique_ptr<mila::BBP>(new mila::GenericBBPProfiler(std::move(bbp),
                                                           std::move(profiler),
                                                           std::move(logger)));
 }
@@ -110,7 +110,7 @@ std::unique_ptr<mila::BBPProfilerInterface>
 mila::BBPProfilerInterfaceFactory::MakeGeneric(std::unique_ptr<mila::BBP> bbp,
                                                std::unique_ptr<mila::Profiler> profiler,
                                                std::unique_ptr<mila::Logger> logger) {
-  return std::unique_ptr<mila::BBPProfilerInterface>(new mila::BBPProfiler(std::move(bbp),
+  return std::unique_ptr<mila::BBPProfilerInterface>(new mila::GenericBBPProfiler(std::move(bbp),
                                                                            std::move(
                                                                                profiler),
                                                                            std::move(
