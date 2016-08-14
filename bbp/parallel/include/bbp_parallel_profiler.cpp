@@ -67,12 +67,6 @@ mila::GenericBBPProfiler::ComputeDigits(const size_t number_of_digits, const cl_
 std::string mila::GenericBBPProfiler::GetDigits(const std::vector<float> &digits) const {
   return bbp_->GetDigits(digits);
 }
-std::chrono::duration<float, std::micro> mila::GenericBBPProfiler::ComputeDigitsDuration() const {
-  return profiler_->GetDuration("ComputeDigits");
-}
-float mila::GenericBBPProfiler::GetDigitsPerSecond() const {
-  return mila::utils::GetValuePerSecond(number_of_digits_, ComputeDigitsDuration());
-}
 
 std::unique_ptr<mila::BBP>
 mila::BBPFactory::MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
@@ -164,18 +158,12 @@ void mila::ParallelBBPProfiler::SetResultsAfterComputeDigits(const size_t number
 
   results_.compute_digits_duration = profiler_->GetDuration("ComputeDigits");
   results_.digits_per_second = mila::utils::GetValuePerSecond(number_of_digits,
-                                                              mila::ParallelBBPProfiler::ComputeDigitsDuration());
-  results_.bandwidth = mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(number_of_digits_,
+                                                              results_.compute_digits_duration);
+  results_.bandwidth = mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(number_of_digits,
                                                                          results_.compute_digits_duration.count());
 }
 std::string mila::ParallelBBPProfiler::GetDigits(const std::vector<float> &digits) const {
   return bbp_->GetDigits(digits);
-}
-std::chrono::duration<float, std::micro> mila::ParallelBBPProfiler::ComputeDigitsDuration() const {
-  return profiler_->GetDuration("ComputeDigits");
-}
-float mila::ParallelBBPProfiler::GetDigitsPerSecond() const {
-  return mila::utils::GetValuePerSecond(number_of_digits_, ComputeDigitsDuration());
 }
 void mila::ParallelBBPProfiler::Initialize() {
   profiler_->Start("Initialize");
@@ -185,9 +173,6 @@ void mila::ParallelBBPProfiler::Initialize() {
 }
 void mila::ParallelBBPProfiler::SetResultsAfterInitialize() {
   results_.initialize_duration = profiler_->GetDuration("Initialize");
-}
-std::chrono::duration<float, std::micro> mila::ParallelBBPProfiler::InitializeDuration() const {
-  return profiler_->GetDuration("Initialize");
 }
 float
 mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const {

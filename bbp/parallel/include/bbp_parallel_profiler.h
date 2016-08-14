@@ -11,8 +11,6 @@ namespace mila {
 class BBPProfiler: public BBP {
  public:
   virtual ~BBPProfiler() = 0;
-  virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const = 0;
-  virtual float GetDigitsPerSecond() const = 0;
 };
 
 class ProfilerFactory {
@@ -75,8 +73,6 @@ class GenericBBPProfiler: public BBPProfiler {
 
   virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
   virtual std::string GetDigits(const std::vector<float> &digits) const override;
-  virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const override;
-  virtual float GetDigitsPerSecond() const override;
  private:
   const std::unique_ptr<mila::BBP> bbp_;
   const std::unique_ptr<mila::Profiler> profiler_;
@@ -105,15 +101,11 @@ class ParallelBBPProfiler: public BBPProfiler {
   virtual void Initialize();
   virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
   virtual std::string GetDigits(const std::vector<float> &digits) const override;
-  virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const override;
-  virtual std::chrono::duration<float, std::micro> InitializeDuration() const;
-  virtual float GetDigitsPerSecond() const override;
   virtual ParallelBBPProfilingResults GetResults() const;
  private:
   const std::unique_ptr<mila::ParallelBBP> bbp_;
   const std::unique_ptr<mila::Profiler> profiler_;
   const std::unique_ptr<mila::Logger> logger_;
-  size_t number_of_digits_;
   ParallelBBPProfilingResults results_;
   float ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const;
   std::chrono::duration<long, std::nano> GetProfilingInfo(clpp::Event event) const;

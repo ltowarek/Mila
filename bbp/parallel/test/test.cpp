@@ -91,30 +91,6 @@ CreateBBPProfiler<mila::ParallelBBPProfiler>() {
 }
 
 template<typename T>
-class BBPProfilerTest: public testing::Test {
- protected:
-  BBPProfilerTest() : bbp_(std::move(CreateBBPProfiler<T>())) {}
-  std::unique_ptr<mila::BBPProfiler> bbp_;
-};
-
-typedef testing::Types<mila::GenericBBPProfiler, mila::ParallelBBPProfiler>
-    BBPProfilerImplementations;
-
-TYPED_TEST_CASE(BBPProfilerTest, BBPProfilerImplementations);
-
-TYPED_TEST(BBPProfilerTest, ComputeDigitsDuration) {
-  EXPECT_EQ(this->bbp_->ComputeDigitsDuration().count(), 0);
-  EXPECT_EQ(this->bbp_->GetDigits(this->bbp_->ComputeDigits(24, 516)), "1411636FBC2A2BA9C55D7418");
-  EXPECT_GT(this->bbp_->ComputeDigitsDuration().count(), 0);
-}
-
-TYPED_TEST(BBPProfilerTest, GetDigitsPerSecond) {
-  EXPECT_EQ(this->bbp_->GetDigitsPerSecond(), 0.0f);
-  EXPECT_EQ(this->bbp_->GetDigits(this->bbp_->ComputeDigits(24, 516)), "1411636FBC2A2BA9C55D7418");
-  EXPECT_GT(this->bbp_->GetDigitsPerSecond(), 0.0f);
-}
-
-template<typename T>
 std::unique_ptr<mila::Profiler> CreateProfiler();
 
 template<>
@@ -187,57 +163,6 @@ TEST_F(ParallelBBPProfilerTest, GetResultsAfterComputeDigits) {
   EXPECT_GT(this->bbp_->GetResults().bandwidth, 0.0f);
 }
 
-//TEST(BBPParallelProfilerTest, RunWithProfiling) {
-//  mila::GenericBBPProfiler bbp;
-//  EXPECT_EQ(bbp.results().count("Run"), 0);
-//  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
-//  EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
-//  EXPECT_EQ(bbp.results().count("Run"), 1);
-//  EXPECT_EQ(bbp.results().count("Digits per second"), 1);
-//}
-//
-//TEST(BBPParallelProfilerTest, InitializeWithProfiling) {
-//  mila::GenericBBPProfiler bbp;
-//  EXPECT_EQ(bbp.results().count("Initialize"), 0);
-//  bbp.Initialize();
-//  EXPECT_EQ(bbp.results().count("Initialize"), 1);
-//}
-//
-//TEST(BBPParallelProfilerTest, GetBuildKernelAsMicroseconds) {
-//  auto bbp = mila::GenericBBPProfiler();
-//  bbp.Initialize();
-//  EXPECT_GT(bbp.GetBuildKernelAsMicroseconds(), 0);
-//}
-//
-//TEST(BBPParallelProfilerTest, GetReadBufferAsMicroseconds) {
-//  auto bbp = mila::GenericBBPProfiler();
-//  bbp.Run(24, 516);
-//  EXPECT_GT(bbp.GetReadBufferAsMicroseconds(), 0);
-//}
-//
-//TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
-//  auto bbp = mila::GenericBBPProfiler();
-//  bbp.Run(24, 516);
-//  EXPECT_GT(bbp.GetEnqueueNDRangeAsMicroseconds(), 0);
-//}
-//
-//TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsString) {
-//  auto bbp = mila::GenericBBPProfiler();
-//  EXPECT_STREQ("", bbp.GetOpenCLStatisticsAsString().c_str());
-//}
-//
-//TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
-//  auto bbp = mila::GenericBBPProfiler();
-//  bbp.Run(24, 516);
-//  EXPECT_STRNE("", bbp.GetOpenCLStatisticsAsString().c_str());
-//}
-//
-//TEST(BBPParallelProfilerTest, GetBandwidth) {
-//  auto bbp = mila::GenericBBPProfiler();
-//  bbp.Run(24, 516);
-//  EXPECT_GT(bbp.GetBandwidth(), 0);
-//}
-//
 TEST(BBPParallelProfilerTest, TimersComparision) {
   const auto platforms = clpp::Platform::get();
   auto platform = platforms.at(0);
