@@ -8,9 +8,9 @@
 
 namespace mila {
 
-class BBPProfilerInterface: public BBP {
+class BBPProfiler: public BBP {
  public:
-  virtual ~BBPProfilerInterface() = 0;
+  virtual ~BBPProfiler() = 0;
   virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const = 0;
   virtual float GetDigitsPerSecond() const = 0;
 };
@@ -20,12 +20,12 @@ class ProfilerFactory {
   std::unique_ptr<mila::Profiler> MakeChrono(std::unique_ptr<mila::Logger> logger);
 };
 
-class BBPProfilerInterfaceFactory {
+class BBPProfilerFactory {
  public:
-  std::unique_ptr<mila::BBPProfilerInterface> MakeGeneric(std::unique_ptr<mila::BBP> bbp,
+  std::unique_ptr<mila::BBPProfiler> MakeGeneric(std::unique_ptr<mila::BBP> bbp,
                                                           std::unique_ptr<mila::Profiler> profiler,
                                                           std::unique_ptr<mila::Logger> logger);
-  std::unique_ptr<mila::BBPProfilerInterface>
+  std::unique_ptr<mila::BBPProfiler>
   MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
                std::unique_ptr<mila::Profiler> profiler,
                std::unique_ptr<mila::Logger> logger);
@@ -73,7 +73,7 @@ class OpenCLApplicationProfiler: public OpenCLApplication {
   std::unique_ptr<OpenCLApplication> app_;
 };
 
-class GenericBBPProfiler: public BBPProfilerInterface {
+class GenericBBPProfiler: public BBPProfiler{
  public:
   GenericBBPProfiler();
   GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
@@ -102,7 +102,7 @@ struct ParallelBBPProfilingResults {
   float bandwidth;
 };
 
-class ParallelBBPProfiler: public BBPProfilerInterface {
+class ParallelBBPProfiler: public BBPProfiler {
  public:
   ParallelBBPProfiler();
   ParallelBBPProfiler(std::unique_ptr<mila::ParallelBBP> bbp,

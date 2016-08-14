@@ -69,46 +69,46 @@ TYPED_TEST(BBPTest, GetDigits) {
 }
 
 template<typename T>
-std::unique_ptr<mila::BBPProfilerInterface> CreateBBPProfilerInterface();
+std::unique_ptr<mila::BBPProfiler> CreateBBPProfiler();
 
 template<>
-std::unique_ptr<mila::BBPProfilerInterface>
-CreateBBPProfilerInterface<mila::GenericBBPProfiler>() {
+std::unique_ptr<mila::BBPProfiler>
+CreateBBPProfiler<mila::GenericBBPProfiler>() {
   auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
   auto bbp = mila::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
-  return mila::BBPProfilerInterfaceFactory().MakeGeneric(std::move(bbp), std::move(profiler), nullptr);
+  return mila::BBPProfilerFactory().MakeGeneric(std::move(bbp), std::move(profiler), nullptr);
 }
 
 template<>
-std::unique_ptr<mila::BBPProfilerInterface>
-CreateBBPProfilerInterface<mila::ParallelBBPProfiler>() {
+std::unique_ptr<mila::BBPProfiler>
+CreateBBPProfiler<mila::ParallelBBPProfiler>() {
   auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
-  return mila::BBPProfilerInterfaceFactory().MakeParallel(std::move(ocl_app),
+  return mila::BBPProfilerFactory().MakeParallel(std::move(ocl_app),
                                                           std::move(profiler),
                                                           nullptr);
 }
 
 template<typename T>
-class BBPProfilerInterfaceTest: public testing::Test {
+class BBPProfilerTest: public testing::Test {
  protected:
-  BBPProfilerInterfaceTest() : bbp_(std::move(CreateBBPProfilerInterface<T>())) {}
-  std::unique_ptr<mila::BBPProfilerInterface> bbp_;
+  BBPProfilerTest() : bbp_(std::move(CreateBBPProfiler<T>())) {}
+  std::unique_ptr<mila::BBPProfiler> bbp_;
 };
 
 typedef testing::Types<mila::GenericBBPProfiler, mila::ParallelBBPProfiler>
-    BBPProfilerInterfaceImplementations;
+    BBPProfilerImplementations;
 
-TYPED_TEST_CASE(BBPProfilerInterfaceTest, BBPProfilerInterfaceImplementations);
+TYPED_TEST_CASE(BBPProfilerTest, BBPProfilerImplementations);
 
-TYPED_TEST(BBPProfilerInterfaceTest, ComputeDigitsDuration) {
+TYPED_TEST(BBPProfilerTest, ComputeDigitsDuration) {
   EXPECT_EQ(this->bbp_->ComputeDigitsDuration().count(), 0);
   EXPECT_EQ(this->bbp_->GetDigits(this->bbp_->ComputeDigits(24, 516)), "1411636FBC2A2BA9C55D7418");
   EXPECT_GT(this->bbp_->ComputeDigitsDuration().count(), 0);
 }
 
-TYPED_TEST(BBPProfilerInterfaceTest, GetDigitsPerSecond) {
+TYPED_TEST(BBPProfilerTest, GetDigitsPerSecond) {
   EXPECT_EQ(this->bbp_->GetDigitsPerSecond(), 0.0f);
   EXPECT_EQ(this->bbp_->GetDigits(this->bbp_->ComputeDigits(24, 516)), "1411636FBC2A2BA9C55D7418");
   EXPECT_GT(this->bbp_->GetDigitsPerSecond(), 0.0f);
