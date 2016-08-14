@@ -1,5 +1,6 @@
 #include <chrono>
 #include <list>
+#include <thread>
 #include "gtest/gtest.h"
 #include "bbp_parallel.h"
 #include "bbp_parallel_profiler.h"
@@ -112,7 +113,7 @@ TYPED_TEST_CASE(ProfilerTest, ProfilerImplementations);
 TYPED_TEST(ProfilerTest, Workflow) {
   EXPECT_EQ(this->profiler_->GetDuration("Test").count(), 0.0f);
   this->profiler_->Start("Test");
-  sleep(1);
+  std::this_thread::sleep_for(std::chrono::microseconds(1));
   this->profiler_->End("Test");
   EXPECT_GT(this->profiler_->GetDuration("Test").count(), 0.0f);
 }
