@@ -69,29 +69,6 @@ TYPED_TEST(BBPTest, GetDigits) {
   EXPECT_EQ(this->bbp_->GetDigits(this->bbp_->ComputeDigits(24, 516)), "1411636FBC2A2BA9C55D7418");
 }
 
-template<typename T>
-std::unique_ptr<mila::BBPProfiler> CreateBBPProfiler();
-
-template<>
-std::unique_ptr<mila::BBPProfiler>
-CreateBBPProfiler<mila::GenericBBPProfiler>() {
-  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
-  auto bbp = mila::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
-  return mila::BBPProfilerFactory().MakeGeneric(std::move(bbp), std::move(profiler), nullptr);
-}
-
-template<>
-std::unique_ptr<mila::BBPProfiler>
-CreateBBPProfiler<mila::ParallelBBPProfiler>() {
-  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
-  return mila::BBPProfilerFactory().MakeParallel(std::move(ocl_app),
-                                                          std::move(profiler),
-                                                          nullptr);
-}
-
-
 class ProfilerStub: public mila::Profiler {
  public:
   virtual ~ProfilerStub() override {
