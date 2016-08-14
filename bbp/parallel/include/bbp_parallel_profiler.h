@@ -23,8 +23,8 @@ class ProfilerFactory {
 class BBPProfilerFactory {
  public:
   std::unique_ptr<mila::BBPProfiler> MakeGeneric(std::unique_ptr<mila::BBP> bbp,
-                                                          std::unique_ptr<mila::Profiler> profiler,
-                                                          std::unique_ptr<mila::Logger> logger);
+                                                 std::unique_ptr<mila::Profiler> profiler,
+                                                 std::unique_ptr<mila::Logger> logger);
   std::unique_ptr<mila::BBPProfiler>
   MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
                std::unique_ptr<mila::Profiler> profiler,
@@ -65,7 +65,7 @@ class OpenCLApplicationProfiler: public OpenCLApplication {
   std::unique_ptr<OpenCLApplication> app_;
 };
 
-class GenericBBPProfiler: public BBPProfiler{
+class GenericBBPProfiler: public BBPProfiler {
  public:
   GenericBBPProfiler();
   GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
