@@ -7,8 +7,6 @@
 #include "statistics.h"
 
 namespace mila {
-namespace bbp {
-namespace parallel {
 
 class BBPProfilerInterface: public BBP {
  public:
@@ -19,34 +17,34 @@ class BBPProfilerInterface: public BBP {
 
 class ProfilerFactory {
  public:
-  std::unique_ptr<mila::bbp::parallel::Profiler> MakeChrono(std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  std::unique_ptr<mila::Profiler> MakeChrono(std::unique_ptr<mila::Logger> logger);
 };
 
 class BBPProfilerInterfaceFactory {
  public:
-  std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface> MakeGeneric(std::unique_ptr<mila::bbp::parallel::BBP> bbp,
-                                                                         std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
-                                                                         std::unique_ptr<mila::bbp::parallel::Logger> logger);
-  std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface>
-  MakeParallel(std::unique_ptr<mila::bbp::parallel::OpenCLApplication> ocl_app,
-               std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
-               std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  std::unique_ptr<mila::BBPProfilerInterface> MakeGeneric(std::unique_ptr<mila::BBP> bbp,
+                                                          std::unique_ptr<mila::Profiler> profiler,
+                                                          std::unique_ptr<mila::Logger> logger);
+  std::unique_ptr<mila::BBPProfilerInterface>
+  MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+               std::unique_ptr<mila::Profiler> profiler,
+               std::unique_ptr<mila::Logger> logger);
 };
 
 class BBPFactory {
  public:
-  std::unique_ptr<mila::bbp::parallel::BBP>
-  MakeParallel(std::unique_ptr<mila::bbp::parallel::OpenCLApplication> ocl_app,
-               std::unique_ptr<mila::bbp::parallel::Logger> logger);
-  std::unique_ptr<mila::bbp::parallel::BBP>
-  MakeBBPProfiler(std::unique_ptr<mila::bbp::parallel::BBP> bbp,
-                  std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
-                  std::unique_ptr<mila::bbp::parallel::Logger> logger
+  std::unique_ptr<mila::BBP>
+  MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+               std::unique_ptr<mila::Logger> logger);
+  std::unique_ptr<mila::BBP>
+  MakeBBPProfiler(std::unique_ptr<mila::BBP> bbp,
+                  std::unique_ptr<mila::Profiler> profiler,
+                  std::unique_ptr<mila::Logger> logger
   );
-  std::unique_ptr<mila::bbp::parallel::BBP>
-  MakeParallelBBPProfiler(std::unique_ptr<mila::bbp::parallel::OpenCLApplication> ocl_app,
-                          std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
-                          std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  std::unique_ptr<mila::BBP>
+  MakeParallelBBPProfiler(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+                          std::unique_ptr<mila::Profiler> profiler,
+                          std::unique_ptr<mila::Logger> logger);
 };
 
 template<typename F, typename... A>
@@ -78,9 +76,9 @@ class OpenCLApplicationProfiler: public OpenCLApplication {
 class BBPProfiler: public BBPProfilerInterface {
  public:
   BBPProfiler();
-  BBPProfiler(std::unique_ptr<mila::bbp::parallel::BBP> bbp,
-              std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
-              std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  BBPProfiler(std::unique_ptr<mila::BBP> bbp,
+              std::unique_ptr<mila::Profiler> profiler,
+              std::unique_ptr<mila::Logger> logger);
   virtual ~BBPProfiler() override;
 
   virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
@@ -88,9 +86,9 @@ class BBPProfiler: public BBPProfilerInterface {
   virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const override;
   virtual float GetDigitsPerSecond() const override;
  private:
-  const std::unique_ptr<mila::bbp::parallel::BBP> bbp_;
-  const std::unique_ptr<mila::bbp::parallel::Profiler> profiler_;
-  const std::unique_ptr<mila::bbp::parallel::Logger> logger_;
+  const std::unique_ptr<mila::BBP> bbp_;
+  const std::unique_ptr<mila::Profiler> profiler_;
+  const std::unique_ptr<mila::Logger> logger_;
   size_t number_of_digits_;
 };
 
@@ -107,7 +105,7 @@ struct ParallelBBPProfilingResults {
 class ParallelBBPProfiler: public BBPProfilerInterface {
  public:
   ParallelBBPProfiler();
-  ParallelBBPProfiler(std::unique_ptr<mila::bbp::parallel::ParallelBBP> bbp,
+  ParallelBBPProfiler(std::unique_ptr<mila::ParallelBBP> bbp,
                       std::unique_ptr<Profiler> profiler,
                       std::unique_ptr<Logger> logger);
   virtual ~ParallelBBPProfiler() override;
@@ -120,9 +118,9 @@ class ParallelBBPProfiler: public BBPProfilerInterface {
   virtual float GetDigitsPerSecond() const override;
   virtual ParallelBBPProfilingResults GetResults() const;
  private:
-  const std::unique_ptr<mila::bbp::parallel::ParallelBBP> bbp_;
-  const std::unique_ptr<mila::bbp::parallel::Profiler> profiler_;
-  const std::unique_ptr<mila::bbp::parallel::Logger> logger_;
+  const std::unique_ptr<mila::ParallelBBP> bbp_;
+  const std::unique_ptr<mila::Profiler> profiler_;
+  const std::unique_ptr<mila::Logger> logger_;
   size_t number_of_digits_;
   ParallelBBPProfilingResults results_;
   float ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const;
@@ -131,8 +129,6 @@ class ParallelBBPProfiler: public BBPProfilerInterface {
   void SetResultsAfterInitialize();
 };
 
-};  // parallel
-};  // bbp
 }  // mila
 
 #endif  // MILA_BBP_PARALLEL_PROFILER_H_

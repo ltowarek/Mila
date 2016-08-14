@@ -5,38 +5,38 @@
 #include "bbp_parallel_profiler.h"
 
 template<typename T>
-std::unique_ptr<mila::bbp::parallel::BBP> CreateBBP();
+std::unique_ptr<mila::BBP> CreateBBP();
 
 template<>
-std::unique_ptr<mila::bbp::parallel::BBP> CreateBBP<mila::bbp::parallel::ParallelBBP>() {
-  auto ocl_app = mila::bbp::parallel::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-  return mila::bbp::parallel::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
+std::unique_ptr<mila::BBP> CreateBBP<mila::ParallelBBP>() {
+  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+  return mila::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
 }
 
 template<>
-std::unique_ptr<mila::bbp::parallel::BBP> CreateBBP<mila::bbp::parallel::BBPProfiler>() {
-  auto bbp = CreateBBP<mila::bbp::parallel::ParallelBBP>();
-  auto profiler = mila::bbp::parallel::ProfilerFactory().MakeChrono(nullptr);
-  return mila::bbp::parallel::BBPFactory().MakeBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
+std::unique_ptr<mila::BBP> CreateBBP<mila::BBPProfiler>() {
+  auto bbp = CreateBBP<mila::ParallelBBP>();
+  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
+  return mila::BBPFactory().MakeBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
 }
 
 template<>
-std::unique_ptr<mila::bbp::parallel::BBP> CreateBBP<mila::bbp::parallel::ParallelBBPProfiler>() {
-  auto ocl_app = mila::bbp::parallel::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-  auto profiler = mila::bbp::parallel::ProfilerFactory().MakeChrono(nullptr);
-  return mila::bbp::parallel::BBPFactory().MakeParallelBBPProfiler(std::move(ocl_app), std::move(profiler), nullptr);
+std::unique_ptr<mila::BBP> CreateBBP<mila::ParallelBBPProfiler>() {
+  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
+  return mila::BBPFactory().MakeParallelBBPProfiler(std::move(ocl_app), std::move(profiler), nullptr);
 }
 
 template<typename T>
 class BBPTest: public testing::Test {
  protected:
   BBPTest() : bbp_(std::move(CreateBBP<T>())) {}
-  std::unique_ptr<mila::bbp::parallel::BBP> bbp_;
+  std::unique_ptr<mila::BBP> bbp_;
 };
 
-typedef testing::Types<mila::bbp::parallel::ParallelBBP,
-                       mila::bbp::parallel::BBPProfiler,
-                       mila::bbp::parallel::ParallelBBPProfiler> BBPImplementations;
+typedef testing::Types<mila::ParallelBBP,
+                       mila::BBPProfiler,
+                       mila::ParallelBBPProfiler> BBPImplementations;
 
 TYPED_TEST_CASE(BBPTest, BBPImplementations);
 
@@ -69,35 +69,35 @@ TYPED_TEST(BBPTest, GetDigits) {
 }
 
 template<typename T>
-std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface> CreateBBPProfilerInterface();
+std::unique_ptr<mila::BBPProfilerInterface> CreateBBPProfilerInterface();
 
 template<>
-std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface>
-CreateBBPProfilerInterface<mila::bbp::parallel::BBPProfiler>() {
-  auto ocl_app = mila::bbp::parallel::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-  auto profiler = mila::bbp::parallel::ProfilerFactory().MakeChrono(nullptr);
-  auto bbp = mila::bbp::parallel::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
-  return mila::bbp::parallel::BBPProfilerInterfaceFactory().MakeGeneric(std::move(bbp), std::move(profiler), nullptr);
+std::unique_ptr<mila::BBPProfilerInterface>
+CreateBBPProfilerInterface<mila::BBPProfiler>() {
+  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
+  auto bbp = mila::BBPFactory().MakeParallel(std::move(ocl_app), nullptr);
+  return mila::BBPProfilerInterfaceFactory().MakeGeneric(std::move(bbp), std::move(profiler), nullptr);
 }
 
 template<>
-std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface>
-CreateBBPProfilerInterface<mila::bbp::parallel::ParallelBBPProfiler>() {
-  auto ocl_app = mila::bbp::parallel::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-  auto profiler = mila::bbp::parallel::ProfilerFactory().MakeChrono(nullptr);
-  return mila::bbp::parallel::BBPProfilerInterfaceFactory().MakeParallel(std::move(ocl_app),
-                                                                         std::move(profiler),
-                                                                         nullptr);
+std::unique_ptr<mila::BBPProfilerInterface>
+CreateBBPProfilerInterface<mila::ParallelBBPProfiler>() {
+  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
+  return mila::BBPProfilerInterfaceFactory().MakeParallel(std::move(ocl_app),
+                                                          std::move(profiler),
+                                                          nullptr);
 }
 
 template<typename T>
 class BBPProfilerInterfaceTest: public testing::Test {
  protected:
   BBPProfilerInterfaceTest() : bbp_(std::move(CreateBBPProfilerInterface<T>())) {}
-  std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface> bbp_;
+  std::unique_ptr<mila::BBPProfilerInterface> bbp_;
 };
 
-typedef testing::Types<mila::bbp::parallel::BBPProfiler, mila::bbp::parallel::ParallelBBPProfiler>
+typedef testing::Types<mila::BBPProfiler, mila::ParallelBBPProfiler>
     BBPProfilerInterfaceImplementations;
 
 TYPED_TEST_CASE(BBPProfilerInterfaceTest, BBPProfilerInterfaceImplementations);
@@ -115,21 +115,21 @@ TYPED_TEST(BBPProfilerInterfaceTest, GetDigitsPerSecond) {
 }
 
 template<typename T>
-std::unique_ptr<mila::bbp::parallel::Profiler> CreateProfiler();
+std::unique_ptr<mila::Profiler> CreateProfiler();
 
 template<>
-std::unique_ptr<mila::bbp::parallel::Profiler> CreateProfiler<mila::bbp::parallel::ChronoProfiler>() {
-  return mila::bbp::parallel::ProfilerFactory().MakeChrono(nullptr);
+std::unique_ptr<mila::Profiler> CreateProfiler<mila::ChronoProfiler>() {
+  return mila::ProfilerFactory().MakeChrono(nullptr);
 }
 
 template<typename T>
 class ProfilerTest: public testing::Test {
  protected:
   ProfilerTest() : profiler_(std::move(CreateProfiler<T>())) {}
-  std::unique_ptr<mila::bbp::parallel::Profiler> profiler_;
+  std::unique_ptr<mila::Profiler> profiler_;
 };
 
-typedef testing::Types<mila::bbp::parallel::ChronoProfiler> ProfilerImplementations;
+typedef testing::Types<mila::ChronoProfiler> ProfilerImplementations;
 
 TYPED_TEST_CASE(ProfilerTest, ProfilerImplementations);
 
@@ -141,7 +141,7 @@ TYPED_TEST(ProfilerTest, Workflow) {
   EXPECT_GT(this->profiler_->GetDuration("Test").count(), 0.0f);
 }
 
-class ProfilerStub: public mila::bbp::parallel::Profiler {
+class ProfilerStub: public mila::Profiler {
  public:
   virtual ~ProfilerStub() override {
 
@@ -161,14 +161,14 @@ class ProfilerStub: public mila::bbp::parallel::Profiler {
 class ParallelBBPProfilerTest: public testing::Test {
  protected:
   virtual void SetUp() {
-    auto ocl_app = mila::bbp::parallel::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-    auto profiler = std::unique_ptr<mila::bbp::parallel::Profiler>(new ProfilerStub());
-    auto bbp = std::unique_ptr<mila::bbp::parallel::ParallelBBP>(new mila::bbp::parallel::ParallelBBP(move(ocl_app),
-                                                                                                      nullptr));
-    auto bbp_profiler = new mila::bbp::parallel::ParallelBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
-    bbp_ = std::unique_ptr<mila::bbp::parallel::ParallelBBPProfiler>(bbp_profiler);
+    auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+    auto profiler = std::unique_ptr<mila::Profiler>(new ProfilerStub());
+    auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(move(ocl_app),
+                                                                        nullptr));
+    auto bbp_profiler = new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
+    bbp_ = std::unique_ptr<mila::ParallelBBPProfiler>(bbp_profiler);
   }
-  std::unique_ptr<mila::bbp::parallel::ParallelBBPProfiler> bbp_;
+  std::unique_ptr<mila::ParallelBBPProfiler> bbp_;
 };
 
 TEST_F(ParallelBBPProfilerTest, GetResultsAfterInitialize) {
@@ -188,7 +188,7 @@ TEST_F(ParallelBBPProfilerTest, GetResultsAfterComputeDigits) {
 }
 
 //TEST(BBPParallelProfilerTest, RunWithProfiling) {
-//  mila::bbp::parallel::BBPProfiler bbp;
+//  mila::BBPProfiler bbp;
 //  EXPECT_EQ(bbp.results().count("Run"), 0);
 //  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
 //  EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
@@ -197,43 +197,43 @@ TEST_F(ParallelBBPProfilerTest, GetResultsAfterComputeDigits) {
 //}
 //
 //TEST(BBPParallelProfilerTest, InitializeWithProfiling) {
-//  mila::bbp::parallel::BBPProfiler bbp;
+//  mila::BBPProfiler bbp;
 //  EXPECT_EQ(bbp.results().count("Initialize"), 0);
 //  bbp.Initialize();
 //  EXPECT_EQ(bbp.results().count("Initialize"), 1);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetBuildKernelAsMicroseconds) {
-//  auto bbp = mila::bbp::parallel::BBPProfiler();
+//  auto bbp = mila::BBPProfiler();
 //  bbp.Initialize();
 //  EXPECT_GT(bbp.GetBuildKernelAsMicroseconds(), 0);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetReadBufferAsMicroseconds) {
-//  auto bbp = mila::bbp::parallel::BBPProfiler();
+//  auto bbp = mila::BBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_GT(bbp.GetReadBufferAsMicroseconds(), 0);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
-//  auto bbp = mila::bbp::parallel::BBPProfiler();
+//  auto bbp = mila::BBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_GT(bbp.GetEnqueueNDRangeAsMicroseconds(), 0);
 //}
 //
 //TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsString) {
-//  auto bbp = mila::bbp::parallel::BBPProfiler();
+//  auto bbp = mila::BBPProfiler();
 //  EXPECT_STREQ("", bbp.GetOpenCLStatisticsAsString().c_str());
 //}
 //
 //TEST(BBPParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
-//  auto bbp = mila::bbp::parallel::BBPProfiler();
+//  auto bbp = mila::BBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_STRNE("", bbp.GetOpenCLStatisticsAsString().c_str());
 //}
 //
 //TEST(BBPParallelProfilerTest, GetBandwidth) {
-//  auto bbp = mila::bbp::parallel::BBPProfiler();
+//  auto bbp = mila::BBPProfiler();
 //  bbp.Run(24, 516);
 //  EXPECT_GT(bbp.GetBandwidth(), 0);
 //}

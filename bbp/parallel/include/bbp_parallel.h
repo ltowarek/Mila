@@ -15,8 +15,6 @@
 #include "utils.h"
 
 namespace mila {
-namespace bbp {
-namespace parallel {
 
 class Logger {
  public:
@@ -39,13 +37,13 @@ class Profiler {
 class ChronoProfiler: public Profiler {
  public:
   ChronoProfiler();
-  explicit ChronoProfiler(std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  explicit ChronoProfiler(std::unique_ptr<mila::Logger> logger);
   virtual ~ChronoProfiler() override;
   virtual void Start(const std::string &event_name) override;
   virtual void End(const std::string &event_name) override;
   virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const override;
  private:
-  std::unique_ptr<mila::bbp::parallel::Logger> logger_;
+  std::unique_ptr<mila::Logger> logger_;
   std::map<std::string,
            std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>>
       durations_;
@@ -69,8 +67,8 @@ class OpenCLApplication {
 
 class OpenCLApplicationFactory {
  public:
-  std::unique_ptr<mila::bbp::parallel::OpenCLApplication>
-  MakeGeneric(const size_t platform_id, const size_t device_id, std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  std::unique_ptr<mila::OpenCLApplication>
+  MakeGeneric(const size_t platform_id, const size_t device_id, std::unique_ptr<mila::Logger> logger);
 };
 
 class GenericOpenCLApplication: public OpenCLApplication {
@@ -143,8 +141,6 @@ class ParallelBBP: public GenericBBP {
   const std::string source_file_path_;
   const std::string kernel_name_;
 };
-};  // parallel
-};  // bbp
 }  // mila
 
 #endif  // MILA_BBP_PARALLEL_H_
