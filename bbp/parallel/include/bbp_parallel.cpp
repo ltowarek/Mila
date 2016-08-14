@@ -1,5 +1,9 @@
 #include "bbp_parallel.h"
+#include "bbp_parallel_profiler.h"
 
+mila::bbp::parallel::OpenCLApplication::~OpenCLApplication() {
+
+}
 mila::bbp::parallel::GenericOpenCLApplication::GenericOpenCLApplication() : GenericOpenCLApplication(0, 0, nullptr) {
 
 }
@@ -60,6 +64,9 @@ clpp::Queue mila::bbp::parallel::GenericOpenCLApplication::GetQueue() const {
   return queue_;
 }
 
+mila::bbp::parallel::BBP::~BBP() {
+
+}
 std::string mila::bbp::parallel::GenericBBP::GetDigits(const std::vector<float> &digits) const {
   const auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
   auto output = std::string("");
@@ -89,14 +96,14 @@ void mila::bbp::parallel::ParallelBBP::Initialize() {
   kernel_ = ocl_app_->CreateKernel(kernel_name_, source_file_path_);
 }
 std::vector<float>
-mila::bbp::parallel::ParallelBBP::ComputeDigits(const size_t number_of_digits, const size_t starting_position) const {
+mila::bbp::parallel::ParallelBBP::ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) {
   auto output = std::vector<cl_float>(number_of_digits, 0.0f);
 
   if (number_of_digits == 0) {
     return output;
   }
 
-  auto output_buffer = clpp::Buffer(ocl_app_->GetContext(), CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
+  auto output_buffer = CreateBuffer(output);
   kernel_.setArgs(starting_position, output_buffer);
   const auto global_work_size = std::vector<size_t>{number_of_digits};
   events_.enqueue_nd_range = ocl_app_->GetQueue().enqueueNDRangeKernel(kernel_, global_work_size);
@@ -107,4 +114,51 @@ mila::bbp::parallel::ParallelBBP::ComputeDigits(const size_t number_of_digits, c
                                                                {events_.enqueue_nd_range});
 
   return output;
+}
+clpp::Buffer mila::bbp::parallel::ParallelBBP::CreateBuffer(const std::vector<cl_float> output) const {
+  return clpp::Buffer(ocl_app_->GetContext(), CL_MEM_WRITE_ONLY, output.size() * sizeof(output.at(0)));
+}
+mila::bbp::parallel::ParallelBBP::Events mila::bbp::parallel::ParallelBBP::GetEvents() const {
+  return events_;
+}
+
+std::unique_ptr<mila::bbp::parallel::OpenCLApplication>
+mila::bbp::parallel::OpenCLApplicationFactory::MakeGeneric(const size_t platform_id,
+                                                           const size_t device_id,
+                                                           std::unique_ptr<mila::bbp::parallel::Logger> logger) {
+  auto ocl_app = new GenericOpenCLApplication(platform_id, device_id, std::move(logger));
+  ocl_app->Initialize();
+  return std::unique_ptr<OpenCLApplication>(ocl_app);
+}
+
+mila::bbp::parallel::Profiler::~Profiler() {
+
+}
+
+mila::bbp::parallel::ChronoProfiler::~ChronoProfiler() {
+
+}
+void mila::bbp::parallel::ChronoProfiler::Start(const std::string &event_name) {
+  durations_[event_name] =
+      std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>();
+  durations_[event_name].first = std::chrono::high_resolution_clock::now();
+}
+void mila::bbp::parallel::ChronoProfiler::End(const std::string &event_name) {
+  durations_[event_name].second = std::chrono::high_resolution_clock::now();
+}
+std::chrono::duration<long int, std::micro>
+mila::bbp::parallel::ChronoProfiler::GetDuration(const std::string &event_name) const {
+  auto duration = std::chrono::microseconds(0);
+  if (durations_.count(event_name) > 0) {
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(
+        durations_.at(event_name).second - durations_.at(event_name).first);
+  }
+  return duration;
+}
+mila::bbp::parallel::ChronoProfiler::ChronoProfiler() : ChronoProfiler(nullptr) {
+
+}
+mila::bbp::parallel::ChronoProfiler::ChronoProfiler(std::unique_ptr<mila::bbp::parallel::Logger> logger)
+    : logger_(std::move(logger)) {
+
 }

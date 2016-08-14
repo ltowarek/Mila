@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <memory>
 
 #include "clpp.h"
@@ -20,11 +21,34 @@ namespace parallel {
 class Logger {
  public:
   virtual ~Logger() = 0;
-  virtual void Critical(const char* message, ...) const = 0;
-  virtual void Error(const char* message, ...) const = 0;
-  virtual void Warning(const char* message, ...) const = 0;
-  virtual void Info(const char* message, ...) const = 0;
-  virtual void Debug(const char* message, ...) const = 0;
+  virtual void Critical(const char *message, ...) const = 0;
+  virtual void Error(const char *message, ...) const = 0;
+  virtual void Warning(const char *message, ...) const = 0;
+  virtual void Info(const char *message, ...) const = 0;
+  virtual void Debug(const char *message, ...) const = 0;
+};
+
+class Profiler {
+ public:
+  virtual ~Profiler() = 0;
+  virtual void Start(const std::string &event_name) = 0;
+  virtual void End(const std::string &event_name) = 0;
+  virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const = 0;
+};
+
+class ChronoProfiler: public Profiler {
+ public:
+  ChronoProfiler();
+  explicit ChronoProfiler(std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  virtual ~ChronoProfiler() override;
+  virtual void Start(const std::string &event_name) override;
+  virtual void End(const std::string &event_name) override;
+  virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const override;
+ private:
+  std::unique_ptr<mila::bbp::parallel::Logger> logger_;
+  std::map<std::string,
+           std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>>
+      durations_;
 };
 
 class OpenCLApplication {
@@ -32,7 +56,7 @@ class OpenCLApplication {
   virtual ~OpenCLApplication() = 0;
   virtual void Initialize() = 0;
   virtual clpp::Program CreateProgramFromSource(const std::string &source_file_path) const = 0;
-  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device) const = 0;
+  virtual void BuildProgram(const clpp::Program &program, const clpp::Device &device) const = 0;
   virtual clpp::Kernel CreateKernel(const std::string &kernel_name, const std::string &source_file_path) = 0;
 
   virtual clpp::Platform GetPlatform() const = 0;
@@ -41,6 +65,12 @@ class OpenCLApplication {
   virtual std::string GetDeviceName() const = 0;
   virtual clpp::Context GetContext() const = 0;
   virtual clpp::Queue GetQueue() const = 0;
+};
+
+class OpenCLApplicationFactory {
+ public:
+  std::unique_ptr<mila::bbp::parallel::OpenCLApplication>
+  MakeGeneric(const size_t platform_id, const size_t device_id, std::unique_ptr<mila::bbp::parallel::Logger> logger);
 };
 
 class GenericOpenCLApplication: public OpenCLApplication {
@@ -52,7 +82,7 @@ class GenericOpenCLApplication: public OpenCLApplication {
   ~GenericOpenCLApplication();
   virtual void Initialize() override;
   virtual clpp::Program CreateProgramFromSource(const std::string &source_file_path) const override;
-  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device) const override;
+  virtual void BuildProgram(const clpp::Program &program, const clpp::Device &device) const override;
   virtual clpp::Kernel CreateKernel(const std::string &kernel_name, const std::string &source_file_path) override;
 
   virtual clpp::Platform GetPlatform() const override;
@@ -75,14 +105,14 @@ class GenericOpenCLApplication: public OpenCLApplication {
 class BBP {
  public:
   virtual ~BBP() = 0;
-  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) const = 0;
-  virtual std::string GetDigits(const std::vector<float>& digits) const = 0;
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) = 0;
+  virtual std::string GetDigits(const std::vector<float> &digits) const = 0;
 };
 
 class GenericBBP: public BBP {
  public:
   virtual ~GenericBBP();
-  virtual std::string GetDigits(const std::vector<float>& digits) const override;
+  virtual std::string GetDigits(const std::vector<float> &digits) const override;
 };
 
 class ParallelBBP: public GenericBBP {
@@ -92,15 +122,19 @@ class ParallelBBP: public GenericBBP {
               std::unique_ptr<Logger> logger);
   ~ParallelBBP();
 
-  void Initialize();
-  std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) const;
- private:
-  std::unique_ptr<Logger> logger_;
+  virtual void Initialize();
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position);
 
   struct Events {
     clpp::Event read_buffer;
     clpp::Event enqueue_nd_range;
   };
+
+  virtual Events GetEvents() const;
+ protected:
+  virtual clpp::Buffer CreateBuffer(const std::vector<cl_float> output) const;
+ private:
+  std::unique_ptr<Logger> logger_;
 
   Events events_;
   std::unique_ptr<OpenCLApplication> ocl_app_;

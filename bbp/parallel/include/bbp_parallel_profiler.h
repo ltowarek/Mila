@@ -10,35 +10,127 @@ namespace mila {
 namespace bbp {
 namespace parallel {
 
-class BBPProfiler : public BBP {
+class BBPProfilerInterface: public BBP {
+ public:
+  virtual ~BBPProfilerInterface() = 0;
+  virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const = 0;
+  virtual float GetDigitsPerSecond() const = 0;
+};
+
+class ProfilerFactory {
+ public:
+  std::unique_ptr<mila::bbp::parallel::Profiler> MakeChrono(std::unique_ptr<mila::bbp::parallel::Logger> logger);
+};
+
+class BBPProfilerInterfaceFactory {
+ public:
+  std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface> MakeGeneric(std::unique_ptr<mila::bbp::parallel::BBP> bbp,
+                                                                         std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
+                                                                         std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  std::unique_ptr<mila::bbp::parallel::BBPProfilerInterface>
+  MakeParallel(std::unique_ptr<mila::bbp::parallel::OpenCLApplication> ocl_app,
+               std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
+               std::unique_ptr<mila::bbp::parallel::Logger> logger);
+};
+
+class BBPFactory {
+ public:
+  std::unique_ptr<mila::bbp::parallel::BBP>
+  MakeParallel(std::unique_ptr<mila::bbp::parallel::OpenCLApplication> ocl_app,
+               std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  std::unique_ptr<mila::bbp::parallel::BBP>
+  MakeBBPProfiler(std::unique_ptr<mila::bbp::parallel::BBP> bbp,
+                  std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
+                  std::unique_ptr<mila::bbp::parallel::Logger> logger
+  );
+  std::unique_ptr<mila::bbp::parallel::BBP>
+  MakeParallelBBPProfiler(std::unique_ptr<mila::bbp::parallel::OpenCLApplication> ocl_app,
+                          std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
+                          std::unique_ptr<mila::bbp::parallel::Logger> logger);
+};
+
+template<typename F, typename... A>
+std::chrono::duration<float> ProfileFunction(F &&f, A &&... a) {
+  auto start_time = std::chrono::high_resolution_clock::now();
+  f(std::forward<A>(a)...);
+  auto end_time = std::chrono::high_resolution_clock::now();
+  return std::chrono::duration<float>(end_time - start_time);
+};
+
+class OpenCLApplicationProfiler: public OpenCLApplication {
+ public:
+  OpenCLApplicationProfiler();
+  OpenCLApplicationProfiler(std::unique_ptr<OpenCLApplication> app);
+  virtual void Initialize() override;
+  virtual clpp::Program CreateProgramFromSource(const std::string &source_file_path) const override;
+  virtual void BuildProgram(const clpp::Program &program, const clpp::Device &device) const override;
+  virtual clpp::Kernel CreateKernel(const std::string &kernel_name, const std::string &source_file_path) override;
+  virtual clpp::Platform GetPlatform() const override;
+  virtual std::string GetPlatformName() const override;
+  virtual clpp::Device GetDevice() const override;
+  virtual std::string GetDeviceName() const override;
+  virtual clpp::Context GetContext() const override;
+  virtual clpp::Queue GetQueue() const override;
+ private:
+  std::unique_ptr<OpenCLApplication> app_;
+};
+
+class BBPProfiler: public BBPProfilerInterface {
  public:
   BBPProfiler();
-  BBPProfiler(float precision);
-  BBPProfiler(size_t platform_id, size_t device_id);
+  BBPProfiler(std::unique_ptr<mila::bbp::parallel::BBP> bbp,
+              std::unique_ptr<mila::bbp::parallel::Profiler> profiler,
+              std::unique_ptr<mila::bbp::parallel::Logger> logger);
+  virtual ~BBPProfiler() override;
 
-  void Initialize() override;
-  std::string Run(size_t number_of_digits, size_t starting_position) override;
-  size_t GetBuildKernelAsMicroseconds();
-  size_t GetReadBufferAsMicroseconds();
-  size_t GetEnqueueNDRangeAsMicroseconds();
-  std::string GetOpenCLStatisticsAsString();
-  float GetBandwidth();
-
-  std::string main_result() const;
-  std::string main_duration() const;
-  std::map<std::string, float> results() const;
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
+  virtual std::string GetDigits(const std::vector<float> &digits) const override;
+  virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const override;
+  virtual float GetDigitsPerSecond() const override;
  private:
-  void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
-  void GetProfilingInfo();
-  size_t GetProfilingInfoAsMicroseconds(clpp::Event);
-  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
-
-  const std::string main_result_;
-  const std::string main_duration_;
-  std::map<std::string, float> results_;
-  mila::statistics::OpenCLStatistics device_statistics_;
-  float bandwidth_;
+  const std::unique_ptr<mila::bbp::parallel::BBP> bbp_;
+  const std::unique_ptr<mila::bbp::parallel::Profiler> profiler_;
+  const std::unique_ptr<mila::bbp::parallel::Logger> logger_;
+  size_t number_of_digits_;
 };
+
+struct ParallelBBPProfilingResults {
+  std::chrono::microseconds compute_digits_duration;
+  std::chrono::microseconds initialize_duration;
+  std::chrono::microseconds build_kernel_duration;
+  std::chrono::microseconds read_buffer_duration;
+  std::chrono::microseconds enqueue_nd_range_duration;
+  float digits_per_second;
+  float bandwidth;
+};
+
+class ParallelBBPProfiler: public BBPProfilerInterface {
+ public:
+  ParallelBBPProfiler();
+  ParallelBBPProfiler(std::unique_ptr<mila::bbp::parallel::ParallelBBP> bbp,
+                      std::unique_ptr<Profiler> profiler,
+                      std::unique_ptr<Logger> logger);
+  virtual ~ParallelBBPProfiler() override;
+
+  virtual void Initialize();
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
+  virtual std::string GetDigits(const std::vector<float> &digits) const override;
+  virtual std::chrono::duration<float, std::micro> ComputeDigitsDuration() const override;
+  virtual std::chrono::duration<float, std::micro> InitializeDuration() const;
+  virtual float GetDigitsPerSecond() const override;
+  virtual ParallelBBPProfilingResults GetResults() const;
+ private:
+  const std::unique_ptr<mila::bbp::parallel::ParallelBBP> bbp_;
+  const std::unique_ptr<mila::bbp::parallel::Profiler> profiler_;
+  const std::unique_ptr<mila::bbp::parallel::Logger> logger_;
+  size_t number_of_digits_;
+  ParallelBBPProfilingResults results_;
+  float ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const;
+  std::chrono::duration<long, std::nano> GetProfilingInfo(clpp::Event event) const;
+  void SetResultsAfterComputeDigits(const size_t number_of_digits);
+  void SetResultsAfterInitialize();
+};
+
 };  // parallel
 };  // bbp
 }  // mila
