@@ -4,7 +4,6 @@
 #include <chrono>
 #include <map>
 #include "bbp_parallel.h"
-#include "statistics.h"
 #include "profiler.h"
 
 namespace mila {
@@ -20,7 +19,7 @@ class BBPProfilerFactory {
                                                  std::unique_ptr<Profiler> profiler,
                                                  std::unique_ptr<Logger> logger);
   std::unique_ptr<mila::BBPProfiler>
-  MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+  MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
                std::unique_ptr<Profiler> profiler,
                std::unique_ptr<Logger> logger);
 };
@@ -28,7 +27,7 @@ class BBPProfilerFactory {
 class BBPFactory {
  public:
   std::unique_ptr<mila::BBP>
-  MakeParallel(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+  MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
                std::unique_ptr<Logger> logger);
   std::unique_ptr<mila::BBP>
   MakeGenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
@@ -36,7 +35,7 @@ class BBPFactory {
                          std::unique_ptr<Logger> logger
   );
   std::unique_ptr<mila::BBP>
-  MakeParallelBBPProfiler(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+  MakeParallelBBPProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
                           std::unique_ptr<Profiler> profiler,
                           std::unique_ptr<Logger> logger);
 };

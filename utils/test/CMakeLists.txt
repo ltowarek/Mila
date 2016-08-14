@@ -7,7 +7,8 @@ add_executable(${PROJECT_NAME}
         version_test.cpp
         statistics_test.cpp
         profiler_test.cpp
-        logger_test.cpp)
+        logger_test.cpp
+        ocl_app_test.cpp)
 target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${UTILS_LIBRARIES})
 
 file(COPY test.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
