@@ -11,6 +11,7 @@ add_library(utils_lib
         include/statistics.h include/statistics.cpp
         include/logger.h include/logger.cpp
         include/profiler.h include/profiler.cpp
-        include/ocl_app.h include/ocl_app.cpp)
+        include/ocl_app.h include/ocl_app.cpp
+        include/ocl_app_profiler.h include/ocl_app_profiler.cpp)
 
 add_subdirectory(test)
