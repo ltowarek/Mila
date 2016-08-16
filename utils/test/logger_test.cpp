@@ -1,32 +1,38 @@
 #include "gtest/gtest.h"
 #include "logger.h"
 
-TEST(PrintfLoggerTest, Critical) {
-  auto logger = mila::PrintfLogger();
-  printf("\n");
-  logger.Critical("Test Critical - %d", 5);
+class PrintfLoggerTest: public testing::Test {
+ protected:
+  virtual void SetUp() {
+    logger_ = mila::PrintfLogger();
+    logger_.SetLevel(mila::LEVELS::DEBUG);
+    printf("\n");
+  }
+  mila::PrintfLogger logger_;
+};
+
+TEST_F(PrintfLoggerTest, Critical) {
+  this->logger_.Critical("Test Critical - %d", 5);
 }
 
-TEST(PrintfLoggerTest, Error) {
-  auto logger = mila::PrintfLogger();
-  printf("\n");
-  logger.Error("Test Error - %d", 5);
+TEST_F(PrintfLoggerTest, Error) {
+  this->logger_.Error("Test Error - %d", 5);
 }
 
-TEST(PrintfLoggerTest, Warning) {
-  auto logger = mila::PrintfLogger();
-  printf("\n");
-  logger.Warning("Test Warning - %d", 5);
+TEST_F(PrintfLoggerTest, Warning) {
+  this->logger_.Warning("Test Warning - %d", 5);
 }
 
-TEST(PrintfLoggerTest, Info) {
-  auto logger = mila::PrintfLogger();
-  printf("\n");
-  logger.Info("Test Info - %d", 5);
+TEST_F(PrintfLoggerTest, Info) {
+  this->logger_.Info("Test Info - %d", 5);
 }
 
-TEST(PrintfLoggerTest, Debug) {
-  auto logger = mila::PrintfLogger();
-  printf("\n");
-  logger.Debug("Test Debug - %d", 5);
+TEST_F(PrintfLoggerTest, Debug) {
+  this->logger_.Debug("Test Debug - %d", 5);
+}
+
+TEST_F(PrintfLoggerTest, Levels) {
+  this->logger_.SetLevel(mila::LEVELS::CRITICAL);
+  this->logger_.Debug("Critical level");
+  this->logger_.Critical("Critical level");
 }
