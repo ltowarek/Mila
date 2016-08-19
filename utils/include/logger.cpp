@@ -8,8 +8,8 @@ std::unique_ptr<mila::Logger> mila::LoggerFactory::MakePrintf() const {
   return std::unique_ptr<mila::Logger>(new PrintfLogger());
 }
 
-mila::PrintfLogger::PrintfLogger() {
-  level_ = LEVELS::WARNING;
+mila::PrintfLogger::PrintfLogger() : level_(LEVELS::INFO) {
+
 }
 mila::PrintfLogger::~PrintfLogger() {
 
