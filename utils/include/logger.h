@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdarg>
+#include <memory>
 
 namespace mila {
 enum class LEVELS : int {DEBUG = 0, INFO = 1, WARNING = 2, ERROR = 3, CRITICAL = 4};
@@ -15,6 +16,11 @@ class Logger {
   virtual void Warning(const char *message, ...) const = 0;
   virtual void Info(const char *message, ...) const = 0;
   virtual void Debug(const char *message, ...) const = 0;
+};
+
+class LoggerFactory {
+public:
+  std::unique_ptr<Logger> MakePrintf() const;
 };
 
 class PrintfLogger: public Logger {
