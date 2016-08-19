@@ -30,7 +30,7 @@ void mila::PrintfLogger::Critical(const char *message, ...) const {
 }
 void mila::PrintfLogger::Error(const char *message, ...) const {
   if (level_ <= LEVELS::ERROR) {
-    printf("Error: ");
+    printf("Error:    ");
     va_list args;
     va_start(args, message);
     vprintf(message, args);
@@ -40,7 +40,7 @@ void mila::PrintfLogger::Error(const char *message, ...) const {
 }
 void mila::PrintfLogger::Warning(const char *message, ...) const {
   if (level_ <= LEVELS::WARNING) {
-    printf("Warning: ");
+    printf("Warning:  ");
     va_list args;
     va_start(args, message);
     vprintf(message, args);
@@ -50,7 +50,7 @@ void mila::PrintfLogger::Warning(const char *message, ...) const {
 }
 void mila::PrintfLogger::Info(const char *message, ...) const {
   if (level_ <= LEVELS::INFO) {
-    printf("Info: ");
+    printf("Info:     ");
     va_list args;
     va_start(args, message);
     vprintf(message, args);
@@ -60,7 +60,7 @@ void mila::PrintfLogger::Info(const char *message, ...) const {
 }
 void mila::PrintfLogger::Debug(const char *message, ...) const {
   if (level_ <= LEVELS::DEBUG) {
-    printf("Debug: ");
+    printf("Debug:    ");
     va_list args;
     va_start(args, message);
     vprintf(message, args);
