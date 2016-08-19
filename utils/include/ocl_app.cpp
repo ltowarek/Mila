@@ -6,8 +6,8 @@ mila::OpenCLApplication::~OpenCLApplication() {
 std::unique_ptr<mila::OpenCLApplication>
 mila::OpenCLApplicationFactory::MakeGeneric(const size_t platform_id,
                                             const size_t device_id,
-                                            std::unique_ptr<mila::Logger> logger) {
-  auto ocl_app = new mila::GenericOpenCLApplication(platform_id, device_id, move(logger));
+                                            const std::shared_ptr<mila::Logger> logger) {
+  auto ocl_app = new mila::GenericOpenCLApplication(platform_id, device_id, logger);
   ocl_app->Initialize();
   return std::unique_ptr<mila::OpenCLApplication>(ocl_app);
 }
@@ -16,9 +16,8 @@ mila::GenericOpenCLApplication::GenericOpenCLApplication() : GenericOpenCLApplic
 }
 mila::GenericOpenCLApplication::GenericOpenCLApplication(const size_t platform_id,
                                                          const size_t device_id,
-                                                         std::unique_ptr<mila::Logger> logger) : platform_id_(
-    platform_id), device_id_(device_id) {
-  logger_ = move(logger);
+                                                         const std::shared_ptr<mila::Logger> logger) : platform_id_(
+    platform_id), device_id_(device_id), logger_(logger) {
 }
 mila::GenericOpenCLApplication::~GenericOpenCLApplication() {
 

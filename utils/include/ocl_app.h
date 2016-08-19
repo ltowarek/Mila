@@ -28,14 +28,14 @@ class OpenCLApplication {
 class OpenCLApplicationFactory {
  public:
   std::unique_ptr<OpenCLApplication>
-  MakeGeneric(const size_t platform_id, const size_t device_id, std::unique_ptr<mila::Logger> logger);
+  MakeGeneric(const size_t platform_id, const size_t device_id, const std::shared_ptr<mila::Logger> logger);
 };
 class GenericOpenCLApplication: public OpenCLApplication {
  public:
   GenericOpenCLApplication();
   GenericOpenCLApplication(const size_t platform_id,
                            const size_t device_id,
-                           std::unique_ptr<mila::Logger> logger);
+                           const std::shared_ptr<mila::Logger> logger);
   ~GenericOpenCLApplication();
   virtual void Initialize() override;
   virtual clpp::Program CreateProgramFromSource(const std::string &source_file_path) const override;
@@ -49,7 +49,7 @@ class GenericOpenCLApplication: public OpenCLApplication {
   virtual clpp::Context GetContext() const override;
   virtual clpp::Queue GetQueue() const override;
  private:
-  std::unique_ptr<mila::Logger> logger_;
+  const std::shared_ptr<mila::Logger> logger_;
   clpp::Platform platform_;
   clpp::Device device_;
   clpp::Context context_;
