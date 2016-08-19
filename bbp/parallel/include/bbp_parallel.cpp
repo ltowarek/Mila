@@ -20,11 +20,12 @@ mila::ParallelBBP::ParallelBBP() : mila::ParallelBBP(nullptr, nullptr) {
 
 }
 mila::ParallelBBP::ParallelBBP(std::unique_ptr<OpenCLApplication> ocl_app,
-                               std::unique_ptr<Logger> logger) :
+                               const std::shared_ptr<Logger> logger) :
     source_file_path_("bbp.cl"),
-    kernel_name_("bbp") {
-  logger_ = std::move(logger);
-  ocl_app_ = std::move(ocl_app);
+    kernel_name_("bbp"),
+    logger_(logger),
+    ocl_app_(std::move(ocl_app)) {
+
 }
 mila::ParallelBBP::~ParallelBBP() {
 

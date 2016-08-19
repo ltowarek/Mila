@@ -30,7 +30,7 @@ class ParallelBBP: public GenericBBP {
  public:
   ParallelBBP();
   ParallelBBP(std::unique_ptr<OpenCLApplication> ocl_app,
-              std::unique_ptr<Logger> logger);
+              const std::shared_ptr<Logger> logger);
   ~ParallelBBP();
 
   virtual void Initialize();
@@ -45,7 +45,7 @@ class ParallelBBP: public GenericBBP {
  protected:
   virtual clpp::Buffer CreateBuffer(const std::vector<cl_float> output) const;
  private:
-  std::unique_ptr<Logger> logger_;
+  const std::shared_ptr<Logger> logger_;
 
   Events events_;
   std::unique_ptr<OpenCLApplication> ocl_app_;

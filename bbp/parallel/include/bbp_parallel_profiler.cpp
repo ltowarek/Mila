@@ -9,8 +9,8 @@ mila::GenericBBPProfiler::GenericBBPProfiler() : GenericBBPProfiler(nullptr, nul
 }
 mila::GenericBBPProfiler::GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
                                              std::unique_ptr<Profiler> profiler,
-                                             std::unique_ptr<Logger> logger)
-    : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(std::move(logger)), number_of_digits_(0) {
+                                             const std::shared_ptr<Logger> logger)
+    : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(logger), number_of_digits_(0) {
 
 }
 mila::GenericBBPProfiler::~GenericBBPProfiler() {
@@ -30,27 +30,27 @@ std::string mila::GenericBBPProfiler::GetDigits(const std::vector<float> &digits
 
 std::unique_ptr<mila::BBP>
 mila::BBPFactory::MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
-                               std::unique_ptr<Logger> logger) {
-  auto bbp = new mila::ParallelBBP(move(ocl_app), move(logger));
+                               const std::shared_ptr<Logger> logger) {
+  auto bbp = new mila::ParallelBBP(std::move(ocl_app), logger);
   bbp->Initialize();
   return std::unique_ptr<mila::BBP>(bbp);
 }
 std::unique_ptr<mila::BBP>
 mila::BBPFactory::MakeGenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
                                          std::unique_ptr<Profiler> profiler,
-                                         std::unique_ptr<Logger> logger) {
+                                         const std::shared_ptr<Logger> logger) {
   return std::unique_ptr<mila::BBP>(new mila::GenericBBPProfiler(std::move(bbp),
                                                                  std::move(profiler),
-                                                                 std::move(logger)));
+                                                                 logger));
 }
 std::unique_ptr<mila::BBP>
 mila::BBPFactory::MakeParallelBBPProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
                                           std::unique_ptr<Profiler> profiler,
-                                          std::unique_ptr<Logger> logger) {
-  auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(move(ocl_app),
-                                                                      move(logger)));
+                                          std::shared_ptr<Logger> logger) {
+  auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(std::move(ocl_app),
+                                                                      logger));
   auto bbp_profiler =
-      new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), std::move(logger));
+      new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), logger);
   bbp_profiler->Initialize();
   return std::unique_ptr<mila::BBP>(bbp_profiler);
 }
@@ -58,21 +58,19 @@ mila::BBPFactory::MakeParallelBBPProfiler(std::unique_ptr<OpenCLApplication> ocl
 std::unique_ptr<mila::BBPProfiler>
 mila::BBPProfilerFactory::MakeGeneric(std::unique_ptr<mila::BBP> bbp,
                                       std::unique_ptr<Profiler> profiler,
-                                      std::unique_ptr<Logger> logger) {
+                                      const std::shared_ptr<Logger> logger) {
   return std::unique_ptr<mila::BBPProfiler>(new mila::GenericBBPProfiler(std::move(bbp),
-                                                                         std::move(
-                                                                             profiler),
-                                                                         std::move(
-                                                                             logger)));
+                                                                         std::move(profiler),
+                                                                         logger));
 }
 std::unique_ptr<mila::BBPProfiler>
 mila::BBPProfilerFactory::MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
                                        std::unique_ptr<Profiler> profiler,
-                                       std::unique_ptr<Logger> logger) {
-  auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(move(ocl_app),
-                                                                      move(logger)));
+                                       const std::shared_ptr<Logger> logger) {
+  auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(std::move(ocl_app),
+                                                                      logger));
   auto bbp_profiler =
-      new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), std::move(logger));
+      new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), logger);
   bbp_profiler->Initialize();
   return std::unique_ptr<mila::BBPProfiler>(std::move(bbp_profiler));
 }
@@ -82,8 +80,8 @@ mila::ParallelBBPProfiler::ParallelBBPProfiler() : ParallelBBPProfiler(nullptr, 
 }
 mila::ParallelBBPProfiler::ParallelBBPProfiler(std::unique_ptr<mila::ParallelBBP> bbp,
                                                std::unique_ptr<Profiler> profiler,
-                                               std::unique_ptr<Logger> logger)
-    : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(std::move(logger)) {
+                                               const std::shared_ptr<Logger> logger)
+    : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(logger) {
 
 }
 mila::ParallelBBPProfiler::~ParallelBBPProfiler() {

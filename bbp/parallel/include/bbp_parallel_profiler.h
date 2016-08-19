@@ -17,27 +17,27 @@ class BBPProfilerFactory {
  public:
   std::unique_ptr<mila::BBPProfiler> MakeGeneric(std::unique_ptr<mila::BBP> bbp,
                                                  std::unique_ptr<Profiler> profiler,
-                                                 std::unique_ptr<Logger> logger);
+                                                 const std::shared_ptr<Logger> logger);
   std::unique_ptr<mila::BBPProfiler>
   MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
                std::unique_ptr<Profiler> profiler,
-               std::unique_ptr<Logger> logger);
+               const std::shared_ptr<Logger> logger);
 };
 
 class BBPFactory {
  public:
   std::unique_ptr<mila::BBP>
   MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
-               std::unique_ptr<Logger> logger);
+               const std::shared_ptr<Logger> logger);
   std::unique_ptr<mila::BBP>
   MakeGenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
                          std::unique_ptr<Profiler> profiler,
-                         std::unique_ptr<Logger> logger
+                         const std::shared_ptr<Logger> logger
   );
   std::unique_ptr<mila::BBP>
   MakeParallelBBPProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
                           std::unique_ptr<Profiler> profiler,
-                          std::unique_ptr<Logger> logger);
+                          const std::shared_ptr<Logger> logger);
 };
 
 class GenericBBPProfiler: public BBPProfiler {
@@ -45,7 +45,7 @@ class GenericBBPProfiler: public BBPProfiler {
   GenericBBPProfiler();
   GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
                      std::unique_ptr<Profiler> profiler,
-                     std::unique_ptr<Logger> logger);
+                     const std::shared_ptr<Logger> logger);
   virtual ~GenericBBPProfiler() override;
 
   virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
@@ -53,7 +53,7 @@ class GenericBBPProfiler: public BBPProfiler {
  private:
   const std::unique_ptr<mila::BBP> bbp_;
   const std::unique_ptr<Profiler> profiler_;
-  const std::unique_ptr<Logger> logger_;
+  const std::shared_ptr<Logger> logger_;
   size_t number_of_digits_;
 };
 
@@ -72,7 +72,7 @@ class ParallelBBPProfiler: public BBPProfiler {
   ParallelBBPProfiler();
   ParallelBBPProfiler(std::unique_ptr<mila::ParallelBBP> bbp,
                       std::unique_ptr<Profiler> profiler,
-                      std::unique_ptr<Logger> logger);
+                      const std::shared_ptr<Logger> logger);
   virtual ~ParallelBBPProfiler() override;
 
   virtual void Initialize();
@@ -82,7 +82,7 @@ class ParallelBBPProfiler: public BBPProfiler {
  private:
   const std::unique_ptr<mila::ParallelBBP> bbp_;
   const std::unique_ptr<Profiler> profiler_;
-  const std::unique_ptr<Logger> logger_;
+  const std::shared_ptr<Logger> logger_;
   ParallelBBPProfilingResults results_;
   float ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const;
   std::chrono::duration<long, std::nano> GetProfilingInfo(clpp::Event event) const;
