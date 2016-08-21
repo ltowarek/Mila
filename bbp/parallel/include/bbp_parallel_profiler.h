@@ -60,7 +60,6 @@ class GenericBBPProfiler: public BBPProfiler {
 struct ParallelBBPProfilingResults {
   std::chrono::microseconds compute_digits_duration;
   std::chrono::microseconds initialize_duration;
-  std::chrono::microseconds build_kernel_duration;
   std::chrono::microseconds read_buffer_duration;
   std::chrono::microseconds enqueue_nd_range_duration;
   float digits_per_second;

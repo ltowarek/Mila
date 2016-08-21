@@ -90,7 +90,7 @@ class ParallelBBPProfilerTest: public testing::Test {
   virtual void SetUp() {
     auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
     auto profiler = std::unique_ptr<mila::Profiler>(new ProfilerStub());
-    auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(move(ocl_app),
+    auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(std::move(ocl_app),
                                                                         nullptr));
     auto bbp_profiler = new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
     bbp_ = std::unique_ptr<mila::ParallelBBPProfiler>(bbp_profiler);
@@ -101,7 +101,6 @@ class ParallelBBPProfilerTest: public testing::Test {
 TEST_F(ParallelBBPProfilerTest, GetResultsAfterInitialize) {
   this->bbp_->Initialize();
   EXPECT_GT(this->bbp_->GetResults().initialize_duration.count(), 0);
-  EXPECT_GT(this->bbp_->GetResults().build_kernel_duration.count(), 0);
 }
 
 TEST_F(ParallelBBPProfilerTest, GetResultsAfterComputeDigits) {
