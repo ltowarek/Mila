@@ -28,11 +28,11 @@ mila::ChronoProfiler::GetDuration(const std::string &event_name) const {
 mila::ChronoProfiler::ChronoProfiler() : ChronoProfiler(nullptr) {
 
 }
-mila::ChronoProfiler::ChronoProfiler(std::unique_ptr<mila::Logger> logger)
-    : logger_(std::move(logger)) {
+mila::ChronoProfiler::ChronoProfiler(const std::shared_ptr<Logger> logger)
+    : logger_(logger) {
 
 }
 std::unique_ptr<mila::Profiler>
-mila::ProfilerFactory::MakeChrono(std::unique_ptr<mila::Logger> logger) {
-  return std::unique_ptr<mila::Profiler>(new mila::ChronoProfiler(std::move(logger)));
+mila::ProfilerFactory::MakeChrono(const std::shared_ptr<Logger> logger) {
+  return std::unique_ptr<mila::Profiler>(new mila::ChronoProfiler(logger));
 }
