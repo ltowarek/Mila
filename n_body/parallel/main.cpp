@@ -28,7 +28,7 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
-  printf("%s\n", mila::version::PrintVersion().c_str());
+  printf("%s\n", mila::version::GetVersion().c_str());
 
   auto n_body_initial = mila::nbody::parallel::NBodyParallelWithInputFileProfiler(config.number_of_particles,
                                                                                   config.platform_id,

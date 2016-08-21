@@ -24,7 +24,7 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
-  printf("%s\n", mila::version::PrintVersion().c_str());
+  printf("%s\n", mila::version::GetVersion().c_str());
 
   auto bbp_initial = mila::bbp::sequential::BBPProfiler();
   std::string output = bbp_initial.Run(config.number_of_digits, config.starting_position);

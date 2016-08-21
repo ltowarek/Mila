@@ -25,7 +25,7 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
-  printf("%s\n", mila::version::PrintVersion().c_str());
+  printf("%s\n", mila::version::GetVersion().c_str());
 
   auto sudoku_solver_initial =
       mila::sudokusolver::parallel::SudokuSolverBasedOnFilesProfiler(config.platform_id, config.device_id);

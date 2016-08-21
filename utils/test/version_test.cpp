@@ -8,11 +8,11 @@
 #include "gtest/gtest.h"
 #include "version.h"
 
-TEST(VersionTest, PrintVersion) {
+TEST(VersionTest, GetVersion) {
 
   std::stringstream ss;
-  ss << "Mila version: " << MILA_VERSION_MAJOR << "." << MILA_VERSION_MINOR << "." << MILA_VERSION_PATCH;
+  ss << MILA_VERSION_MAJOR << "." << MILA_VERSION_MINOR << "." << MILA_VERSION_PATCH;
   std::string expected_version = ss.str();
 
-  EXPECT_STREQ(mila::version::PrintVersion().c_str(), expected_version.c_str());
+  EXPECT_STREQ(mila::version::GetVersion().c_str(), expected_version.c_str());
 }

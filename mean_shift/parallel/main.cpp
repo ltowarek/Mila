@@ -30,7 +30,7 @@ parameters ParseCommandLine(int argc, char **argv) {
 
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
-  printf("%s\n", mila::version::PrintVersion().c_str());
+  printf("%s\n", mila::version::GetVersion().c_str());
 
   auto mean_shift_initial =
       mila::meanshift::parallel::MeanShiftImageProcessingProfiler(config.platform_id, config.device_id);
