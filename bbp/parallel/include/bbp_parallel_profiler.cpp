@@ -131,9 +131,9 @@ float
 mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const {
   auto gb_per_s = 0.0f;
   if (microseconds > 0) {
-    auto read_writes = 1;
+    auto read_writes = 1.0f;
     auto micro_to_giga = 1e3f;
-    gb_per_s = number_of_work_items * sizeof(cl_float) * read_writes / microseconds / micro_to_giga;
+    gb_per_s = number_of_work_items * sizeof(cl_float) * read_writes / static_cast<float>(microseconds) / micro_to_giga;
   }
   return gb_per_s;
 }
