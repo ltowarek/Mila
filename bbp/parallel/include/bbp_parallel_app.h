@@ -27,7 +27,7 @@ class ParallelBBPApp {
   };
 
   Parameters ParseCommandLine(int argc, char **argv) const;
-  std::vector<mila::ParallelBBPProfilingResults> RunTests(const Parameters config) const;
+  std::vector<mila::ParallelBBPProfilingResults> RunIterations(const Parameters config) const;
   Results PrepareResults(const std::vector<mila::ParallelBBPProfilingResults> &raw_results) const;
   void PrintParameters(const Parameters &config) const;
   void PrintResults(const ParallelBBPProfilingResults &results) const;

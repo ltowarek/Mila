@@ -6,7 +6,7 @@ mila::ParallelBBPApp::ParallelBBPApp(std::shared_ptr<mila::Logger> logger): logg
 void mila::ParallelBBPApp::Run(int argc, char **argv) const {
   auto config = ParseCommandLine(argc, argv);
   PrintParameters(config);
-  auto raw_results = RunTests(config);
+  auto raw_results = RunIterations(config);
   auto prepared_results = PrepareResults(raw_results);
   PrintResultsStatistics(prepared_results);
 }
@@ -22,7 +22,7 @@ mila::ParallelBBPApp::Parameters mila::ParallelBBPApp::ParseCommandLine(int argc
   config.number_of_iterations = static_cast<size_t>(atoi(argv[5]));
   return config;
 }
-std::vector<mila::ParallelBBPProfilingResults> mila::ParallelBBPApp::RunTests(const Parameters config) const {
+std::vector<mila::ParallelBBPProfilingResults> mila::ParallelBBPApp::RunIterations(const Parameters config) const {
   auto results = std::vector<mila::ParallelBBPProfilingResults>();
   const auto warm_up_iterations = 1;
   for (size_t i = 0; i < config.number_of_iterations + warm_up_iterations; ++i) {
