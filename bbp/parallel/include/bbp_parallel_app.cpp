@@ -70,11 +70,11 @@ void mila::ParallelBBPApp::PrintParameters(const Parameters &config) const {
 }
 void mila::ParallelBBPApp::PrintResultsStatistics(const Results &results) const {
   PrintResultStatistics("Bandwidth", "GB/s", results.bandwidth);
-  PrintResultStatistics("Throughput", "digits/s", results.bandwidth);
-  PrintResultStatistics("Initialize duration", "us", results.bandwidth);
-  PrintResultStatistics("Compute digits duration", "us", results.bandwidth);
-  PrintResultStatistics("Enqueue ND range duration", "us", results.bandwidth);
-  PrintResultStatistics("Read buffer duration", "us", results.bandwidth);
+  PrintResultStatistics("Throughput", "digits/s", results.digits_per_second);
+  PrintResultStatistics("Initialize duration", "us", results.initialize_duration);
+  PrintResultStatistics("Compute digits duration", "us", results.compute_digits_duration);
+  PrintResultStatistics("Enqueue ND range duration", "us", results.enqueue_nd_range_duration);
+  PrintResultStatistics("Read buffer duration", "us", results.read_buffer_duration);
 }
 void mila::ParallelBBPApp::PrintResultStatistics(const std::string &name,
                                                  const std::string &unit,
