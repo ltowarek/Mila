@@ -40,8 +40,15 @@ std::vector<mila::ParallelBBPProfilingResults> mila::ParallelBBPApp::RunTests(co
     auto bbp_profiler = std::unique_ptr<mila::ParallelBBPProfiler>(new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), logger_));
     bbp_profiler->Initialize();
     auto digits = bbp_profiler->ComputeDigits(config.number_of_digits, config.starting_position);
+    auto digits_str = bbp_profiler->GetDigits(digits);
 
-    PrintResults(bbp_profiler->GetDigits(digits), bbp_profiler->GetResults());
+    if (i == 0) {
+      logger_->Info("Digits: %s", digits_str.c_str());
+    } else {
+      logger_->Debug("Digits: %s", digits_str.c_str());
+    }
+
+    PrintResults(bbp_profiler->GetResults());
 
     if (i >= warm_up_iterations) {
       results.push_back(bbp_profiler->GetResults());
@@ -84,8 +91,7 @@ void mila::ParallelBBPApp::PrintResultStatistics(const std::string &name,
   logger_->Info("%s standard deviation: %f %s", name.c_str(), mila::utils::StandardDeviation(result), unit.c_str());
   logger_->Info("%s coefficient of variation: %f", name.c_str(), mila::utils::CoefficientOfVariation(result), unit.c_str());
 }
-void mila::ParallelBBPApp::PrintResults(const std::string &digits, const ParallelBBPProfilingResults &results) const {
-  logger_->Debug("Digits: %s", digits.c_str());
+void mila::ParallelBBPApp::PrintResults(const ParallelBBPProfilingResults &results) const {
   logger_->Debug("Bandwidth: %f GB/s", results.bandwidth);
   logger_->Debug("Throughput: %f digits/s", results.digits_per_second);
   logger_->Debug("Initialize duration: %llu us", results.initialize_duration);

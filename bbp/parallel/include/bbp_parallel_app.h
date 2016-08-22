@@ -30,7 +30,7 @@ class ParallelBBPApp {
   std::vector<mila::ParallelBBPProfilingResults> RunTests(const Parameters config) const;
   Results PrepareResults(const std::vector<mila::ParallelBBPProfilingResults> &raw_results) const;
   void PrintParameters(const Parameters &config) const;
-  void PrintResults(const std::string &digits, const ParallelBBPProfilingResults &results) const;
+  void PrintResults(const ParallelBBPProfilingResults &results) const;
   void PrintResultsStatistics(const Results &results) const;
   void PrintResultStatistics(const std::string &name, const std::string &unit, const std::vector<float> &result) const;
 
