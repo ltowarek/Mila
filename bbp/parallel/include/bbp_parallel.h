@@ -42,13 +42,12 @@ class ParallelBBP: public GenericBBP {
   };
 
   virtual Events GetEvents() const;
- protected:
-  virtual clpp::Buffer CreateBuffer(const std::vector<cl_float> output) const;
  private:
+  clpp::Buffer CreateBuffer(const std::vector<cl_float> output) const;
   const std::shared_ptr<Logger> logger_;
 
   Events events_;
-  std::unique_ptr<OpenCLApplication> ocl_app_;
+  const std::unique_ptr<OpenCLApplication> ocl_app_;
   clpp::Kernel kernel_;
 
   const std::string source_file_path_;
