@@ -8,11 +8,6 @@
 
 namespace mila {
 
-class BBPProfiler: public BBP {
- public:
-  virtual ~BBPProfiler() = 0;
-};
-
 class BBPProfilerFactory {
  public:
   std::unique_ptr<mila::BBPProfiler> MakeGeneric(std::unique_ptr<mila::BBP> bbp,

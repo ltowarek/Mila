@@ -14,3 +14,7 @@ std::string mila::GenericBBP::GetDigits(const std::vector<float> &digits) const 
 mila::GenericBBP::~GenericBBP() {
 
 }
+mila::BBPProfiler::~BBPProfiler() {
+
+}
+

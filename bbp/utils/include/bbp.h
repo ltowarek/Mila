@@ -19,6 +19,12 @@ class GenericBBP : public BBP {
   virtual ~GenericBBP();
   virtual std::string GetDigits(const std::vector<float> &digits) const override;
 };
+
+class BBPProfiler: public BBP {
+ public:
+  virtual ~BBPProfiler() = 0;
+};
+
 }  // mila
 
 #endif  // MILA_BBP_H_

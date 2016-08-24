@@ -1,9 +1,5 @@
 #include "bbp_parallel_profiler.h"
 
-mila::BBPProfiler::~BBPProfiler() {
-
-}
-
 mila::GenericBBPProfiler::GenericBBPProfiler() : GenericBBPProfiler(nullptr, nullptr, nullptr) {
 
 }
