@@ -1,21 +1,6 @@
 #include "bbp_parallel.h"
 #include "bbp_parallel_profiler.h"
 
-mila::BBP::~BBP() {
-
-}
-std::string mila::GenericBBP::GetDigits(const std::vector<float> &digits) const {
-  const auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
-  auto output = std::string("");
-  for (const auto digit : hex_digits) {
-    output += digit[0];
-  }
-  return output;
-}
-mila::GenericBBP::~GenericBBP() {
-
-}
-
 mila::ParallelBBP::ParallelBBP() : mila::ParallelBBP(nullptr, nullptr) {
 
 }
@@ -34,7 +19,7 @@ void mila::ParallelBBP::Initialize() {
   kernel_ = ocl_app_->CreateKernel(kernel_name_, source_file_path_);
 }
 std::vector<float>
-mila::ParallelBBP::ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) {
+mila::ParallelBBP::ComputeDigits(const size_t number_of_digits, const size_t starting_position) {
   auto output = std::vector<cl_float>(number_of_digits, 0.0f);
 
   if (number_of_digits == 0) {
@@ -42,7 +27,7 @@ mila::ParallelBBP::ComputeDigits(const size_t number_of_digits, const cl_uint st
   }
 
   auto output_buffer = CreateBuffer(output);
-  kernel_.setArgs(starting_position, output_buffer);
+  kernel_.setArgs(static_cast<cl_uint>(starting_position), output_buffer);
   const auto global_work_size = std::vector<size_t>{number_of_digits};
   events_.enqueue_nd_range = ocl_app_->GetQueue().enqueueNDRangeKernel(kernel_, global_work_size);
   events_.read_buffer = ocl_app_->GetQueue().enqueueReadBuffer(output_buffer,

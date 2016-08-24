@@ -48,7 +48,7 @@ class GenericBBPProfiler: public BBPProfiler {
                      const std::shared_ptr<Logger> logger);
   virtual ~GenericBBPProfiler() override;
 
-  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) override;
   virtual std::string GetDigits(const std::vector<float> &digits) const override;
  private:
   const std::unique_ptr<mila::BBP> bbp_;
@@ -75,7 +75,7 @@ class ParallelBBPProfiler: public BBPProfiler {
   virtual ~ParallelBBPProfiler() override;
 
   virtual void Initialize();
-  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) override;
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) override;
   virtual std::string GetDigits(const std::vector<float> &digits) const override;
   virtual ParallelBBPProfilingResults GetResults() const;
  private:

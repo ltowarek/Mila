@@ -10,21 +10,9 @@
 #include "bbp_utils.h"
 #include "logger.h"
 #include "ocl_app.h"
+#include "bbp.h"
 
 namespace mila {
-
-class BBP {
- public:
-  virtual ~BBP() = 0;
-  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) = 0;
-  virtual std::string GetDigits(const std::vector<float> &digits) const = 0;
-};
-
-class GenericBBP: public BBP {
- public:
-  virtual ~GenericBBP();
-  virtual std::string GetDigits(const std::vector<float> &digits) const override;
-};
 
 class ParallelBBP: public GenericBBP {
  public:
@@ -34,7 +22,7 @@ class ParallelBBP: public GenericBBP {
   ~ParallelBBP();
 
   virtual void Initialize();
-  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const cl_uint starting_position);
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position);
 
   struct Events {
     clpp::Event read_buffer;

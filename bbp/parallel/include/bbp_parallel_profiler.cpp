@@ -17,7 +17,7 @@ mila::GenericBBPProfiler::~GenericBBPProfiler() {
 
 }
 std::vector<float>
-mila::GenericBBPProfiler::ComputeDigits(const size_t number_of_digits, const cl_uint starting_position) {
+mila::GenericBBPProfiler::ComputeDigits(const size_t number_of_digits, const size_t starting_position) {
   number_of_digits_ = number_of_digits;
   profiler_->Start("ComputeDigits");
   auto output = bbp_->ComputeDigits(number_of_digits, starting_position);
@@ -88,7 +88,7 @@ mila::ParallelBBPProfiler::~ParallelBBPProfiler() {
 
 }
 std::vector<float> mila::ParallelBBPProfiler::ComputeDigits(const size_t number_of_digits,
-                                                            const cl_uint starting_position) {
+                                                            const size_t starting_position) {
   profiler_->Start("ComputeDigits");
   auto output = bbp_->ComputeDigits(number_of_digits, starting_position);
   profiler_->End("ComputeDigits");
