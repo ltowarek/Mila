@@ -18,9 +18,9 @@ std::map<std::string, float> mila::SequentialBBPProfiler::results() const {
   return results_;
 }
 
-std::string mila::SequentialBBPProfiler::Run(size_t number_of_digits, size_t starting_position) {
+std::vector<float> mila::SequentialBBPProfiler::ComputeDigits(size_t number_of_digits, size_t starting_position) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  auto output = SequentialBBP::Run(number_of_digits, starting_position);
+  auto output = SequentialBBP::ComputeDigits(number_of_digits, starting_position);
   auto end_time = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration<float>(end_time - start_time);

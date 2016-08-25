@@ -12,7 +12,7 @@ class SequentialBBPProfiler : public SequentialBBP {
   SequentialBBPProfiler(const std::shared_ptr<Logger> logger);
   virtual ~SequentialBBPProfiler();
 
-  std::string Run(size_t number_of_digits, size_t starting_position) override;
+  std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) override;
 
   std::string main_result() const;
   std::string main_duration() const;

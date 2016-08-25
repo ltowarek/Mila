@@ -1,5 +1,11 @@
 #include "bbp_sequential.h"
 
+mila::SequentialBBP::SequentialBBP(const std::shared_ptr<mila::Logger> logger): logger_(logger) {
+
+}
+mila::SequentialBBP::~SequentialBBP() {
+
+}
 float mila::SequentialBBP::ComputeDigit(size_t position) const {
   auto series_1 = Series(1, position);
   auto series_2 = Series(4, position);
@@ -71,25 +77,10 @@ size_t mila::SequentialBBP::LargestPowerOfTwoLessOrEqual(size_t n) const {
   }
   return i;
 }
-mila::SequentialBBP::SequentialBBP(const std::shared_ptr<mila::Logger> logger): logger_(logger) {
-
-}
 std::vector<float> mila::SequentialBBP::ComputeDigits(const size_t number_of_digits, const size_t starting_position) {
   auto digits = std::vector<float>(number_of_digits, 0.0f);
   for (size_t i = 0; i < digits.size(); ++i) {
     digits[i] = ComputeDigit(starting_position + i);
   }
   return digits;
-}
-std::string mila::SequentialBBP::Run(size_t number_of_digits, size_t starting_position) {
-  auto digits = ComputeDigits(number_of_digits, starting_position);
-  auto hex_digits = mila::bbp::utils::ConvertFractionsToHex(digits, 1);
-  auto output = std::string("");
-  for (auto digit : hex_digits) {
-    output += digit[0];
-  }
-  return output;
-}
-mila::SequentialBBP::~SequentialBBP() {
-
 }

@@ -59,7 +59,7 @@ TEST(BBPSequentialProfilerTest, RunWithProfiling) {
   mila::SequentialBBPProfiler bbp(nullptr);
   EXPECT_EQ(bbp.results().count("Run"), 0);
   EXPECT_EQ(bbp.results().count("Digits per second"), 0);
-  EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");
+  bbp.ComputeDigits(24, 516);
   EXPECT_EQ(bbp.results().count("Run"), 1);
   EXPECT_EQ(bbp.results().count("Digits per second"), 1);
 }
