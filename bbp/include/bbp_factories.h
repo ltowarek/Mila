@@ -27,6 +27,7 @@ class BBPFactory {
                           std::unique_ptr<Profiler> profiler,
                           const std::shared_ptr<Logger> logger) const;
   std::unique_ptr<mila::BBP> MakeSequential(const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::BBP> MakeSequentialProfiler(const std::shared_ptr<Logger> logger) const;
 };
 
 class BBPAppFactory {
