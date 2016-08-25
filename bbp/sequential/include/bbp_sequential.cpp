@@ -64,8 +64,8 @@ float mila::SequentialBBP::ModularExponentiation(float b, size_t e, float m) con
 }
 size_t mila::SequentialBBP::LargestPowerOfTwoLessOrEqual(size_t n) const {
   auto i = size_t{0};
-  for (i = 0; i < kPowersOfTwo.size(); ++i) {
-    if (kPowersOfTwo[i] > n) {
+  for (i = 0; i < powers_of_two.size(); ++i) {
+    if (powers_of_two[i] > n) {
       break;
     }
   }
