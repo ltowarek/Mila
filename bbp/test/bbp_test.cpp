@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
-#include "bbp_parallel.h"
-#include "bbp_parallel_profiler.h"
+#include "bbp_factories.h"
 
 template<typename T>
 std::unique_ptr<mila::BBP> CreateBBP();
