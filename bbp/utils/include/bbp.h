@@ -25,6 +25,11 @@ class BBPProfiler: public BBP {
   virtual ~BBPProfiler() = 0;
 };
 
+class BBPApp {
+ public:
+  virtual ~BBPApp() = 0;
+  virtual void Run(int argc, char **argv) const = 0;
+};
 }  // mila
 
 #endif  // MILA_UTILS_BBP_H_

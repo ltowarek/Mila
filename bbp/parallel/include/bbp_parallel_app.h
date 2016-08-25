@@ -4,10 +4,11 @@
 #include "bbp_parallel_profiler.h"
 
 namespace mila {
-class ParallelBBPApp {
+class ParallelBBPApp: public BBPApp {
  public:
   ParallelBBPApp(const std::shared_ptr<mila::Logger> logger);
-  void Run(int argc, char **argv) const;
+  virtual ~ParallelBBPApp();
+  void Run(int argc, char **argv) const override;
  private:
   struct Parameters {
     size_t number_of_digits;

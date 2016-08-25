@@ -17,4 +17,6 @@ mila::GenericBBP::~GenericBBP() {
 mila::BBPProfiler::~BBPProfiler() {
 
 }
+mila::BBPApp::~BBPApp() {
 
+}

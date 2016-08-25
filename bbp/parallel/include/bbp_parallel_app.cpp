@@ -99,3 +99,6 @@ void mila::ParallelBBPApp::PrintResults(const ParallelBBPProfilingResults &resul
   logger_->Debug("Enqueue ND range duration: %llu us", results.enqueue_nd_range_duration);
   logger_->Debug("Read buffer duration: %llu us", results.read_buffer_duration);
 }
+mila::ParallelBBPApp::~ParallelBBPApp() {
+
+}
