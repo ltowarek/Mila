@@ -7,30 +7,30 @@ mila::SequentialBBP::~SequentialBBP() {
 
 }
 float mila::SequentialBBP::ComputeDigit(const size_t position) const {
-  auto series_1 = Series(1, position);
-  auto series_2 = Series(4, position);
-  auto series_3 = Series(5, position);
-  auto series_4 = Series(6, position);
+  const auto series_1 = Series(1, position);
+  const auto series_2 = Series(4, position);
+  const auto series_3 = Series(5, position);
+  const auto series_4 = Series(6, position);
   auto result = 4.0f * series_1 - 2.0f * series_2 - series_3 - series_4;  // BBP formula
   result = result - truncf(result) + 1.0f;
   return result;
 }
 float mila::SequentialBBP::Series(const size_t j, const size_t d) const {
   auto sum = 0.0f;
-  auto precision = 1e-5;
+  const auto precision = 1e-5;
 
   for (size_t k = 0; k < d; ++k) {
-    auto ak = 8.0f * k + j;
-    auto p = d - k;
-    auto t = ModularExponentiation(16.0f, ak, p);
+    const auto ak = 8.0f * k + j;
+    const auto p = d - k;
+    const auto t = ModularExponentiation(16.0f, ak, p);
     sum += t / ak;
     sum -= truncf(sum);
   }
 
   for (size_t k = d; k <= d + 100; ++k) {
-    auto ak = 8.0f * k + j;
-    auto p = static_cast<float>(d) - static_cast<float>(k);
-    auto t = powf(16.0f, p) / ak;
+    const auto ak = 8.0f * k + j;
+    const auto p = static_cast<float>(d) - static_cast<float>(k);
+    const auto t = powf(16.0f, p) / ak;
 
     if (t < precision) {
       break;
@@ -48,7 +48,7 @@ float mila::SequentialBBP::ModularExponentiation(const float b, const float m, s
   }
 
   auto c = 1.0f;
-  auto p = LargestPowerOfTwoLessOrEqual(e);
+  const auto p = LargestPowerOfTwoLessOrEqual(e);
   auto t = powf(2.0f, static_cast<float>(p - 1));
 
   for (size_t i = 0; i < p; ++i) {
