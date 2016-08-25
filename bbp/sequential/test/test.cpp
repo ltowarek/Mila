@@ -13,17 +13,17 @@ TEST(BBPSequentialTest, FloatPrecision) {
 }
 
 TEST(BBPSequentialTest, DefaultConstructor) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_EQ(bbp.precision(), 1e-5f);
 }
 
 TEST(BBPSequentialTest, Constructor) {
-  mila::bbp::sequential::BBP bbp(1e-7f);
+  mila::SequentialBBP bbp(1e-7f);
   EXPECT_EQ(bbp.precision(), 1e-7f);
 }
 
 TEST(BBPSequentialTest, Run) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_EQ(bbp.Run(0, 0), "");
   EXPECT_EQ(bbp.Run(1, 0), "2");
   EXPECT_EQ(bbp.Run(2, 0), "24");
@@ -41,7 +41,7 @@ TEST(BBPSequentialTest, Run) {
 }
 
 TEST(BBPSequentialTest, ComputeDigits) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_EQ(bbp.ComputeDigits(0, 0).size(), 0);
   EXPECT_EQ(bbp.ComputeDigits(1, 0).size(), 1);
   ASSERT_EQ(bbp.ComputeDigits(2, 0).size(), 2);
@@ -52,14 +52,14 @@ TEST(BBPSequentialTest, ComputeDigits) {
 }
 
 TEST(BBPSequentialTest, ComputeDigit) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_NEAR(bbp.ComputeDigit(0), 0.141587316989899f, 1e-5f);
   EXPECT_NEAR(bbp.ComputeDigit(1), 0.265479207038879f, 1e-5f);
   EXPECT_NEAR(bbp.ComputeDigit(1000), 1.7962465286254883f, 1e-5f);
 }
 
 TEST(BBPSequentialTest, Series) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_NEAR(bbp.Series(1, 1000), 0.93149524927139282f, 1e-5f);
   EXPECT_NEAR(bbp.Series(4, 1000), 0.36730793118476868f, 1e-5f);
   EXPECT_NEAR(bbp.Series(5, 1000), 0.70736938714981079f, 1e-5f);
@@ -67,7 +67,7 @@ TEST(BBPSequentialTest, Series) {
 }
 
 TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_EQ(bbp.LargestPowerOfTwoLessOrEqual(0), 0);
   EXPECT_EQ(bbp.LargestPowerOfTwoLessOrEqual(1), 1);
   EXPECT_EQ(bbp.LargestPowerOfTwoLessOrEqual(2), 2);
@@ -81,7 +81,7 @@ TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {
 }
 
 TEST(BBPSequentialTest, ModularExponentiation) {
-  mila::bbp::sequential::BBP bbp;
+  mila::SequentialBBP bbp;
   EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0, 0.0f), 1.0f);
   EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0, 1.0f), 0.0f);
   EXPECT_EQ(bbp.ModularExponentiation(16.0f, 0, 1.0f), 0.0f);
@@ -95,21 +95,21 @@ TEST(BBPSequentialTest, ModularExponentiation) {
 }
 
 TEST(BBPSequentialProfilerTest, DefaultConstructor) {
-  mila::bbp::sequential::BBPProfiler bbp;
+  mila::SequentialBBPProfiler bbp;
   EXPECT_EQ(bbp.precision(), 1e-5f);
   EXPECT_EQ(bbp.main_result(), "Digits per second");
   EXPECT_EQ(bbp.main_duration(), "Run");
 }
 
 TEST(BBPSequentialProfilerTest, Constructor) {
-  mila::bbp::sequential::BBPProfiler bbp(1e-7f);
+  mila::SequentialBBPProfiler bbp(1e-7f);
   EXPECT_EQ(bbp.precision(), 1e-7f);
   EXPECT_EQ(bbp.main_result(), "Digits per second");
   EXPECT_EQ(bbp.main_duration(), "Run");
 }
 
 TEST(BBPSequentialProfilerTest, Run) {
-  mila::bbp::sequential::BBPProfiler bbp;
+  mila::SequentialBBPProfiler bbp;
   EXPECT_EQ(bbp.Run(0, 0), "");
   EXPECT_EQ(bbp.Run(1, 0), "2");
   EXPECT_EQ(bbp.Run(2, 0), "24");
@@ -127,7 +127,7 @@ TEST(BBPSequentialProfilerTest, Run) {
 }
 
 TEST(BBPSequentialProfilerTest, RunWithProfiling) {
-  mila::bbp::sequential::BBPProfiler bbp;
+  mila::SequentialBBPProfiler bbp;
   EXPECT_EQ(bbp.results().count("Run"), 0);
   EXPECT_EQ(bbp.results().count("Digits per second"), 0);
   EXPECT_EQ(bbp.Run(24, 516), "1411636FBC2A2BA9C55D7418");

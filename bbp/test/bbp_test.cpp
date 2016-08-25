@@ -24,6 +24,11 @@ std::unique_ptr<mila::BBP> CreateBBP<mila::ParallelBBPProfiler>() {
   return mila::BBPFactory().MakeParallelBBPProfiler(std::move(ocl_app), std::move(profiler), nullptr);
 }
 
+template<>
+std::unique_ptr<mila::BBP> CreateBBP<mila::SequentialBBP>() {
+  return mila::BBPFactory().MakeSequential(nullptr);
+}
+
 template<typename T>
 class BBPTest : public testing::Test {
  protected:
@@ -33,7 +38,8 @@ class BBPTest : public testing::Test {
 
 typedef testing::Types<mila::ParallelBBP,
                        mila::GenericBBPProfiler,
-                       mila::ParallelBBPProfiler> BBPImplementations;
+                       mila::ParallelBBPProfiler,
+                       mila::SequentialBBP> BBPImplementations;
 
 TYPED_TEST_CASE(BBPTest, BBPImplementations);
 

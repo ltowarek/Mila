@@ -7,15 +7,13 @@
 #include "utils.h"
 
 namespace mila {
-namespace bbp {
-namespace sequential {
-class BBPProfiler : public BBP {
+class SequentialBBPProfiler : public SequentialBBP {
  public:
-  BBPProfiler();
-  BBPProfiler(float precision);
+  SequentialBBPProfiler();
+  SequentialBBPProfiler(float precision);
+  virtual ~SequentialBBPProfiler();
 
   std::string Run(size_t number_of_digits, size_t starting_position) override;
-
 
   std::string main_result() const;
   std::string main_duration() const;
@@ -25,7 +23,5 @@ class BBPProfiler : public BBP {
   const std::string main_duration_;
   std::map<std::string, float> results_;
 };
-};  // sequential
-};  // bbp
 }  // mila
 #endif  // MILA_BBP_SEQUENTIAL_PROFILER_H_

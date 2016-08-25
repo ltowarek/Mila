@@ -9,6 +9,7 @@
 #include "bbp.h"
 #include "bbp_parallel_profiler.h"
 #include "bbp_parallel_app.h"
+#include "bbp_sequential_profiler.h"
 
 namespace mila {
 class BBPFactory {
@@ -25,6 +26,7 @@ class BBPFactory {
   MakeParallelBBPProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
                           std::unique_ptr<Profiler> profiler,
                           const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::BBP> MakeSequential(const std::shared_ptr<Logger> logger) const;
 };
 
 class BBPAppFactory {

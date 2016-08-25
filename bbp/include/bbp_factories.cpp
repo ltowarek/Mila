@@ -26,6 +26,9 @@ mila::BBPFactory::MakeParallelBBPProfiler(std::unique_ptr<OpenCLApplication> ocl
   bbp_profiler->Initialize();
   return std::unique_ptr<mila::BBP>(bbp_profiler);
 }
+std::unique_ptr<mila::BBP> mila::BBPFactory::MakeSequential(const std::shared_ptr<mila::Logger> logger) const {
+  return std::unique_ptr<mila::BBP>(new mila::SequentialBBP());
+}
 std::unique_ptr<mila::BBPApp> mila::BBPAppFactory::MakeParallel(const std::shared_ptr<mila::Logger> logger) const {
   return std::unique_ptr<mila::BBPApp>(new mila::ParallelBBPApp(logger));
 }
