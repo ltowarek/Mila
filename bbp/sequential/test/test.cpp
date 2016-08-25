@@ -43,16 +43,16 @@ TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {
 
 TEST(BBPSequentialTest, ModularExponentiation) {
   mila::SequentialBBP bbp(nullptr);
-  EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0, 0.0f), 1.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0, 1.0f), 0.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 0, 1.0f), 0.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 1, 1.0f), 0.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 5, 1.0f), 0.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 16, 16.0f), 0.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 2, 7.0f), 4.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(5.0f, 3, 13.0f), 8.0f);
-  EXPECT_EQ(bbp.ModularExponentiation(8.5f, 2, 3.25f), 0.75f);
-  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 999985, 121.0f), 56.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(0.0f, 0.0f, 0), 1.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(0.0f, 1.0f, 0), 0.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 1.0f, 0), 0.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 1.0f, 1), 0.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 1.0f, 5), 0.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 16.0f, 16), 0.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 7.0f, 2), 4.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(5.0f, 13.0f, 3), 8.0f);
+  EXPECT_EQ(bbp.ModularExponentiation(8.5f, 3.25f, 2), 0.75f);
+  EXPECT_EQ(bbp.ModularExponentiation(16.0f, 121.0f, 999985), 56.0f);
 }
 
 TEST(BBPSequentialProfilerTest, RunWithProfiling) {

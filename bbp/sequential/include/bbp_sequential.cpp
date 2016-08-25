@@ -6,7 +6,7 @@ mila::SequentialBBP::SequentialBBP(const std::shared_ptr<mila::Logger> logger): 
 mila::SequentialBBP::~SequentialBBP() {
 
 }
-float mila::SequentialBBP::ComputeDigit(size_t position) const {
+float mila::SequentialBBP::ComputeDigit(const size_t position) const {
   auto series_1 = Series(1, position);
   auto series_2 = Series(4, position);
   auto series_3 = Series(5, position);
@@ -15,14 +15,14 @@ float mila::SequentialBBP::ComputeDigit(size_t position) const {
   result = result - truncf(result) + 1.0f;
   return result;
 }
-float mila::SequentialBBP::Series(size_t j, size_t d) const {
+float mila::SequentialBBP::Series(const size_t j, const size_t d) const {
   auto sum = 0.0f;
   auto precision = 1e-5;
 
   for (size_t k = 0; k < d; ++k) {
     auto ak = 8.0f * k + j;
     auto p = d - k;
-    auto t = ModularExponentiation(16.0f, p, ak);
+    auto t = ModularExponentiation(16.0f, ak, p);
     sum += t / ak;
     sum -= truncf(sum);
   }
@@ -42,7 +42,7 @@ float mila::SequentialBBP::Series(size_t j, size_t d) const {
 
   return sum;
 }
-float mila::SequentialBBP::ModularExponentiation(float b, size_t e, float m) const {
+float mila::SequentialBBP::ModularExponentiation(const float b, const float m, size_t e) const {
   if (m == 1.0f) {
     return 0.0f;
   }
@@ -68,7 +68,7 @@ float mila::SequentialBBP::ModularExponentiation(float b, size_t e, float m) con
 
   return c;
 }
-size_t mila::SequentialBBP::LargestPowerOfTwoLessOrEqual(size_t n) const {
+size_t mila::SequentialBBP::LargestPowerOfTwoLessOrEqual(const size_t n) const {
   auto i = size_t{0};
   for (i = 0; i < powers_of_two.size(); ++i) {
     if (powers_of_two[i] > n) {
