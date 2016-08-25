@@ -11,6 +11,7 @@ float mila::SequentialBBP::ComputeDigit(size_t position) const {
 }
 float mila::SequentialBBP::Series(size_t j, size_t d) const {
   auto sum = 0.0f;
+  auto precision = 1e-5;
 
   for (size_t k = 0; k < d; ++k) {
     auto ak = 8.0f * k + j;
@@ -25,7 +26,7 @@ float mila::SequentialBBP::Series(size_t j, size_t d) const {
     auto p = static_cast<float>(d) - static_cast<float>(k);
     auto t = powf(16.0f, p) / ak;
 
-    if (t < precision_) {
+    if (t < precision) {
       break;
     }
 
@@ -70,14 +71,8 @@ size_t mila::SequentialBBP::LargestPowerOfTwoLessOrEqual(size_t n) const {
   }
   return i;
 }
-mila::SequentialBBP::SequentialBBP(float precision) : precision_(precision) {
+mila::SequentialBBP::SequentialBBP(const std::shared_ptr<mila::Logger> logger): logger_(logger) {
 
-}
-mila::SequentialBBP::SequentialBBP() : precision_(1e-5f) {
-
-}
-float mila::SequentialBBP::precision() const {
-  return precision_;
 }
 std::vector<float> mila::SequentialBBP::ComputeDigits(const size_t number_of_digits, const size_t starting_position) {
   auto digits = std::vector<float>(number_of_digits, 0.0f);

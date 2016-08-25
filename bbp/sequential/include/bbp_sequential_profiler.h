@@ -9,8 +9,7 @@
 namespace mila {
 class SequentialBBPProfiler : public SequentialBBP {
  public:
-  SequentialBBPProfiler();
-  SequentialBBPProfiler(float precision);
+  SequentialBBPProfiler(const std::shared_ptr<Logger> logger);
   virtual ~SequentialBBPProfiler();
 
   std::string Run(size_t number_of_digits, size_t starting_position) override;

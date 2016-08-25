@@ -5,9 +5,11 @@
 #include <cstddef>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "bbp.h"
 #include "bbp_utils.h"
+#include "logger.h"
 
 namespace mila {
 const std::vector<size_t> kPowersOfTwo = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048,
@@ -15,8 +17,7 @@ const std::vector<size_t> kPowersOfTwo = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
                                           1048576, 2097152, 4194304, 8388608, 16777216, 33554432};
 class SequentialBBP: public GenericBBP {
  public:
-  SequentialBBP();
-  SequentialBBP(float precision);
+  SequentialBBP(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialBBP();
 
   float ComputeDigit(size_t position) const;
@@ -25,10 +26,8 @@ class SequentialBBP: public GenericBBP {
   size_t LargestPowerOfTwoLessOrEqual(size_t n) const;
   std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) override;
   virtual std::string Run(size_t number_of_digits, size_t starting_position);
-
-  float precision() const;
  private:
-  const float precision_;
+  const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
 

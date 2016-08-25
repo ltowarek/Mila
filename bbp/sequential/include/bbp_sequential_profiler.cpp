@@ -1,14 +1,9 @@
 #include "bbp_sequential_profiler.h"
 #include "utils.h"
 
-mila::SequentialBBPProfiler::SequentialBBPProfiler() : SequentialBBP(),
-                                                    main_result_("Digits per second"),
-                                                    main_duration_("Run") {
-}
-
-mila::SequentialBBPProfiler::SequentialBBPProfiler(float precision) : SequentialBBP(precision),
-                                                                   main_result_("Digits per second"),
-                                                                   main_duration_("Run") {
+mila::SequentialBBPProfiler::SequentialBBPProfiler(const std::shared_ptr<Logger> logger) : SequentialBBP(logger),
+                                                                                           main_result_("Digits per second"),
+                                                                                           main_duration_("Run") {
 }
 
 std::string mila::SequentialBBPProfiler::main_result() const {
