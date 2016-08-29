@@ -28,7 +28,6 @@ class SequentialBBPApp: public BBPApp {
   void PrintParameters(const Parameters &config) const;
   void PrintResults(const SequentialBBPProfilingResults &results) const;
   void PrintResultsStatistics(const Results &results) const;
-  void PrintResultStatistics(const std::string &name, const std::string &unit, const std::vector<float> &result) const;
 
   const std::shared_ptr<mila::Logger> logger_;
 };
