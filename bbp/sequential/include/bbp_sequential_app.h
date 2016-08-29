@@ -2,6 +2,7 @@
 #define MILA_BBP_SEQUENTIAL_APP_H
 
 #include "bbp_sequential_profiler.h"
+#include "statistics.h"
 
 namespace mila {
 class SequentialBBPApp: public BBPApp {
@@ -22,6 +23,12 @@ class SequentialBBPApp: public BBPApp {
   };
 
   Parameters ParseCommandLine(int argc, char **argv) const;
+  std::vector<mila::SequentialBBPProfilingResults> RunIterations(const Parameters config) const;
+  Results PrepareResults(const std::vector<mila::SequentialBBPProfilingResults> &raw_results) const;
+  void PrintParameters(const Parameters &config) const;
+  void PrintResults(const SequentialBBPProfilingResults &results) const;
+  void PrintResultsStatistics(const Results &results) const;
+  void PrintResultStatistics(const std::string &name, const std::string &unit, const std::vector<float> &result) const;
 
   const std::shared_ptr<mila::Logger> logger_;
 };
