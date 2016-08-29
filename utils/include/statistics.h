@@ -4,8 +4,16 @@
 #include <string>
 #include <sstream>
 #include <chrono>
+#include <vector>
+
+#include "utils.h"
+#include "logger.h"
 
 namespace mila {
+void PrintResultStatistics(const std::string &name,
+                           const std::string &unit,
+                           const std::vector<float> &result,
+                           const mila::Logger &logger);
 namespace statistics {
 
 class OpenCLStatistics {

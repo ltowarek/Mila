@@ -71,25 +71,17 @@ mila::ParallelBBPApp::Results mila::ParallelBBPApp::PrepareResults(const std::ve
 void mila::ParallelBBPApp::PrintParameters(const Parameters &config) const {
   logger_->Info("Number of digits: %d", config.number_of_digits);
   logger_->Info("Starting position: %d", config.starting_position);
+  logger_->Info("Number of iterations: %d", config.number_of_iterations);
   logger_->Info("Platform id: %d", config.platform_id);
   logger_->Info("Device id: %d", config.device_id);
-  logger_->Info("Number of iterations: %d", config.number_of_iterations);
 }
 void mila::ParallelBBPApp::PrintResultsStatistics(const Results &results) const {
-  PrintResultStatistics("Bandwidth", "GB/s", results.bandwidth);
-  PrintResultStatistics("Throughput", "digits/s", results.digits_per_second);
-  PrintResultStatistics("Initialize duration", "us", results.initialize_duration);
-  PrintResultStatistics("Compute digits duration", "us", results.compute_digits_duration);
-  PrintResultStatistics("Enqueue ND range duration", "us", results.enqueue_nd_range_duration);
-  PrintResultStatistics("Read buffer duration", "us", results.read_buffer_duration);
-}
-void mila::ParallelBBPApp::PrintResultStatistics(const std::string &name,
-                                                 const std::string &unit,
-                                                 const std::vector<float> &result) const {
-  logger_->Info("%s mean: %f %s", name.c_str(), mila::utils::Mean(result), unit.c_str());
-  logger_->Info("%s median: %f %s", name.c_str(), mila::utils::Median(result), unit.c_str());
-  logger_->Info("%s standard deviation: %f %s", name.c_str(), mila::utils::StandardDeviation(result), unit.c_str());
-  logger_->Info("%s coefficient of variation: %f", name.c_str(), mila::utils::CoefficientOfVariation(result), unit.c_str());
+  mila::PrintResultStatistics("Bandwidth", "GB/s", results.bandwidth, *logger_);
+  mila::PrintResultStatistics("Throughput", "digits/s", results.digits_per_second, *logger_);
+  mila::PrintResultStatistics("Initialize duration", "us", results.initialize_duration, *logger_);
+  mila::PrintResultStatistics("Compute digits duration", "us", results.compute_digits_duration, *logger_);
+  mila::PrintResultStatistics("Enqueue ND range duration", "us", results.enqueue_nd_range_duration, *logger_);
+  mila::PrintResultStatistics("Read buffer duration", "us", results.read_buffer_duration, *logger_);
 }
 void mila::ParallelBBPApp::PrintResults(const ParallelBBPProfilingResults &results) const {
   logger_->Debug("Bandwidth: %f GB/s", results.bandwidth);

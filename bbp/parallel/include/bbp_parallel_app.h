@@ -2,6 +2,7 @@
 #define MILA_BBP_PARALLEL_APP_H
 
 #include "bbp_parallel_profiler.h"
+#include "statistics.h"
 
 namespace mila {
 class ParallelBBPApp: public BBPApp {
@@ -33,7 +34,6 @@ class ParallelBBPApp: public BBPApp {
   void PrintParameters(const Parameters &config) const;
   void PrintResults(const ParallelBBPProfilingResults &results) const;
   void PrintResultsStatistics(const Results &results) const;
-  void PrintResultStatistics(const std::string &name, const std::string &unit, const std::vector<float> &result) const;
 
   const std::shared_ptr<mila::Logger> logger_;
 };
