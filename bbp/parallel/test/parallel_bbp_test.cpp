@@ -6,28 +6,11 @@
 #include "bbp_parallel_profiler.h"
 #include "bbp_parallel_app.h"
 
-
-class ProfilerStub : public mila::Profiler {
- public:
-  virtual ~ProfilerStub() override {
-
-  }
-  virtual void Start(const std::string &event_name) override {
-
-  }
-  virtual void End(const std::string &event_name) override {
-
-  }
-  virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const override {
-    return std::chrono::microseconds(1);
-  }
-};
-
 class ParallelBBPProfilerTest : public testing::Test {
  protected:
   virtual void SetUp() {
     auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
-    auto profiler = std::unique_ptr<mila::Profiler>(new ProfilerStub());
+    auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
     auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(std::move(ocl_app),
                                                                         nullptr));
     auto bbp_profiler = new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), nullptr);

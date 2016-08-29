@@ -8,23 +8,6 @@
 
 namespace mila {
 
-class GenericBBPProfiler: public BBPProfiler {
- public:
-  GenericBBPProfiler();
-  GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
-                     std::unique_ptr<Profiler> profiler,
-                     const std::shared_ptr<Logger> logger);
-  virtual ~GenericBBPProfiler() override;
-
-  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) override;
-  virtual std::string GetDigits(const std::vector<float> &digits) const override;
- private:
-  const std::unique_ptr<mila::BBP> bbp_;
-  const std::unique_ptr<Profiler> profiler_;
-  const std::shared_ptr<Logger> logger_;
-  size_t number_of_digits_;
-};
-
 struct ParallelBBPProfilingResults {
   std::chrono::microseconds compute_digits_duration;
   std::chrono::microseconds initialize_duration;
@@ -51,6 +34,7 @@ class ParallelBBPProfiler: public BBPProfiler {
   const std::unique_ptr<Profiler> profiler_;
   const std::shared_ptr<Logger> logger_;
   ParallelBBPProfilingResults results_;
+
   float ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const;
   std::chrono::duration<long, std::nano> GetProfilingInfo(clpp::Event event) const;
   void SetResultsAfterComputeDigits(const size_t number_of_digits);

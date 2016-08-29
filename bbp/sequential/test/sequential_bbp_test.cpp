@@ -55,12 +55,20 @@ TEST(BBPSequentialTest, ModularExponentiation) {
   EXPECT_EQ(bbp.ModularExponentiation(16.0f, 121.0f, 999985), 56.0f);
 }
 
-TEST(BBPSequentialProfilerTest, RunWithProfiling) {
-  mila::SequentialBBPProfiler bbp(nullptr);
-  EXPECT_EQ(bbp.results().count("Run"), 0);
-  EXPECT_EQ(bbp.results().count("Digits per second"), 0);
-  bbp.ComputeDigits(24, 516);
-  EXPECT_EQ(bbp.results().count("Run"), 1);
-  EXPECT_EQ(bbp.results().count("Digits per second"), 1);
+class SequentialBBPProfilerTest : public testing::Test {
+ protected:
+  virtual void SetUp() {
+    auto bbp = std::unique_ptr<mila::SequentialBBP>(new mila::SequentialBBP(nullptr));
+    auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
+    auto bbp_profiler = new mila::SequentialBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
+    bbp_ = std::unique_ptr<mila::SequentialBBPProfiler>(bbp_profiler);
+  }
+  std::unique_ptr<mila::SequentialBBPProfiler> bbp_;
+};
+
+TEST_F(SequentialBBPProfilerTest, GetResultsAfterComputeDigits) {
+  this->bbp_->ComputeDigits(24, 516);
+  EXPECT_GT(this->bbp_->GetResults().compute_digits_duration.count(), 0);
+  EXPECT_GT(this->bbp_->GetResults().digits_per_second, 0.0f);
 }
 

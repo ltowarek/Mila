@@ -1,28 +1,5 @@
 #include "bbp_parallel_profiler.h"
 
-mila::GenericBBPProfiler::GenericBBPProfiler() : GenericBBPProfiler(nullptr, nullptr, nullptr) {
-
-}
-mila::GenericBBPProfiler::GenericBBPProfiler(std::unique_ptr<mila::BBP> bbp,
-                                             std::unique_ptr<Profiler> profiler,
-                                             const std::shared_ptr<Logger> logger)
-    : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(logger), number_of_digits_(0) {
-
-}
-mila::GenericBBPProfiler::~GenericBBPProfiler() {
-
-}
-std::vector<float>
-mila::GenericBBPProfiler::ComputeDigits(const size_t number_of_digits, const size_t starting_position) {
-  number_of_digits_ = number_of_digits;
-  profiler_->Start("ComputeDigits");
-  auto output = bbp_->ComputeDigits(number_of_digits, starting_position);
-  profiler_->End("ComputeDigits");
-  return output;
-}
-std::string mila::GenericBBPProfiler::GetDigits(const std::vector<float> &digits) const {
-  return bbp_->GetDigits(digits);
-}
 mila::ParallelBBPProfiler::ParallelBBPProfiler() : ParallelBBPProfiler(nullptr, nullptr, nullptr) {
 
 }

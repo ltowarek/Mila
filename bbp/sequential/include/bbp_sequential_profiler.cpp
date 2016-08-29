@@ -1,37 +1,31 @@
 #include "bbp_sequential_profiler.h"
 #include "utils.h"
 
-mila::SequentialBBPProfiler::SequentialBBPProfiler(const std::shared_ptr<Logger> logger) : SequentialBBP(logger),
-                                                                                           main_result_("Digits per second"),
-                                                                                           main_duration_("Run") {
-}
+mila::SequentialBBPProfiler::SequentialBBPProfiler(std::unique_ptr<mila::SequentialBBP> bbp,
+                                                   std::unique_ptr<mila::Profiler> profiler,
+                                                   const std::shared_ptr<mila::Logger> logger)
+    : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(logger) {
 
-std::string mila::SequentialBBPProfiler::main_result() const {
-  return main_result_;
-}
-
-std::string mila::SequentialBBPProfiler::main_duration() const {
-  return main_duration_;
-}
-
-std::map<std::string, float> mila::SequentialBBPProfiler::results() const {
-  return results_;
-}
-
-std::vector<float> mila::SequentialBBPProfiler::ComputeDigits(size_t number_of_digits, size_t starting_position) {
-  auto start_time = std::chrono::high_resolution_clock::now();
-  auto output = SequentialBBP::ComputeDigits(number_of_digits, starting_position);
-  auto end_time = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration<float>(end_time - start_time);
-  auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-  results_.insert(std::pair<std::string, float>("Run", duration_us));
-  results_.insert(std::pair<std::string, float>("Digits per second",
-                                                mila::utils::GetValuePerSecond(number_of_digits, duration)));
-
-  return output;
 }
 mila::SequentialBBPProfiler::~SequentialBBPProfiler() {
 
 }
-
+std::vector<float>
+mila::SequentialBBPProfiler::ComputeDigits(const size_t number_of_digits, const size_t starting_position) {
+  profiler_->Start("ComputeDigits");
+  auto output = bbp_->ComputeDigits(number_of_digits, starting_position);
+  profiler_->End("ComputeDigits");
+  SetResultsAfterComputeDigits(number_of_digits);
+  return output;
+}
+std::string mila::SequentialBBPProfiler::GetDigits(const std::vector<float> &digits) const {
+  return bbp_->GetDigits(digits);
+}
+mila::SequentialBBPProfilingResults mila::SequentialBBPProfiler::GetResults() const {
+  return results_;
+}
+void mila::SequentialBBPProfiler::SetResultsAfterComputeDigits(const size_t number_of_digits) {
+  results_.compute_digits_duration = profiler_->GetDuration("ComputeDigits");
+  results_.digits_per_second = mila::utils::GetValuePerSecond(number_of_digits,
+                                                              results_.compute_digits_duration);
+}

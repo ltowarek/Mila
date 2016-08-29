@@ -39,5 +39,20 @@ class ProfilerFactory {
  public:
   std::unique_ptr<mila::Profiler> MakeChrono(const std::shared_ptr<Logger> logger);
 };
+class ProfilerStub : public Profiler {
+ public:
+  virtual ~ProfilerStub() override {
+
+  }
+  virtual void Start(const std::string &event_name) override {
+
+  }
+  virtual void End(const std::string &event_name) override {
+
+  }
+  virtual std::chrono::duration<long int, std::micro> GetDuration(const std::string &event_name) const override {
+    return std::chrono::microseconds(1);
+  }
+};
 }  // mila
 #endif //MILA_PROFILER_H

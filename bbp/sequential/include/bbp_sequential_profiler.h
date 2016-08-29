@@ -1,26 +1,31 @@
 #ifndef MILA_BBP_SEQUENTIAL_PROFILER_H_
 #define MILA_BBP_SEQUENTIAL_PROFILER_H_
 
-#include <chrono>
-#include <map>
 #include "bbp_sequential.h"
-#include "utils.h"
+#include "profiler.h"
 
 namespace mila {
-class SequentialBBPProfiler : public SequentialBBP {
+struct SequentialBBPProfilingResults {
+  std::chrono::microseconds compute_digits_duration;
+  float digits_per_second;
+};
+class SequentialBBPProfiler : public BBPProfiler {
  public:
-  SequentialBBPProfiler(const std::shared_ptr<Logger> logger);
+  SequentialBBPProfiler(std::unique_ptr<mila::SequentialBBP> bbp_,
+                        std::unique_ptr<mila::Profiler> profiler,
+                        const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialBBPProfiler();
 
-  std::vector<float> ComputeDigits(size_t number_of_digits, size_t starting_position) override;
-
-  std::string main_result() const;
-  std::string main_duration() const;
-  std::map<std::string, float> results() const;
+  virtual std::vector<float> ComputeDigits(const size_t number_of_digits, const size_t starting_position) override;
+  virtual std::string GetDigits(const std::vector<float> &digits) const override;
+  virtual SequentialBBPProfilingResults GetResults() const;
  private:
-  const std::string main_result_;
-  const std::string main_duration_;
-  std::map<std::string, float> results_;
+  const std::unique_ptr<mila::SequentialBBP> bbp_;
+  const std::unique_ptr<mila::Profiler> profiler_;
+  const std::shared_ptr<mila::Logger> logger_;
+  SequentialBBPProfilingResults results_;
+
+  void SetResultsAfterComputeDigits(const size_t number_of_digits);
 };
 }  // mila
 #endif  // MILA_BBP_SEQUENTIAL_PROFILER_H_

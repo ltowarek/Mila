@@ -11,7 +11,7 @@ std::unique_ptr<mila::BBP> CreateBBP<mila::ParallelBBP>() {
 }
 
 template<>
-std::unique_ptr<mila::BBP> CreateBBP<mila::GenericBBPProfiler>() {
+std::unique_ptr<mila::BBP> CreateBBP<GenericBBPProfiler>() {
   auto bbp = CreateBBP<mila::ParallelBBP>();
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
   return mila::BBPFactory().MakeGenericBBPProfiler(std::move(bbp), std::move(profiler), nullptr);
@@ -42,7 +42,7 @@ class BBPTest : public testing::Test {
 };
 
 typedef testing::Types<mila::ParallelBBP,
-                       mila::GenericBBPProfiler,
+                       GenericBBPProfiler,
                        mila::ParallelBBPProfiler,
                        mila::SequentialBBP,
                        mila::SequentialBBPProfiler> BBPImplementations;
