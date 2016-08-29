@@ -34,8 +34,10 @@ int main(int argc, char **argv) {
   logger->Info("Version: %s", mila::version::GetVersion().c_str());
 
   auto bbp = std::unique_ptr<mila::BBPApp>();
-  if (config.test_case.compare("parallel") != std::string::npos) {
+  if (config.test_case.compare("parallel") == 0) {
     bbp = mila::BBPAppFactory().MakeParallel(logger);
+  } else if (config.test_case.compare("sequential") == 0) {
+    bbp = mila::BBPAppFactory().MakeSequential(logger);
   }
   bbp->Run(argc, argv);
 

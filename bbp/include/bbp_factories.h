@@ -10,6 +10,7 @@
 #include "bbp_parallel_profiler.h"
 #include "bbp_parallel_app.h"
 #include "bbp_sequential_profiler.h"
+#include "bbp_sequential_app.h"
 
 namespace mila {
 class BBPFactory {
@@ -29,6 +30,7 @@ class BBPFactory {
 class BBPAppFactory {
  public:
   std::unique_ptr<mila::BBPApp> MakeParallel(const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::BBPApp> MakeSequential(const std::shared_ptr<Logger> logger) const;
 };
 
 }  // mila
