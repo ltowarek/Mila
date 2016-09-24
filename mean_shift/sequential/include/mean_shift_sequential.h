@@ -24,11 +24,11 @@ class SequentialMeanShift : public MeanShift {
   SequentialMeanShift();
   virtual ~SequentialMeanShift() override;
 
-  Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth) const;
+  Point ShiftPoint(const Point &point, const std::vector<Point> &points, const float bandwidth) const;
   virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
 };
 
-class SequentialMeanShiftImageProcessing: public SequentialMeanShift {
+class SequentialMeanShiftImageProcessing : public SequentialMeanShift {
  public:
   SequentialMeanShiftImageProcessing();
 

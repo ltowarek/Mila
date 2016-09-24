@@ -20,12 +20,12 @@ std::vector<mila::Point> mila::ConvertVectorToPoints(const std::vector<uint8_t> 
     return output;
   }
 
-  for (size_t i = 0; i < data.size(); i+=4) {
+  for (size_t i = 0; i < data.size(); i += 4) {
     auto point = Point();
     point.x = static_cast<float>(data[i]);
-    point.y = static_cast<float>(data[i+1]);
-    point.z = static_cast<float>(data[i+2]);
-    point.w = static_cast<float>(data[i+3]);
+    point.y = static_cast<float>(data[i + 1]);
+    point.z = static_cast<float>(data[i + 2]);
+    point.w = static_cast<float>(data[i + 3]);
     output.push_back(point);
   }
 
@@ -54,8 +54,8 @@ mila::SequentialMeanShift::~SequentialMeanShift() {
 }
 
 mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
-                                                                                      const std::vector<mila::Point> &points,
-                                                                                      float bandwidth) const {
+                                                  const std::vector<mila::Point> &points,
+                                                  const float bandwidth) const {
   auto shift = Point{0.0f};
   if (bandwidth != 0) {
     auto scale = 0.0f;
@@ -74,7 +74,7 @@ mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
   return shift;
 }
 
-std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point> &points, float bandwidth) {
+std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point> &points, const float bandwidth) {
   const auto precision = 1e-5f;
   const auto max_iterations = 100;
 
@@ -114,13 +114,13 @@ std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point>
 mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing() : SequentialMeanShift() {}
 
 std::vector<mila::Point> mila::SequentialMeanShiftImageProcessing::Run(const std::vector<Point> &points,
-                                                                              float bandwidth) {
+                                                                       float bandwidth) {
   return SequentialMeanShift::Run(points, bandwidth);
 }
 
 void mila::SequentialMeanShiftImageProcessing::Run(const std::string &input_file,
-                                                                const std::string &output_file,
-                                                                float bandwidth) {
+                                                   const std::string &output_file,
+                                                   float bandwidth) {
   auto input_image = mila::meanshift::utils::Image(input_file);
   auto output_image = mila::meanshift::utils::Image(output_file);
 
