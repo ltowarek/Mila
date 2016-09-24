@@ -7,17 +7,11 @@
 #include <string>
 #include <vector>
 
+#include "mean_shift.h"
 #include "mean_shift_utils.h"
 
 namespace mila {
 const float pi = 3.14159265358979323846f;
-
-struct Point {
-  float x;
-  float y;
-  float z;
-  float w;
-};
 
 std::vector<Point> ConvertVectorToPoints(const std::vector<uint8_t> &data);
 std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
@@ -25,13 +19,14 @@ std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
 float Distance(const Point &point1, const Point &point2);
 float GaussianKernel(float x, float sigma);
 
-class SequentialMeanShift {
+class SequentialMeanShift : public MeanShift {
  public:
   SequentialMeanShift();
   SequentialMeanShift(float precision, size_t max_iterations);
+  virtual ~SequentialMeanShift() override;
 
   Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth) const;
-  virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth);
+  virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
 
   float precision() const;
   size_t max_iterations() const;

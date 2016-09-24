@@ -14,7 +14,7 @@ struct Point {
 class MeanShift {
  public:
   virtual ~MeanShift() = 0;
-  virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) = 0;
+  virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) = 0;
 };
 
 class MeanShiftProfiler : public MeanShift {

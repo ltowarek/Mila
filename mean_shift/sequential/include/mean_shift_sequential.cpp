@@ -49,6 +49,10 @@ mila::SequentialMeanShift::SequentialMeanShift() : SequentialMeanShift(1e-5, 100
 
 mila::SequentialMeanShift::SequentialMeanShift(float precision, size_t max_iterations) : precision_(precision), max_iterations_(max_iterations) {}
 
+mila::SequentialMeanShift::~SequentialMeanShift() {
+
+}
+
 mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
                                                                                       const std::vector<mila::Point> &points,
                                                                                       float bandwidth) const {
