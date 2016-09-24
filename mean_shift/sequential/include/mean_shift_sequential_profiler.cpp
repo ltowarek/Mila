@@ -1,6 +1,6 @@
 #include "mean_shift_sequential_profiler.h"
 
-mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler() : SequentialMeanShift(),
+mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler() : SequentialMeanShift(std::shared_ptr<Logger>()),
                                                                    main_result_("Points per second"),
                                                                    main_duration_("Run") {
 }

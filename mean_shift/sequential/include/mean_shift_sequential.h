@@ -18,7 +18,7 @@ std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
 
 class SequentialMeanShift : public MeanShift {
  public:
-  SequentialMeanShift();
+  SequentialMeanShift(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialMeanShift() override;
 
   virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
@@ -26,6 +26,8 @@ class SequentialMeanShift : public MeanShift {
   Point ShiftPoint(const Point &point, const std::vector<Point> &points, const float bandwidth) const;
   float Distance(const Point &point1, const Point &point2) const;
   float GaussianKernel(const float x, const float sigma) const;
+ private:
+  const std::shared_ptr<mila::Logger> logger_;
 };
 
 class MeanShiftImageProcessing {

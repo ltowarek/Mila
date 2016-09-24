@@ -33,7 +33,7 @@ std::vector<uint8_t> mila::ConvertPointsToVector(const std::vector<Point> &data)
   return output;
 }
 
-mila::SequentialMeanShift::SequentialMeanShift() {
+mila::SequentialMeanShift::SequentialMeanShift(const std::shared_ptr<mila::Logger> logger) : logger_(logger) {
 
 }
 

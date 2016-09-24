@@ -56,42 +56,42 @@ TEST(SequentialMeanShiftPointTest, ConvertPointsToVector) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, DistanceZero) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point1 = {0.0f};
   mila::Point point2 = {0.0f};
   EXPECT_EQ(mean_shift.Distance(point1, point2), 0.0f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, DistanceComplex) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point1 = {-7.0f, -4.0f, 3.0f, 0.0f};
   mila::Point point2 = {17.0f, 6.0f, 2.5f, 0.0f};
   EXPECT_NEAR(mean_shift.Distance(point1, point2), 26.00480f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, GaussianKernelZero) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   float x = 0.0f;
   float sigma = 1.0f;
   EXPECT_NEAR(mean_shift.GaussianKernel(x, sigma), 0.39894f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, GaussianKernelUndefined) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   float x = 0.0f;
   float sigma = 0.0f;
   EXPECT_NEAR(mean_shift.GaussianKernel(x, sigma), 0.0f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, GaussianKernelComplex) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   float x = 2.25f;
   float sigma = 2.0f;
   EXPECT_NEAR(mean_shift.GaussianKernel(x, sigma), 0.10593f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, ShiftPointZero) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point = {0.0f};
   std::vector<mila::Point> points = {{1.0f}, {-1.0f}};
   float bandwidth = 1.0f;
@@ -105,7 +105,7 @@ TEST(SequentialMeanShiftSequentialTest, ShiftPointZero) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, ShiftPointUndefined) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point = {0.0f};
   std::vector<mila::Point> points = {{1.0f}, {-1.0f}};
   float bandwidth = 0.0f;
@@ -119,7 +119,7 @@ TEST(SequentialMeanShiftSequentialTest, ShiftPointUndefined) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, ShiftPointSimple) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point = {0.0f};
   std::vector<mila::Point> points = {{1.0f, 1.0f, 0.0f, 0.0f}, {-2.0f, -2.0f, 0.0f, 0.0f}};
   float bandwidth = 2.0f;
@@ -133,7 +133,7 @@ TEST(SequentialMeanShiftSequentialTest, ShiftPointSimple) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, ShiftPointComplex) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point = {1.0f, -5.0f, 8.0f, 0.0f};
   std::vector<mila::Point>
       points = {{1.5f, 1.0f, -10.0f, 0.0f}, {-2.0f, 20.0f, -1.25f, 0.0f}, {5.5f, 7.3f, -8.75f, 0.0f}};
@@ -148,7 +148,7 @@ TEST(SequentialMeanShiftSequentialTest, ShiftPointComplex) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, RunSimple) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
                                      {2.0f, 3.0f, 0.0f, 0.0f},
                                      {10.0f, 11.0f, 0.0f, 0.0f},
@@ -172,7 +172,7 @@ TEST(SequentialMeanShiftSequentialTest, RunSimple) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, RunComplex) {
-  mila::SequentialMeanShift mean_shift;
+  mila::SequentialMeanShift mean_shift(nullptr);
   std::vector<mila::Point> points = {{10.91079f, 8.38941f},
                                      {9.87500f, 9.90925f},
                                      {7.84812f, 10.43175f},
@@ -479,7 +479,7 @@ TEST(SequentialMeanShiftSequentialProfilerTest, RunWithProfiling) {
 }
 
 TEST(MeanShiftImageProcessingTest, RunWithImage) {
-  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift());
+  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
   mila::MeanShiftImageProcessing mean_shift(std::move(m), nullptr);
   std::string input_file = "test_image.png";
   std::string output_file = "test_image_output.png";
@@ -500,7 +500,7 @@ TEST(MeanShiftImageProcessingTest, RunWithImage) {
 }
 
 TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImage) {
-  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift());
+  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
   mila::MeanShiftImageProcessingProfiler mean_shift(std::move(m), nullptr);
   std::string input_file = "test_image.png";
   std::string output_file = "test_image_output.png";
@@ -521,7 +521,7 @@ TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImage) {
 }
 
 TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImageWithProfiling) {
-  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift());
+  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
   mila::MeanShiftImageProcessingProfiler mean_shift(std::move(m), nullptr);
   std::string input_file = "test_image.png";
   std::string output_file = "test_image_output.png";
