@@ -30,7 +30,7 @@ class MeanShiftImageProcessingProfiler : public MeanShiftImageProcessing {
   MeanShiftImageProcessingProfiler(std::unique_ptr<mila::MeanShift> mean_shift,
                                    const std::shared_ptr<mila::Logger> logger);
 
-  void Run(const std::string &input_file, const std::string &output_file, float bandwidth) override;
+  void Run(const std::string &input_file, const std::string &output_file, const float bandwidth) override;
 
   std::string main_result() const;
   std::string main_duration() const;

@@ -53,7 +53,7 @@ std::map<std::string, float> mila::MeanShiftImageProcessingProfiler::results() c
 
 void mila::MeanShiftImageProcessingProfiler::Run(const std::string &input_file,
                                                  const std::string &output_file,
-                                                 float bandwidth) {
+                                                 const float bandwidth) {
   auto start_time = std::chrono::high_resolution_clock::now();
   MeanShiftImageProcessing::Run(input_file, output_file, bandwidth);
   auto end_time = std::chrono::high_resolution_clock::now();

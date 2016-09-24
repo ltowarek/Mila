@@ -34,7 +34,7 @@ class MeanShiftImageProcessing {
  public:
   MeanShiftImageProcessing(std::unique_ptr<mila::MeanShift> mean_shift,
                            const std::shared_ptr<mila::Logger> logger);
-  virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
+  virtual void Run(const std::string &input_file, const std::string &output_file, const float bandwidth);
  private:
   const std::shared_ptr<mila::Logger> logger_;
   const std::unique_ptr<mila::MeanShift> mean_shift_;
