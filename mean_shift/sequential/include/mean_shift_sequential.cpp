@@ -1,17 +1,5 @@
 #include "mean_shift_sequential.h"
 
-float mila::Distance(const Point &point1, const Point &point2) {
-  return sqrtf(powf(point1.x - point2.x, 2.0f) + powf(point1.y - point2.y, 2.0f) + powf(point1.z - point2.z, 2.0f));
-}
-
-float mila::GaussianKernel(float x, float sigma) {
-  auto output = 0.0f;
-  if (sigma != 0) {
-    output = (1.0f / (sqrtf(2.0f * pi) * sigma)) * expf(-0.5f * powf(x / sigma, 2.0f));
-  }
-  return output;
-}
-
 std::vector<mila::Point> mila::ConvertVectorToPoints(const std::vector<uint8_t> &data) {
   auto output = std::vector<Point>();
 
@@ -53,27 +41,6 @@ mila::SequentialMeanShift::~SequentialMeanShift() {
 
 }
 
-mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
-                                                  const std::vector<mila::Point> &points,
-                                                  const float bandwidth) const {
-  auto shift = Point{0.0f};
-  if (bandwidth != 0) {
-    auto scale = 0.0f;
-    for (size_t i = 0; i < points.size(); ++i) {
-      auto distance = Distance(point, points[i]);
-      auto weight = GaussianKernel(distance, bandwidth);
-      shift.x += weight * points[i].x;
-      shift.y += weight * points[i].y;
-      shift.z += weight * points[i].z;
-      scale += weight;
-    }
-    shift.x /= scale;
-    shift.y /= scale;
-    shift.z /= scale;
-  }
-  return shift;
-}
-
 std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point> &points, const float bandwidth) {
   const auto precision = 1e-5f;
   const auto max_iterations = 100;
@@ -109,6 +76,40 @@ std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point>
   } while ((difference_distance > precision) && (iteration < max_iterations));
 
   return shifted_points;
+}
+
+mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
+                                                  const std::vector<mila::Point> &points,
+                                                  const float bandwidth) const {
+  auto shift = Point{0.0f};
+  if (bandwidth != 0) {
+    auto scale = 0.0f;
+    for (size_t i = 0; i < points.size(); ++i) {
+      auto distance = Distance(point, points[i]);
+      auto weight = GaussianKernel(distance, bandwidth);
+      shift.x += weight * points[i].x;
+      shift.y += weight * points[i].y;
+      shift.z += weight * points[i].z;
+      scale += weight;
+    }
+    shift.x /= scale;
+    shift.y /= scale;
+    shift.z /= scale;
+  }
+  return shift;
+}
+
+float mila::SequentialMeanShift::Distance(const Point &point1, const Point &point2) const {
+  return sqrtf(powf(point1.x - point2.x, 2.0f) + powf(point1.y - point2.y, 2.0f) + powf(point1.z - point2.z, 2.0f));
+}
+
+float mila::SequentialMeanShift::GaussianKernel(const float x, const float sigma) const {
+  const auto pi = 3.14159265358979323846f;
+  auto output = 0.0f;
+  if (sigma != 0.0f) {
+    output = (1.0f / (sqrtf(2.0f * pi) * sigma)) * expf(-0.5f * powf(x / sigma, 2.0f));
+  }
+  return output;
 }
 
 mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing() : SequentialMeanShift() {}

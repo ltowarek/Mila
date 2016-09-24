@@ -56,33 +56,38 @@ TEST(SequentialMeanShiftPointTest, ConvertPointsToVector) {
 }
 
 TEST(SequentialMeanShiftSequentialTest, DistanceZero) {
+  mila::SequentialMeanShift mean_shift;
   mila::Point point1 = {0.0f};
   mila::Point point2 = {0.0f};
-  EXPECT_EQ(mila::Distance(point1, point2), 0.0f);
+  EXPECT_EQ(mean_shift.Distance(point1, point2), 0.0f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, DistanceComplex) {
+  mila::SequentialMeanShift mean_shift;
   mila::Point point1 = {-7.0f, -4.0f, 3.0f, 0.0f};
   mila::Point point2 = {17.0f, 6.0f, 2.5f, 0.0f};
-  EXPECT_NEAR(mila::Distance(point1, point2), 26.00480f, 1e-5f);
+  EXPECT_NEAR(mean_shift.Distance(point1, point2), 26.00480f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, GaussianKernelZero) {
+  mila::SequentialMeanShift mean_shift;
   float x = 0.0f;
   float sigma = 1.0f;
-  EXPECT_NEAR(mila::GaussianKernel(x, sigma), 0.39894f, 1e-5f);
+  EXPECT_NEAR(mean_shift.GaussianKernel(x, sigma), 0.39894f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, GaussianKernelUndefined) {
+  mila::SequentialMeanShift mean_shift;
   float x = 0.0f;
   float sigma = 0.0f;
-  EXPECT_NEAR(mila::GaussianKernel(x, sigma), 0.0f, 1e-5f);
+  EXPECT_NEAR(mean_shift.GaussianKernel(x, sigma), 0.0f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, GaussianKernelComplex) {
+  mila::SequentialMeanShift mean_shift;
   float x = 2.25f;
   float sigma = 2.0f;
-  EXPECT_NEAR(mila::GaussianKernel(x, sigma), 0.10593f, 1e-5f);
+  EXPECT_NEAR(mean_shift.GaussianKernel(x, sigma), 0.10593f, 1e-5f);
 }
 
 TEST(SequentialMeanShiftSequentialTest, ShiftPointZero) {
