@@ -10,8 +10,6 @@
 #include "mean_shift_utils.h"
 
 namespace mila {
-namespace meanshift {
-namespace sequential {
 const float pi = 3.14159265358979323846f;
 
 struct Point {
@@ -27,10 +25,10 @@ std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
 float Distance(const Point &point1, const Point &point2);
 float GaussianKernel(float x, float sigma);
 
-class MeanShift {
+class SequentialMeanShift {
  public:
-  MeanShift();
-  MeanShift(float precision, size_t max_iterations);
+  SequentialMeanShift();
+  SequentialMeanShift(float precision, size_t max_iterations);
 
   Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth) const;
   virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth);
@@ -42,15 +40,13 @@ class MeanShift {
   const size_t max_iterations_;
 };
 
-class MeanShiftImageProcessing: public MeanShift {
+class SequentialMeanShiftImageProcessing: public SequentialMeanShift {
  public:
-  MeanShiftImageProcessing();
-  MeanShiftImageProcessing(float precision, size_t max_iterations);
+  SequentialMeanShiftImageProcessing();
+  SequentialMeanShiftImageProcessing(float precision, size_t max_iterations);
 
   virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
 };
-}  // sequential
-}  // meanshift
 }  // mila
 #endif  // MILA_MEAN_SHIFT_SEQUENTIAL_H_

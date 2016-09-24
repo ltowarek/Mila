@@ -1,10 +1,10 @@
 #include "mean_shift_sequential.h"
 
-float mila::meanshift::sequential::Distance(const Point &point1, const Point &point2) {
+float mila::Distance(const Point &point1, const Point &point2) {
   return sqrtf(powf(point1.x - point2.x, 2.0f) + powf(point1.y - point2.y, 2.0f) + powf(point1.z - point2.z, 2.0f));
 }
 
-float mila::meanshift::sequential::GaussianKernel(float x, float sigma) {
+float mila::GaussianKernel(float x, float sigma) {
   auto output = 0.0f;
   if (sigma != 0) {
     output = (1.0f / (sqrtf(2.0f * pi) * sigma)) * expf(-0.5f * powf(x / sigma, 2.0f));
@@ -12,7 +12,7 @@ float mila::meanshift::sequential::GaussianKernel(float x, float sigma) {
   return output;
 }
 
-std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::ConvertVectorToPoints(const std::vector<uint8_t> &data) {
+std::vector<mila::Point> mila::ConvertVectorToPoints(const std::vector<uint8_t> &data) {
   auto output = std::vector<Point>();
 
   if (data.size() % 4 != 0) {
@@ -32,7 +32,7 @@ std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::Con
   return output;
 }
 
-std::vector<uint8_t> mila::meanshift::sequential::ConvertPointsToVector(const std::vector<Point> &data) {
+std::vector<uint8_t> mila::ConvertPointsToVector(const std::vector<Point> &data) {
   auto output = std::vector<uint8_t>();
 
   for (size_t i = 0; i < data.size(); ++i) {
@@ -45,12 +45,12 @@ std::vector<uint8_t> mila::meanshift::sequential::ConvertPointsToVector(const st
   return output;
 }
 
-mila::meanshift::sequential::MeanShift::MeanShift() : MeanShift(1e-5, 100) {}
+mila::SequentialMeanShift::SequentialMeanShift() : SequentialMeanShift(1e-5, 100) {}
 
-mila::meanshift::sequential::MeanShift::MeanShift(float precision, size_t max_iterations) : precision_(precision), max_iterations_(max_iterations) {}
+mila::SequentialMeanShift::SequentialMeanShift(float precision, size_t max_iterations) : precision_(precision), max_iterations_(max_iterations) {}
 
-mila::meanshift::sequential::Point mila::meanshift::sequential::MeanShift::ShiftPoint(const mila::meanshift::sequential::Point &point,
-                                                                                      const std::vector<mila::meanshift::sequential::Point> &points,
+mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
+                                                                                      const std::vector<mila::Point> &points,
                                                                                       float bandwidth) const {
   auto shift = Point{0.0f};
   if (bandwidth != 0) {
@@ -70,15 +70,15 @@ mila::meanshift::sequential::Point mila::meanshift::sequential::MeanShift::Shift
   return shift;
 }
 
-float mila::meanshift::sequential::MeanShift::precision() const {
+float mila::SequentialMeanShift::precision() const {
   return precision_;
 }
 
-size_t mila::meanshift::sequential::MeanShift::max_iterations() const {
+size_t mila::SequentialMeanShift::max_iterations() const {
   return max_iterations_;
 }
 
-std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShift::Run(const std::vector<Point> &points, float bandwidth) {
+std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point> &points, float bandwidth) {
   auto difference_distance = 0.0f;
   auto iteration = size_t{0};
 
@@ -112,16 +112,16 @@ std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::Mea
   return shifted_points;
 }
 
-mila::meanshift::sequential::MeanShiftImageProcessing::MeanShiftImageProcessing() : MeanShift() {}
+mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing() : SequentialMeanShift() {}
 
-mila::meanshift::sequential::MeanShiftImageProcessing::MeanShiftImageProcessing(float precision, size_t max_iterations) : MeanShift(precision, max_iterations) {}
+mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing(float precision, size_t max_iterations) : SequentialMeanShift(precision, max_iterations) {}
 
-std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShiftImageProcessing::Run(const std::vector<Point> &points,
+std::vector<mila::Point> mila::SequentialMeanShiftImageProcessing::Run(const std::vector<Point> &points,
                                                                               float bandwidth) {
-  return MeanShift::Run(points, bandwidth);
+  return SequentialMeanShift::Run(points, bandwidth);
 }
 
-void mila::meanshift::sequential::MeanShiftImageProcessing::Run(const std::string &input_file,
+void mila::SequentialMeanShiftImageProcessing::Run(const std::string &input_file,
                                                                 const std::string &output_file,
                                                                 float bandwidth) {
   auto input_image = mila::meanshift::utils::Image(input_file);

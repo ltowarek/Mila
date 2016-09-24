@@ -1,30 +1,30 @@
 #include "mean_shift_sequential_profiler.h"
 
-mila::meanshift::sequential::MeanShiftProfiler::MeanShiftProfiler() : MeanShift(),
+mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler() : SequentialMeanShift(),
                                                                       main_result_("Points per second"),
                                                                       main_duration_("Run"){
 }
 
-mila::meanshift::sequential::MeanShiftProfiler::MeanShiftProfiler(float precision, size_t max_iterations) : MeanShift(precision, max_iterations),
+mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler(float precision, size_t max_iterations) : SequentialMeanShift(precision, max_iterations),
                                                                                                             main_result_("Points per second"),
                                                                                                             main_duration_("Run") {
 }
 
-std::string mila::meanshift::sequential::MeanShiftProfiler::main_duration() const {
+std::string mila::SequentialMeanShiftProfiler::main_duration() const {
   return main_duration_;
 }
 
-std::string mila::meanshift::sequential::MeanShiftProfiler::main_result() const {
+std::string mila::SequentialMeanShiftProfiler::main_result() const {
   return main_result_;
 }
 
-std::map<std::string, float> mila::meanshift::sequential::MeanShiftProfiler::results() const {
+std::map<std::string, float> mila::SequentialMeanShiftProfiler::results() const {
   return results_;
 }
 
-std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShiftProfiler::Run(const std::vector<Point> &points, float bandwidth) {
+std::vector<mila::Point> mila::SequentialMeanShiftProfiler::Run(const std::vector<Point> &points, float bandwidth) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  auto output = MeanShift::Run(points, bandwidth);
+  auto output = SequentialMeanShift::Run(points, bandwidth);
   auto end_time = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration<float>(end_time - start_time);
@@ -35,33 +35,33 @@ std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::Mea
   return output;
 }
 
-mila::meanshift::sequential::MeanShiftImageProcessingProfiler::MeanShiftImageProcessingProfiler() : MeanShiftImageProcessing(),
+mila::SequentialMeanShiftImageProcessingProfiler::SequentialMeanShiftImageProcessingProfiler() : SequentialMeanShiftImageProcessing(),
                                                                                                     main_result_("Pixels per second"),
                                                                                                     main_duration_("RunWithImage"),
                                                                                                     number_of_points_(0) {
 }
 
-mila::meanshift::sequential::MeanShiftImageProcessingProfiler::MeanShiftImageProcessingProfiler(float precision, size_t max_iterations) : MeanShiftImageProcessing(precision, max_iterations),
+mila::SequentialMeanShiftImageProcessingProfiler::SequentialMeanShiftImageProcessingProfiler(float precision, size_t max_iterations) : SequentialMeanShiftImageProcessing(precision, max_iterations),
                                                                                                                                           main_duration_("RunWithImage"),
                                                                                                                                           main_result_("Pixels per second"),
                                                                                                                                           number_of_points_(0) {
 }
 
-std::string mila::meanshift::sequential::MeanShiftImageProcessingProfiler::main_duration() const {
+std::string mila::SequentialMeanShiftImageProcessingProfiler::main_duration() const {
   return main_duration_;
 }
 
-std::string mila::meanshift::sequential::MeanShiftImageProcessingProfiler::main_result() const {
+std::string mila::SequentialMeanShiftImageProcessingProfiler::main_result() const {
   return main_result_;
 }
 
-std::map<std::string, float> mila::meanshift::sequential::MeanShiftImageProcessingProfiler::results() const {
+std::map<std::string, float> mila::SequentialMeanShiftImageProcessingProfiler::results() const {
   return results_;
 }
 
-std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::MeanShiftImageProcessingProfiler::Run(const std::vector<Point> &points, float bandwidth) {
+std::vector<mila::Point> mila::SequentialMeanShiftImageProcessingProfiler::Run(const std::vector<Point> &points, float bandwidth) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  auto output = MeanShiftImageProcessing::Run(points, bandwidth);
+  auto output = SequentialMeanShiftImageProcessing::Run(points, bandwidth);
   auto end_time = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration<float>(end_time - start_time);
@@ -74,9 +74,9 @@ std::vector<mila::meanshift::sequential::Point> mila::meanshift::sequential::Mea
   return output;
 }
 
-void mila::meanshift::sequential::MeanShiftImageProcessingProfiler::Run(const std::string &input_file, const std::string &output_file, float bandwidth) {
+void mila::SequentialMeanShiftImageProcessingProfiler::Run(const std::string &input_file, const std::string &output_file, float bandwidth) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  MeanShiftImageProcessing::Run(input_file, output_file, bandwidth);
+  SequentialMeanShiftImageProcessing::Run(input_file, output_file, bandwidth);
   auto end_time = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration<float>(end_time - start_time);

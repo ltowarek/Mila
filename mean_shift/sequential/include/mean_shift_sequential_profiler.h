@@ -9,13 +9,11 @@
 #include "utils.h"
 
 namespace mila {
-namespace meanshift {
-namespace sequential {
 
-class MeanShiftProfiler: public MeanShift {
+class SequentialMeanShiftProfiler: public SequentialMeanShift {
  public:
-  MeanShiftProfiler();
-  MeanShiftProfiler(float precision, size_t max_iterations);
+  SequentialMeanShiftProfiler();
+  SequentialMeanShiftProfiler(float precision, size_t max_iterations);
 
   std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
 
@@ -28,10 +26,10 @@ class MeanShiftProfiler: public MeanShift {
   std::map<std::string, float> results_;
 };
 
-class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
+class SequentialMeanShiftImageProcessingProfiler: public SequentialMeanShiftImageProcessing {
  public:
-  MeanShiftImageProcessingProfiler();
-  MeanShiftImageProcessingProfiler(float precision, size_t max_iterations);
+  SequentialMeanShiftImageProcessingProfiler();
+  SequentialMeanShiftImageProcessingProfiler(float precision, size_t max_iterations);
 
   std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   void Run(const std::string &input_file, const std::string &output_file, float bandwidth) override;
@@ -46,8 +44,6 @@ class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
   size_t number_of_points_;
 };
 
-}  // sequential
-}  // meanshift
 }  // mila
 
 #endif  // MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H_
