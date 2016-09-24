@@ -85,20 +85,6 @@ TEST(MeanShiftSequentialTest, GaussianKernelComplex) {
   EXPECT_NEAR(mila::meanshift::sequential::GaussianKernel(x, sigma), 0.10593f, 1e-5f);
 }
 
-TEST(MeanShiftSequentialTest, DefaultConstructor) {
-  mila::meanshift::sequential::MeanShift mean_shift;
-  EXPECT_EQ(mean_shift.precision(), 1e-5f);
-  EXPECT_EQ(mean_shift.max_iterations(), 100);
-}
-
-TEST(MeanShiftSequentialTest, Constructor) {
-  float precision = 1e-3;
-  size_t max_iterations = 50;
-  mila::meanshift::sequential::MeanShift mean_shift(precision, max_iterations);
-  EXPECT_EQ(mean_shift.precision(), precision);
-  EXPECT_EQ(mean_shift.max_iterations(), max_iterations);
-}
-
 TEST(MeanShiftSequentialTest, ShiftPointZero) {
   mila::meanshift::sequential::MeanShift mean_shift;
   mila::meanshift::sequential::Point point = {0.0f};
@@ -445,22 +431,6 @@ TEST(MeanShiftSequentialTest, RunComplex) {
   }
 }
 
-TEST(MeanShiftSequentialProfilerTest, DefaultConstructor) {
-  mila::meanshift::sequential::MeanShiftProfiler mean_shift;
-  EXPECT_EQ(mean_shift.precision(), 1e-5f);
-  EXPECT_EQ(mean_shift.max_iterations(), 100);
-  EXPECT_EQ(mean_shift.main_result(), "Points per second");
-  EXPECT_EQ(mean_shift.main_duration(), "Run");
-}
-
-TEST(MeanShiftSequentialProfilerTest, Constructor) {
-  mila::meanshift::sequential::MeanShiftProfiler mean_shift(1e-7f, 123);
-  EXPECT_EQ(mean_shift.precision(), 1e-7f);
-  EXPECT_EQ(mean_shift.max_iterations(), 123);
-  EXPECT_EQ(mean_shift.main_result(), "Points per second");
-  EXPECT_EQ(mean_shift.main_duration(), "Run");
-}
-
 TEST(MeanShiftSequentialProfilerTest, Run) {
   mila::meanshift::sequential::MeanShiftProfiler mean_shift;
   std::vector<mila::meanshift::sequential::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
@@ -500,18 +470,6 @@ TEST(MeanShiftSequentialProfilerTest, RunWithProfiling) {
   mean_shift.Run(points, bandwidth);
   EXPECT_EQ(mean_shift.results().count("Points per second"), 1);
   EXPECT_EQ(mean_shift.results().count("Run"), 1);
-}
-
-TEST(MeanShiftSequentialImageProcessingTest, DefaultConstructor) {
-  mila::meanshift::sequential::MeanShiftImageProcessing mean_shift;
-  EXPECT_EQ(mean_shift.precision(), 1e-5f);
-  EXPECT_EQ(mean_shift.max_iterations(), 100);
-}
-
-TEST(MeanShiftSequentialImageProcessingTest, Constructor) {
-  mila::meanshift::sequential::MeanShiftImageProcessing mean_shift(1e-7f, 123);
-  EXPECT_EQ(mean_shift.precision(), 1e-7f);
-  EXPECT_EQ(mean_shift.max_iterations(), 123);
 }
 
 TEST(MeanShiftSequentialImageProcessingTest, RunWithoutImage) {
@@ -557,22 +515,6 @@ TEST(MeanShiftSequentialImageProcessingTest, RunWithImage) {
   for (size_t i = 0; i < reference.size(); ++i) {
     EXPECT_EQ(output[i], reference[i]);
   }
-}
-
-TEST(MeanShiftSequentialImageProcessingProfilerTest, DefaultConstructor) {
-  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift;
-  EXPECT_EQ(mean_shift.precision(), 1e-5f);
-  EXPECT_EQ(mean_shift.max_iterations(), 100);
-  EXPECT_EQ(mean_shift.main_result(), "Pixels per second");
-  EXPECT_EQ(mean_shift.main_duration(), "RunWithImage");
-}
-
-TEST(MeanShiftSequentialImageProcessingProfilerTest, Constructor) {
-  mila::meanshift::sequential::MeanShiftImageProcessingProfiler mean_shift(1e-7f, 123);
-  EXPECT_EQ(mean_shift.precision(), 1e-7f);
-  EXPECT_EQ(mean_shift.max_iterations(), 123);
-  EXPECT_EQ(mean_shift.main_result(), "Pixels per second");
-  EXPECT_EQ(mean_shift.main_duration(), "RunWithImage");
 }
 
 TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithoutImage) {
