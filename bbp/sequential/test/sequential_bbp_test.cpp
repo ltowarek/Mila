@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "bbp_sequential.h"
 #include "bbp_sequential_profiler.h"
+#include "bbp_sequential_app.h"
 
 TEST(BBPSequentialTest, FloatPrecision) {
   EXPECT_NEAR(powf(8 * 100 + 6, 2), 649636, 1e-5);
@@ -72,3 +73,26 @@ TEST_F(SequentialBBPProfilerTest, GetResultsAfterComputeDigits) {
   EXPECT_GT(this->bbp_->GetResults().digits_per_second, 0.0f);
 }
 
+TEST(SequentialBBPAppTest, Run) {
+  auto logger_spy = std::shared_ptr<mila::LoggerSpy>(new mila::LoggerSpy());
+  auto number_of_digits = std::string("5");
+  auto starting_position = std::string("100");
+  auto number_of_iterations = std::string("10");
+  auto expected_output = std::string("29B7C");
+  const char *parameters[] = {"app", number_of_digits.c_str(), starting_position.c_str(), number_of_iterations.c_str()};
+  auto bbp = mila::SequentialBBPApp(logger_spy);
+  // const_cast due to C vs C++ string literals
+  bbp.Run(6, const_cast<char **>(parameters));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of digits: " + number_of_digits));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Starting position: " + starting_position));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of iterations: " + number_of_iterations));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Digits: " + expected_output));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Compute digits duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Compute digits duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Compute digits duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Compute digits duration coefficient of variation: "));
+}
