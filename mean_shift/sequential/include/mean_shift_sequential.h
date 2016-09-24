@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "logger.h"
 #include "mean_shift.h"
 #include "mean_shift_utils.h"
 
@@ -27,12 +28,14 @@ class SequentialMeanShift : public MeanShift {
   float GaussianKernel(const float x, const float sigma) const;
 };
 
-class SequentialMeanShiftImageProcessing : public SequentialMeanShift {
+class MeanShiftImageProcessing {
  public:
-  SequentialMeanShiftImageProcessing();
-
-  virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
+  MeanShiftImageProcessing(std::unique_ptr<mila::MeanShift> mean_shift,
+                           const std::shared_ptr<mila::Logger> logger);
   virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
+ private:
+  const std::shared_ptr<mila::Logger> logger_;
+  const std::unique_ptr<mila::MeanShift> mean_shift_;
 };
 }  // mila
 #endif  // MILA_MEAN_SHIFT_SEQUENTIAL_H_

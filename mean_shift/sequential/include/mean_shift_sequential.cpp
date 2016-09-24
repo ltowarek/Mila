@@ -112,26 +112,24 @@ float mila::SequentialMeanShift::GaussianKernel(const float x, const float sigma
   return output;
 }
 
-mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing() : SequentialMeanShift() {}
-
-std::vector<mila::Point> mila::SequentialMeanShiftImageProcessing::Run(const std::vector<Point> &points,
-                                                                       float bandwidth) {
-  return SequentialMeanShift::Run(points, bandwidth);
-}
-
-void mila::SequentialMeanShiftImageProcessing::Run(const std::string &input_file,
-                                                   const std::string &output_file,
-                                                   float bandwidth) {
+void mila::MeanShiftImageProcessing::Run(const std::string &input_file,
+                                         const std::string &output_file,
+                                         float bandwidth) {
   auto input_image = mila::meanshift::utils::Image(input_file);
   auto output_image = mila::meanshift::utils::Image(output_file);
 
   auto input_data = input_image.Read();
   auto input_points = ConvertVectorToPoints(input_data);
-  auto output_points = Run(input_points, bandwidth);
+  auto output_points = mean_shift_->Run(input_points, bandwidth);
   for (size_t i = 0; i < output_points.size(); ++i) {
     output_points[i].w = 255;
   }
   auto output_data = ConvertPointsToVector(output_points);
 
   output_image.Write(output_data, input_image.width(), input_image.height());
+}
+mila::MeanShiftImageProcessing::MeanShiftImageProcessing(std::unique_ptr<mila::MeanShift> mean_shift,
+                                                         const std::shared_ptr<mila::Logger> logger) : logger_(
+    logger), mean_shift_(std::move(mean_shift)) {
+
 }

@@ -10,7 +10,7 @@
 
 namespace mila {
 
-class SequentialMeanShiftProfiler: public SequentialMeanShift {
+class SequentialMeanShiftProfiler : public SequentialMeanShift {
  public:
   SequentialMeanShiftProfiler();
 
@@ -25,11 +25,11 @@ class SequentialMeanShiftProfiler: public SequentialMeanShift {
   std::map<std::string, float> results_;
 };
 
-class SequentialMeanShiftImageProcessingProfiler: public SequentialMeanShiftImageProcessing {
+class MeanShiftImageProcessingProfiler : public MeanShiftImageProcessing {
  public:
-  SequentialMeanShiftImageProcessingProfiler();
+  MeanShiftImageProcessingProfiler(std::unique_ptr<mila::MeanShift> mean_shift,
+                                   const std::shared_ptr<mila::Logger> logger);
 
-  std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   void Run(const std::string &input_file, const std::string &output_file, float bandwidth) override;
 
   std::string main_result() const;
