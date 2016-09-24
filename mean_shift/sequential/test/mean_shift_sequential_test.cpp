@@ -437,7 +437,7 @@ TEST(SequentialMeanShiftSequentialTest, RunComplex) {
   }
 }
 
-TEST(SequentialMeanShiftSequentialProfilerTest, Run) {
+TEST(SequentialMeanShiftProfilerTest, Run) {
   mila::SequentialMeanShiftProfiler mean_shift;
   std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
                                      {2.0f, 3.0f, 0.0f, 0.0f},
@@ -461,7 +461,7 @@ TEST(SequentialMeanShiftSequentialProfilerTest, Run) {
   }
 }
 
-TEST(SequentialMeanShiftSequentialProfilerTest, RunWithProfiling) {
+TEST(SequentialMeanShiftProfilerTest, RunWithProfiling) {
   mila::SequentialMeanShiftProfiler mean_shift;
 
   std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
@@ -488,10 +488,10 @@ TEST(MeanShiftImageProcessingTest, RunWithImage) {
 
   mean_shift.Run(input_file, output_file, bandwidth);
 
-  mila::meanshift::utils::Image output_image(output_file);
+  mila::Image output_image(output_file);
   std::vector<uint8_t> output = output_image.Read();
 
-  mila::meanshift::utils::Image reference_image(reference_file);
+  mila::Image reference_image(reference_file);
   std::vector<uint8_t> reference = reference_image.Read();
 
   for (size_t i = 0; i < reference.size(); ++i) {
@@ -499,7 +499,7 @@ TEST(MeanShiftImageProcessingTest, RunWithImage) {
   }
 }
 
-TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImage) {
+TEST(MeanShiftImageProcessingProfilerTest, RunWithImage) {
   auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
   mila::MeanShiftImageProcessingProfiler mean_shift(std::move(m), nullptr);
   std::string input_file = "test_image.png";
@@ -509,10 +509,10 @@ TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImage) {
 
   mean_shift.Run(input_file, output_file, bandwidth);
 
-  mila::meanshift::utils::Image output_image(output_file);
+  mila::Image output_image(output_file);
   std::vector<uint8_t> output = output_image.Read();
 
-  mila::meanshift::utils::Image reference_image(reference_file);
+  mila::Image reference_image(reference_file);
   std::vector<uint8_t> reference = reference_image.Read();
 
   for (size_t i = 0; i < reference.size(); ++i) {
@@ -520,7 +520,7 @@ TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImage) {
   }
 }
 
-TEST(MeanShiftSequentialImageProcessingProfilerTest, RunWithImageWithProfiling) {
+TEST(MeanShiftImageProcessingProfilerTest, RunWithImageWithProfiling) {
   auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
   mila::MeanShiftImageProcessingProfiler mean_shift(std::move(m), nullptr);
   std::string input_file = "test_image.png";

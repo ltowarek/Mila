@@ -120,16 +120,16 @@ mila::MeanShiftImageProcessing::MeanShiftImageProcessing(std::unique_ptr<mila::M
 void mila::MeanShiftImageProcessing::Run(const std::string &input_file,
                                          const std::string &output_file,
                                          const float bandwidth) {
-  auto input_image = mila::meanshift::utils::Image(input_file);
-  auto output_image = mila::meanshift::utils::Image(output_file);
+  auto input_image = mila::Image(input_file);
+  auto output_image = mila::Image(output_file);
 
   auto input_data = input_image.Read();
-  auto input_points = ConvertVectorToPoints(input_data);
+  const auto input_points = ConvertVectorToPoints(input_data);
   auto output_points = mean_shift_->Run(input_points, bandwidth);
   for (size_t i = 0; i < output_points.size(); ++i) {
     output_points[i].w = 255;
   }
-  auto output_data = ConvertPointsToVector(output_points);
+  const auto output_data = ConvertPointsToVector(output_points);
 
   output_image.Write(output_data, input_image.width(), input_image.height());
 }

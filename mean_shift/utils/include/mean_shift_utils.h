@@ -8,8 +8,6 @@
 #include "lodepng.h"
 
 namespace mila {
-namespace meanshift {
-namespace utils {
 
 class Image {
  public:
@@ -28,8 +26,6 @@ class Image {
   std::string file_name_;
 };
 
-}  // utils
-}  // meanshift
 }  // mila
 
 #endif  // MILA_MEAN_SHIFT_UTILS_H_

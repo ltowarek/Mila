@@ -174,8 +174,8 @@ std::vector<cl_float4> mila::meanshift::parallel::MeanShiftImageProcessing::Run(
 void mila::meanshift::parallel::MeanShiftImageProcessing::Run(const std::string &input_file,
                                                               const std::string &output_file,
                                                               float bandwidth) {
-  auto input_image = mila::meanshift::utils::Image(input_file);
-  auto output_image = mila::meanshift::utils::Image(output_file);
+  auto input_image = mila::Image(input_file);
+  auto output_image = mila::Image(output_file);
 
   auto input_data = input_image.Read();
   auto input_points = ConvertVectorToPoints(input_data);
