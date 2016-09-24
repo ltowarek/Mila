@@ -1,5 +1,13 @@
 #include "logger.h"
 
+std::vector<std::string> mila::logger_spy_messages;
+
+bool mila::ContainsStr(const std::vector<std::string> &v, const std::string str) {
+  return
+      std::find_if(v.begin(), v.end(),
+                   [str](const std::string &s) -> bool { return s.find(str) != std::string::npos; }) != v.end();
+}
+
 mila::Logger::~Logger() {
 
 }
@@ -67,4 +75,69 @@ void mila::PrintfLogger::Debug(const char *message, ...) const {
     va_end(args);
     printf("\n");
   }
+}
+
+mila::LoggerSpy::LoggerSpy() {
+  mila::logger_spy_messages.clear();
+}
+mila::LoggerSpy::~LoggerSpy() {
+
+}
+void mila::LoggerSpy::SetLevel(LEVELS level) {
+
+}
+void mila::LoggerSpy::Critical(const char *message, ...) const {
+  va_list args1;
+  va_start(args1, message);
+  va_list args2;
+  va_copy(args2, args1);
+  auto output = std::vector<char>(1ul + vsnprintf(nullptr, 0, message, args1));
+  va_end(args1);
+  vsnprintf(output.data(), output.size(), message, args2);
+  va_end(args2);
+  logger_spy_messages.push_back("C " + std::string(output.data()));
+}
+void mila::LoggerSpy::Error(const char *message, ...) const {
+  va_list args1;
+  va_start(args1, message);
+  va_list args2;
+  va_copy(args2, args1);
+  auto output = std::vector<char>(1ul + vsnprintf(nullptr, 0, message, args1));
+  va_end(args1);
+  vsnprintf(output.data(), output.size(), message, args2);
+  va_end(args2);
+  logger_spy_messages.push_back("E " + std::string(output.data()));
+}
+void mila::LoggerSpy::Warning(const char *message, ...) const {
+  va_list args1;
+  va_start(args1, message);
+  va_list args2;
+  va_copy(args2, args1);
+  auto output = std::vector<char>(1ul + vsnprintf(nullptr, 0, message, args1));
+  va_end(args1);
+  vsnprintf(output.data(), output.size(), message, args2);
+  va_end(args2);
+  logger_spy_messages.push_back("W " + std::string(output.data()));
+}
+void mila::LoggerSpy::Info(const char *message, ...) const {
+  va_list args1;
+  va_start(args1, message);
+  va_list args2;
+  va_copy(args2, args1);
+  auto output = std::vector<char>(1ul + vsnprintf(nullptr, 0, message, args1));
+  va_end(args1);
+  vsnprintf(output.data(), output.size(), message, args2);
+  va_end(args2);
+  logger_spy_messages.push_back("I " + std::string(output.data()));
+}
+void mila::LoggerSpy::Debug(const char *message, ...) const {
+  va_list args1;
+  va_start(args1, message);
+  va_list args2;
+  va_copy(args2, args1);
+  auto output = std::vector<char>(1ul + vsnprintf(nullptr, 0, message, args1));
+  va_end(args1);
+  vsnprintf(output.data(), output.size(), message, args2);
+  va_end(args2);
+  logger_spy_messages.push_back("D " + std::string(output.data()));
 }
