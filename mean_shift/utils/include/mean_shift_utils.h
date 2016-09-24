@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 #include "mean_shift.h"
 #include "lodepng.h"

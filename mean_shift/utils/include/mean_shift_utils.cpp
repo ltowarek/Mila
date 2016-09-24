@@ -4,8 +4,7 @@ std::vector<mila::Point> mila::ConvertVectorToPoints(const std::vector<uint8_t> 
   auto output = std::vector<Point>();
 
   if (data.size() % 4 != 0) {
-    // TODO throw exception
-    return output;
+    throw std::runtime_error("Vector size is not divisible by 4");
   }
 
   for (size_t i = 0; i < data.size(); i += 4) {
@@ -40,7 +39,9 @@ mila::Image::Image(const std::string &file_name): width_(0), height_(0), file_na
 std::vector<uint8_t> mila::Image::Read() {
   auto data = std::vector<uint8_t>();
   auto error = lodepng::decode(data, width_, height_, file_name_.c_str());
-  // TODO: Throw exception if error
+  if (error) {
+    throw std::runtime_error(std::string("Failed to decode an image: ") + lodepng_error_text(error));
+  }
   return data;
 }
 
@@ -48,7 +49,9 @@ void mila::Image::Write(const std::vector<uint8_t> &data, uint32_t width, uint32
   width_ = width;
   height_ = height;
   auto error = lodepng::encode(file_name_.c_str(), data, width_, height_);
-  // TODO: Throw exception if error
+  if (error) {
+    throw std::runtime_error(std::string("Failed to encode an image: ") + lodepng_error_text(error));
+  }
 }
 
 uint32_t mila::Image::width() const {

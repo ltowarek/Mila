@@ -36,9 +36,11 @@ TEST(MeanShiftUtilsPointTest, ConvertVectorToPoints) {
 TEST(MeanShiftUtilsPointTest, ConvertVectorToPointsIllegal) {
   std::vector<uint8_t> data = {1, 2, 3};
 
-  std::vector<mila::Point> output = mila::ConvertVectorToPoints(data);
-
-  EXPECT_EQ(output.size(), 0);
+  try {
+    mila::ConvertVectorToPoints(data);
+  } catch (const std::runtime_error &error) {
+    EXPECT_STREQ(error.what(), "Vector size is not divisible by 4");
+  }
 }
 
 TEST(MeanShiftUtilsPointTest, ConvertPointsToVector) {
@@ -54,20 +56,6 @@ TEST(MeanShiftUtilsPointTest, ConvertPointsToVector) {
   }
 }
 
-TEST(MeanShiftUtilsImageTest, DefaultConstructor) {
-  mila::Image image;
-  EXPECT_EQ(image.file_name(), "");
-  EXPECT_EQ(image.width(), 0);
-  EXPECT_EQ(image.height(), 0);
-}
-
-TEST(MeanShiftUtilsImageTest, Constructor) {
-  mila::Image image("file.png");
-  EXPECT_EQ(image.file_name(), "file.png");
-  EXPECT_EQ(image.width(), 0);
-  EXPECT_EQ(image.height(), 0);
-}
-
 TEST(MeanShiftUtilsImageTest, Read) {
   mila::Image image("test_image.png");
   std::vector<uint8_t> output = image.Read();
@@ -81,6 +69,15 @@ TEST(MeanShiftUtilsImageTest, Read) {
 
   for (size_t i = 0; i < expected_output.size(); ++i) {
     EXPECT_EQ(output[i], expected_output[i]);
+  }
+}
+
+TEST(MeanShiftUtilsImageTest, ReadIllegal) {
+  mila::Image image;
+  try {
+    image.Read();
+  } catch (const std::runtime_error &error) {
+    EXPECT_STREQ(error.what(), "Failed to decode an image: failed to open file for reading");
   }
 }
 
@@ -104,3 +101,13 @@ TEST(MeanShiftUtilsImageTest, Write) {
     EXPECT_EQ(output[i], expected_output[i]);
   }
 }
+
+TEST(MeanShiftUtilsImageTest, WriteIllegal) {
+  mila::Image image;
+  try {
+    image.Write({}, 0, 0);
+  } catch (const std::runtime_error &error) {
+    EXPECT_STREQ(error.what(), "Failed to encode an image: failed to open file for writing");
+  }
+}
+
