@@ -5,9 +5,13 @@
 #include <string>
 #include <vector>
 
+#include "mean_shift.h"
 #include "lodepng.h"
 
 namespace mila {
+
+std::vector<Point> ConvertVectorToPoints(const std::vector<uint8_t> &data);
+std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
 
 class Image {
  public:

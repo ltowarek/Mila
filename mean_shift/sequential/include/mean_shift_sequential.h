@@ -13,9 +13,6 @@
 
 namespace mila {
 
-std::vector<Point> ConvertVectorToPoints(const std::vector<uint8_t> &data);
-std::vector<uint8_t> ConvertPointsToVector(const std::vector<Point> &data);
-
 class SequentialMeanShift : public MeanShift {
  public:
   SequentialMeanShift(const std::shared_ptr<mila::Logger> logger);

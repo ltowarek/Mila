@@ -2,59 +2,6 @@
 #include "mean_shift_sequential.h"
 #include "mean_shift_sequential_profiler.h"
 
-TEST(SequentialMeanShiftPointTest, InitializeWithSingleValue) {
-  mila::Point point = {0.0f};
-  EXPECT_EQ(point.x, 0.0f);
-  EXPECT_EQ(point.y, 0.0f);
-  EXPECT_EQ(point.z, 0.0f);
-  EXPECT_EQ(point.w, 0.0f);
-}
-
-TEST(SequentialMeanShiftPointTest, InitializeWithMultipleValues) {
-  mila::Point point = {1.0f, 2.0f, 3.0f, 4.0f};
-  EXPECT_EQ(point.x, 1.0f);
-  EXPECT_EQ(point.y, 2.0f);
-  EXPECT_EQ(point.z, 3.0f);
-  EXPECT_EQ(point.w, 4.0f);
-}
-
-TEST(SequentialMeanShiftPointTest, ConvertVectorToPoints) {
-  std::vector<uint8_t> data = {1, 2, 3, 4, 5, 6, 7, 8};
-  std::vector<mila::Point> expected_output = {{1.0f, 2.0f, 3.0f, 4.0f},
-                                              {5.0f, 6.0f, 7.0f, 8.0f}
-  };
-
-  std::vector<mila::Point> output = mila::ConvertVectorToPoints(data);
-
-  for (size_t i = 0; i < expected_output.size(); ++i) {
-    EXPECT_EQ(output[i].x, expected_output[i].x);
-    EXPECT_EQ(output[i].y, expected_output[i].y);
-    EXPECT_EQ(output[i].z, expected_output[i].z);
-    EXPECT_EQ(output[i].w, expected_output[i].w);
-  }
-}
-
-TEST(SequentialMeanShiftPointTest, ConvertVectorToPointsIllegal) {
-  std::vector<uint8_t> data = {1, 2, 3};
-
-  std::vector<mila::Point> output = mila::ConvertVectorToPoints(data);
-
-  EXPECT_EQ(output.size(), 0);
-}
-
-TEST(SequentialMeanShiftPointTest, ConvertPointsToVector) {
-  std::vector<mila::Point> data = {{1.0f, 2.0f, 3.0f, 4.0f},
-                                   {5.0f, 6.0f, 7.0f, 8.0f}
-  };
-  std::vector<uint8_t> expected_output = {1, 2, 3, 4, 5, 6, 7, 8};
-
-  std::vector<uint8_t> output = mila::ConvertPointsToVector(data);
-
-  for (size_t i = 0; i < expected_output.size(); ++i) {
-    EXPECT_EQ(output[i], expected_output[i]);
-  }
-}
-
 TEST(SequentialMeanShiftSequentialTest, DistanceZero) {
   mila::SequentialMeanShift mean_shift(nullptr);
   mila::Point point1 = {0.0f};

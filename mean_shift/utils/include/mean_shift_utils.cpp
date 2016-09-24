@@ -1,5 +1,38 @@
 #include "mean_shift_utils.h"
 
+std::vector<mila::Point> mila::ConvertVectorToPoints(const std::vector<uint8_t> &data) {
+  auto output = std::vector<Point>();
+
+  if (data.size() % 4 != 0) {
+    // TODO throw exception
+    return output;
+  }
+
+  for (size_t i = 0; i < data.size(); i += 4) {
+    auto point = Point();
+    point.x = static_cast<float>(data[i]);
+    point.y = static_cast<float>(data[i + 1]);
+    point.z = static_cast<float>(data[i + 2]);
+    point.w = static_cast<float>(data[i + 3]);
+    output.push_back(point);
+  }
+
+  return output;
+}
+
+std::vector<uint8_t> mila::ConvertPointsToVector(const std::vector<Point> &data) {
+  auto output = std::vector<uint8_t>();
+
+  for (size_t i = 0; i < data.size(); ++i) {
+    output.push_back(static_cast<uint8_t>(data[i].x));
+    output.push_back(static_cast<uint8_t>(data[i].y));
+    output.push_back(static_cast<uint8_t>(data[i].z));
+    output.push_back(static_cast<uint8_t>(data[i].w));
+  }
+
+  return output;
+}
+
 mila::Image::Image(): Image("") {}
 
 mila::Image::Image(const std::string &file_name): width_(0), height_(0), file_name_(file_name) {}
