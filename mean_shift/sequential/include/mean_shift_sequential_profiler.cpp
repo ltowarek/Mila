@@ -5,11 +5,6 @@ mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler() : SequentialMea
                                                                       main_duration_("Run"){
 }
 
-mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler(float precision, size_t max_iterations) : SequentialMeanShift(precision, max_iterations),
-                                                                                                            main_result_("Points per second"),
-                                                                                                            main_duration_("Run") {
-}
-
 std::string mila::SequentialMeanShiftProfiler::main_duration() const {
   return main_duration_;
 }
@@ -39,12 +34,6 @@ mila::SequentialMeanShiftImageProcessingProfiler::SequentialMeanShiftImageProces
                                                                                                     main_result_("Pixels per second"),
                                                                                                     main_duration_("RunWithImage"),
                                                                                                     number_of_points_(0) {
-}
-
-mila::SequentialMeanShiftImageProcessingProfiler::SequentialMeanShiftImageProcessingProfiler(float precision, size_t max_iterations) : SequentialMeanShiftImageProcessing(precision, max_iterations),
-                                                                                                                                          main_duration_("RunWithImage"),
-                                                                                                                                          main_result_("Pixels per second"),
-                                                                                                                                          number_of_points_(0) {
 }
 
 std::string mila::SequentialMeanShiftImageProcessingProfiler::main_duration() const {

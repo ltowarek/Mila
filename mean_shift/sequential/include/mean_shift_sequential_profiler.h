@@ -13,7 +13,6 @@ namespace mila {
 class SequentialMeanShiftProfiler: public SequentialMeanShift {
  public:
   SequentialMeanShiftProfiler();
-  SequentialMeanShiftProfiler(float precision, size_t max_iterations);
 
   std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
 
@@ -29,7 +28,6 @@ class SequentialMeanShiftProfiler: public SequentialMeanShift {
 class SequentialMeanShiftImageProcessingProfiler: public SequentialMeanShiftImageProcessing {
  public:
   SequentialMeanShiftImageProcessingProfiler();
-  SequentialMeanShiftImageProcessingProfiler(float precision, size_t max_iterations);
 
   std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   void Run(const std::string &input_file, const std::string &output_file, float bandwidth) override;

@@ -45,9 +45,9 @@ std::vector<uint8_t> mila::ConvertPointsToVector(const std::vector<Point> &data)
   return output;
 }
 
-mila::SequentialMeanShift::SequentialMeanShift() : SequentialMeanShift(1e-5, 100) {}
+mila::SequentialMeanShift::SequentialMeanShift() {
 
-mila::SequentialMeanShift::SequentialMeanShift(float precision, size_t max_iterations) : precision_(precision), max_iterations_(max_iterations) {}
+}
 
 mila::SequentialMeanShift::~SequentialMeanShift() {
 
@@ -74,15 +74,10 @@ mila::Point mila::SequentialMeanShift::ShiftPoint(const mila::Point &point,
   return shift;
 }
 
-float mila::SequentialMeanShift::precision() const {
-  return precision_;
-}
-
-size_t mila::SequentialMeanShift::max_iterations() const {
-  return max_iterations_;
-}
-
 std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point> &points, float bandwidth) {
+  const auto precision = 1e-5f;
+  const auto max_iterations = 100;
+
   auto difference_distance = 0.0f;
   auto iteration = size_t{0};
 
@@ -104,21 +99,19 @@ std::vector<mila::Point> mila::SequentialMeanShift::Run(const std::vector<Point>
         difference_distance = distance;
       }
 
-      if (distance < precision_) {
+      if (distance < precision) {
         still_shifting[i] = false;
       }
 
       shifted_points[i] = new_point;
     }
     ++iteration;
-  } while ((difference_distance > precision_) && (iteration < max_iterations_));
+  } while ((difference_distance > precision) && (iteration < max_iterations));
 
   return shifted_points;
 }
 
 mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing() : SequentialMeanShift() {}
-
-mila::SequentialMeanShiftImageProcessing::SequentialMeanShiftImageProcessing(float precision, size_t max_iterations) : SequentialMeanShift(precision, max_iterations) {}
 
 std::vector<mila::Point> mila::SequentialMeanShiftImageProcessing::Run(const std::vector<Point> &points,
                                                                               float bandwidth) {

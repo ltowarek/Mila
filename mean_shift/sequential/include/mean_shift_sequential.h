@@ -22,23 +22,15 @@ float GaussianKernel(float x, float sigma);
 class SequentialMeanShift : public MeanShift {
  public:
   SequentialMeanShift();
-  SequentialMeanShift(float precision, size_t max_iterations);
   virtual ~SequentialMeanShift() override;
 
   Point ShiftPoint(const Point &point, const std::vector<Point> &points, float bandwidth) const;
   virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
-
-  float precision() const;
-  size_t max_iterations() const;
- private:
-  const float precision_;
-  const size_t max_iterations_;
 };
 
 class SequentialMeanShiftImageProcessing: public SequentialMeanShift {
  public:
   SequentialMeanShiftImageProcessing();
-  SequentialMeanShiftImageProcessing(float precision, size_t max_iterations);
 
   virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
