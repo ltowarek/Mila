@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "mean_shift_sequential.h"
 #include "mean_shift_sequential_profiler.h"
+#include "mean_shift_image_processing.h"
 
 TEST(SequentialMeanShiftSequentialTest, DistanceZero) {
   mila::SequentialMeanShift mean_shift(nullptr);

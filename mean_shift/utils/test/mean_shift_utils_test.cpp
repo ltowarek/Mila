@@ -110,4 +110,3 @@ TEST(MeanShiftUtilsImageTest, WriteIllegal) {
     EXPECT_STREQ(error.what(), "Failed to encode an image: failed to open file for writing");
   }
 }
-

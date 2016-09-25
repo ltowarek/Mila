@@ -9,7 +9,6 @@
 #include "utils.h"
 
 namespace mila {
-
 class SequentialMeanShiftProfiler : public SequentialMeanShift {
  public:
   SequentialMeanShiftProfiler();
@@ -24,24 +23,5 @@ class SequentialMeanShiftProfiler : public SequentialMeanShift {
   const std::string main_duration_;
   std::map<std::string, float> results_;
 };
-
-class MeanShiftImageProcessingProfiler : public MeanShiftImageProcessing {
- public:
-  MeanShiftImageProcessingProfiler(std::unique_ptr<mila::MeanShift> mean_shift,
-                                   const std::shared_ptr<mila::Logger> logger);
-
-  void Run(const std::string &input_file, const std::string &output_file, const float bandwidth) override;
-
-  std::string main_result() const;
-  std::string main_duration() const;
-  std::map<std::string, float> results() const;
- private:
-  const std::string main_result_;
-  const std::string main_duration_;
-  std::map<std::string, float> results_;
-  size_t number_of_points_;
-};
-
 }  // mila
-
 #endif  // MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H_

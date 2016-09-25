@@ -12,7 +12,6 @@
 #include "mean_shift_utils.h"
 
 namespace mila {
-
 class SequentialMeanShift : public MeanShift {
  public:
   SequentialMeanShift(const std::shared_ptr<mila::Logger> logger);
@@ -25,16 +24,6 @@ class SequentialMeanShift : public MeanShift {
   float GaussianKernel(const float x, const float sigma) const;
  private:
   const std::shared_ptr<mila::Logger> logger_;
-};
-
-class MeanShiftImageProcessing {
- public:
-  MeanShiftImageProcessing(std::unique_ptr<mila::MeanShift> mean_shift,
-                           const std::shared_ptr<mila::Logger> logger);
-  virtual void Run(const std::string &input_file, const std::string &output_file, const float bandwidth);
- private:
-  const std::shared_ptr<mila::Logger> logger_;
-  const std::unique_ptr<mila::MeanShift> mean_shift_;
 };
 }  // mila
 #endif  // MILA_MEAN_SHIFT_SEQUENTIAL_H_

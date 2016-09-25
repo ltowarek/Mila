@@ -2,6 +2,8 @@
 #define MILA_UTILS_MEAN_SHIFT_H_
 
 #include <vector>
+#include <memory>
+#include <string>
 
 namespace mila {
 struct Point {
@@ -28,5 +30,4 @@ class MeanShiftApp {
   virtual void Run(int argc, char **argv) const = 0;
 };
 }  // mila
-
 #endif  // MILA_UTILS_MEAN_SHIFT_H_
