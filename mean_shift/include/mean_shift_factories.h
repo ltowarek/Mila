@@ -15,12 +15,19 @@ namespace mila {
 class MeanShiftFactory {
  public:
   std::unique_ptr<mila::MeanShift> MakeSequential(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::MeanShift> MakeSequentialMeanShiftProfiler(std::unique_ptr<Profiler> profiler,
-                                                                   const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::MeanShift> MakeSequentialProfiler(std::unique_ptr<Profiler> profiler,
+                                                          const std::shared_ptr<Logger> logger) const;
 };
 
 class MeanShiftAppFactory {
  public:
+};
+
+class MeanShiftImageProcessingFactory {
+ public:
+  std::unique_ptr<mila::MeanShiftImageProcessing> MakeSequential(const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::MeanShiftImageProcessing> MakeSequentialProfiler(std::unique_ptr<Profiler> profiler,
+                                                                         const std::shared_ptr<Logger> logger) const;
 };
 }  // mila
 #endif  // MILA_MEAN_SHIFT_FACTORIES_H_

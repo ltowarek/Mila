@@ -12,7 +12,7 @@ std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::SequentialMeanShift>() {
 template<>
 std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::SequentialMeanShiftProfiler>() {
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
-  return mila::MeanShiftFactory().MakeSequentialMeanShiftProfiler(std::move(profiler), nullptr);
+  return mila::MeanShiftFactory().MakeSequentialProfiler(std::move(profiler), nullptr);
 }
 
 template<typename T>
@@ -314,3 +314,61 @@ TYPED_TEST(MeanShiftTest, RunComplex) {
   }
 }
 
+template<typename T>
+std::unique_ptr<mila::MeanShiftImageProcessing> CreateMeanShiftImageProcessing();
+
+template<>
+std::unique_ptr<mila::MeanShiftImageProcessing> CreateMeanShiftImageProcessing<mila::MeanShiftImageProcessing>() {
+  return mila::MeanShiftImageProcessingFactory().MakeSequential(nullptr);
+}
+
+template<>
+std::unique_ptr<mila::MeanShiftImageProcessing> CreateMeanShiftImageProcessing<mila::MeanShiftImageProcessingProfiler>() {
+  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
+  return mila::MeanShiftImageProcessingFactory().MakeSequentialProfiler(std::move(profiler), nullptr);
+}
+
+template<typename T>
+class MeanShiftImageProcessingTest : public testing::Test {
+ protected:
+  MeanShiftImageProcessingTest() : mean_shift_(std::move(CreateMeanShiftImageProcessing<T>())) {}
+  std::unique_ptr<mila::MeanShiftImageProcessing> mean_shift_;
+};
+
+typedef testing::Types<mila::MeanShiftImageProcessing, mila::MeanShiftImageProcessingProfiler> MeanShiftImageProcessingImplementations;
+
+TYPED_TEST_CASE(MeanShiftImageProcessingTest, MeanShiftImageProcessingImplementations);
+
+TYPED_TEST(MeanShiftImageProcessingTest, RunWithImage) {
+  const auto input_file = std::string("test_image.png");
+  const auto output_file = std::string("test_image_output.png");
+  const auto reference_file = std::string("test_image_reference.png");
+  const auto bandwidth = 25.0f;
+
+  this->mean_shift_->Run(input_file, output_file, bandwidth);
+
+  auto output_image = mila::Image(output_file);
+  const auto output = std::vector<uint8_t>(output_image.Read());
+
+  auto reference_image = mila::Image(reference_file);
+  const auto reference = std::vector<uint8_t>(reference_image.Read());
+
+  for (size_t i = 0; i < reference.size(); ++i) {
+    EXPECT_EQ(output[i], reference[i]);
+  }
+}
+
+TEST(MeanShiftImageProcessingProfilerTest, RunWithImageWithProfiling) {
+  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
+  // TODO: Move constructor is deleted
+  mila::MeanShiftImageProcessingProfiler mean_shift(std::move(m), nullptr);
+  const auto input_file = std::string("test_image.png");
+  const auto output_file = std::string("test_image_output.png");
+  const auto bandwidth = 25.0f;
+
+  EXPECT_EQ(mean_shift.results().count("RunWithImage"), 0);
+  EXPECT_EQ(mean_shift.results().count("Pixels per second"), 0);
+  mean_shift.Run(input_file, output_file, bandwidth);
+  EXPECT_EQ(mean_shift.results().count("RunWithImage"), 1);
+  EXPECT_EQ(mean_shift.results().count("Pixels per second"), 1);
+}
