@@ -1,32 +1,30 @@
 #include "mean_shift_sequential_profiler.h"
 
-mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler() : SequentialMeanShift(std::shared_ptr<Logger>()),
-                                                                   main_result_("Points per second"),
-                                                                   main_duration_("Run") {
+mila::SequentialMeanShiftProfiler::SequentialMeanShiftProfiler(std::unique_ptr<mila::SequentialMeanShift> mean_shift,
+                                                               std::unique_ptr<mila::Profiler> profiler,
+                                                               const std::shared_ptr<mila::Logger> logger)
+    : mean_shift_(std::move(mean_shift)), profiler_(std::move(profiler)), logger_(logger) {
+  InitResults();
 }
+mila::SequentialMeanShiftProfiler::~SequentialMeanShiftProfiler() {
 
-std::string mila::SequentialMeanShiftProfiler::main_duration() const {
-  return main_duration_;
 }
-
-std::string mila::SequentialMeanShiftProfiler::main_result() const {
-  return main_result_;
-}
-
-std::map<std::string, float> mila::SequentialMeanShiftProfiler::results() const {
+mila::SequentialMeanShiftProfilingResults mila::SequentialMeanShiftProfiler::GetResults() const {
   return results_;
 }
-
 std::vector<mila::Point> mila::SequentialMeanShiftProfiler::Run(const std::vector<Point> &points, float bandwidth) {
-  auto start_time = std::chrono::high_resolution_clock::now();
-  auto output = SequentialMeanShift::Run(points, bandwidth);
-  auto end_time = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration<float>(end_time - start_time);
-  auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-  results_.insert(std::pair<std::string, float>("Run", duration_us));
-  results_.insert(std::pair<std::string, float>("Points per second",
-                                                mila::utils::GetValuePerSecond(points.size(), duration)));
-
+  profiler_->Start("MeanShift");
+  auto output = mean_shift_->Run(points, bandwidth);
+  profiler_->End("MeanShift");
+  SetResultsAfterComputeDigits(points.size());
   return output;
+}
+void mila::SequentialMeanShiftProfiler::InitResults() {
+  results_.mean_shift_duration = std::chrono::seconds(0);
+  results_.points_per_second = 0.0f;
+}
+void mila::SequentialMeanShiftProfiler::SetResultsAfterComputeDigits(const size_t number_of_points) {
+  results_.mean_shift_duration = profiler_->GetDuration("MeanShift");
+  results_.points_per_second = mila::utils::GetValuePerSecond(number_of_points,
+                                                              results_.mean_shift_duration);
 }

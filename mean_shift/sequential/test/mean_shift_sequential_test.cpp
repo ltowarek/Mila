@@ -94,9 +94,18 @@ TEST(SequentialMeanShiftTest, ShiftPointComplex) {
   EXPECT_NEAR(output.w, 0.0f, 1e-5f);
 }
 
-TEST(SequentialMeanShiftProfilerTest, RunWithProfiling) {
-  mila::SequentialMeanShiftProfiler mean_shift;
+class SequentialMeanShiftProfilerTest : public testing::Test {
+ protected:
+  virtual void SetUp() {
+    auto mean_shift = std::unique_ptr<mila::SequentialMeanShift>(new mila::SequentialMeanShift(nullptr));
+    auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
+    auto mean_shift_profiler = new mila::SequentialMeanShiftProfiler(std::move(mean_shift), std::move(profiler), nullptr);
+    mean_shift_ = std::unique_ptr<mila::SequentialMeanShiftProfiler>(mean_shift_profiler);
+  }
+  std::unique_ptr<mila::SequentialMeanShiftProfiler> mean_shift_;
+};
 
+TEST_F(SequentialMeanShiftProfilerTest, GetResultsAfterRun) {
   const auto points = std::vector<mila::Point>{{0.0f, 1.0f, 0.0f, 0.0f},
                                                {2.0f, 3.0f, 0.0f, 0.0f},
                                                {10.0f, 11.0f, 0.0f, 0.0f},
@@ -104,11 +113,8 @@ TEST(SequentialMeanShiftProfilerTest, RunWithProfiling) {
   };
   const auto bandwidth = 3.0f;
 
-  EXPECT_EQ(mean_shift.results().count("Points per second"), 0);
-  EXPECT_EQ(mean_shift.results().count("Run"), 0);
+  this->mean_shift_->Run(points, bandwidth);
 
-  mean_shift.Run(points, bandwidth);
-
-  EXPECT_EQ(mean_shift.results().count("Points per second"), 1);
-  EXPECT_EQ(mean_shift.results().count("Run"), 1);
+  EXPECT_GT(this->mean_shift_->GetResults().mean_shift_duration.count(), 0);
+  EXPECT_GT(this->mean_shift_->GetResults().points_per_second, 0.0f);
 }
