@@ -6,7 +6,10 @@ std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeSequential(const st
 std::unique_ptr<mila::MeanShift>
 mila::MeanShiftFactory::MakeSequentialProfiler(std::unique_ptr<Profiler> profiler,
                                                const std::shared_ptr<Logger> logger) const {
-  return std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShiftProfiler());
+  auto mean_shift = std::unique_ptr<mila::SequentialMeanShift>(new mila::SequentialMeanShift(logger));
+  return std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShiftProfiler(std::move(mean_shift),
+                                                                                std::move(profiler),
+                                                                                logger));
 }
 
 std::unique_ptr<mila::MeanShiftImageProcessing> mila::MeanShiftImageProcessingFactory::MakeSequential(
