@@ -1,10 +1,6 @@
 #ifndef MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H_
 #define MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H_
 
-#include <chrono>
-#include <map>
-#include <string>
-
 #include "mean_shift_sequential.h"
 #include "profiler.h"
 #include "utils.h"
@@ -21,9 +17,9 @@ class SequentialMeanShiftProfiler : public MeanShift {
                               const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialMeanShiftProfiler();
 
-  std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
+  std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
 
-  virtual SequentialMeanShiftProfilingResults GetResults() const;
+  SequentialMeanShiftProfilingResults GetResults() const;
  private:
   const std::unique_ptr<mila::SequentialMeanShift> mean_shift_;
   const std::unique_ptr<mila::Profiler> profiler_;
