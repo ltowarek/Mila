@@ -26,6 +26,7 @@ class SequentialBBPProfiler : public BBPProfiler {
   SequentialBBPProfilingResults results_;
 
   void SetResultsAfterComputeDigits(const size_t number_of_digits);
+  void InitResults();
 };
 }  // mila
 #endif  // MILA_BBP_SEQUENTIAL_PROFILER_H_

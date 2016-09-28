@@ -7,7 +7,7 @@ mila::ParallelBBPProfiler::ParallelBBPProfiler(std::unique_ptr<mila::ParallelBBP
                                                std::unique_ptr<Profiler> profiler,
                                                const std::shared_ptr<Logger> logger)
     : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(logger) {
-
+  InitResults();
 }
 mila::ParallelBBPProfiler::~ParallelBBPProfiler() {
 
@@ -68,4 +68,12 @@ mila::ParallelBBPProfiler::GetProfilingInfo(clpp::Event event) const {
 }
 mila::ParallelBBPProfilingResults mila::ParallelBBPProfiler::GetResults() const {
   return results_;
+}
+void mila::ParallelBBPProfiler::InitResults() {
+  results_.enqueue_nd_range_duration = std::chrono::seconds(0);
+  results_.initialize_duration = std::chrono::seconds(0);
+  results_.read_buffer_duration = std::chrono::seconds(0);
+  results_.compute_digits_duration = std::chrono::seconds(0);
+  results_.bandwidth = 0.0f;
+  results_.digits_per_second = 0.0f;
 }

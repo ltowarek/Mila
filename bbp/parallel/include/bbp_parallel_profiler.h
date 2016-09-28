@@ -39,6 +39,7 @@ class ParallelBBPProfiler: public BBPProfiler {
   std::chrono::duration<long, std::nano> GetProfilingInfo(clpp::Event event) const;
   void SetResultsAfterComputeDigits(const size_t number_of_digits);
   void SetResultsAfterInitialize();
+  void InitResults();
 };
 
 }  // mila

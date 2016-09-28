@@ -5,7 +5,7 @@ mila::SequentialBBPProfiler::SequentialBBPProfiler(std::unique_ptr<mila::Sequent
                                                    std::unique_ptr<mila::Profiler> profiler,
                                                    const std::shared_ptr<mila::Logger> logger)
     : bbp_(std::move(bbp)), profiler_(std::move(profiler)), logger_(logger) {
-
+  InitResults();
 }
 mila::SequentialBBPProfiler::~SequentialBBPProfiler() {
 
@@ -28,4 +28,8 @@ void mila::SequentialBBPProfiler::SetResultsAfterComputeDigits(const size_t numb
   results_.compute_digits_duration = profiler_->GetDuration("ComputeDigits");
   results_.digits_per_second = mila::utils::GetValuePerSecond(number_of_digits,
                                                               results_.compute_digits_duration);
+}
+void mila::SequentialBBPProfiler::InitResults() {
+  results_.compute_digits_duration = std::chrono::seconds(0);
+  results_.digits_per_second = 0.0f;
 }
