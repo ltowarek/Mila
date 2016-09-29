@@ -13,6 +13,9 @@ struct Point {
   float w;
 };
 
+std::string to_string(const Point &p);
+std::string to_string(const std::vector<Point> &v);
+
 class MeanShift {
  public:
   virtual ~MeanShift() = 0;
