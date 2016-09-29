@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "mean_shift_sequential.h"
 #include "mean_shift_sequential_profiler.h"
+#include "mean_shift_sequential_app.h"
 
 TEST(SequentialMeanShiftTest, DistanceZero) {
   const auto mean_shift = mila::SequentialMeanShift(nullptr);
@@ -117,4 +118,34 @@ TEST_F(SequentialMeanShiftProfilerTest, GetResultsAfterRun) {
 
   EXPECT_GT(this->mean_shift_->GetResults().mean_shift_duration.count(), 0);
   EXPECT_GT(this->mean_shift_->GetResults().points_per_second, 0.0f);
+}
+
+TEST(SequentialMeanShiftAppTest, Run) {
+  const auto logger_spy = std::shared_ptr<mila::LoggerSpy>(new mila::LoggerSpy());
+  const auto number_of_points = std::string("2");
+  const auto points = std::string("0.000000 1.000000 0.000000 0.000000\n"
+                                  "2.000000 3.000000 0.000000 0.000000\n");
+  const auto bandwidth = std::string("3.000000");
+  const auto number_of_iterations = std::string("10");
+  const auto expected_output = std::string("0.999999 1.999999 0.000000 0.000000\n"
+                                           "1.000001 2.000001 0.000000 0.000000\n");
+  const char *parameters[] = {"app", number_of_points.c_str(),
+                              "0.0f", "1.0f", "0.0f", "0.0f",
+                              "2.0f", "3.0f", "0.0f", "0.0f",
+                              bandwidth.c_str(), number_of_iterations.c_str()};
+  const auto mean_shift = mila::SequentialMeanShiftApp(logger_spy);
+  // const_cast due to C vs C++ string literals
+  mean_shift.Run(12, const_cast<char **>(parameters));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Points:\n" + points));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Bandwidth: " + bandwidth));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of iterations: " + number_of_iterations));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Output:\n" + expected_output));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift duration coefficient of variation: "));
 }
