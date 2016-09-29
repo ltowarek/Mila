@@ -12,7 +12,8 @@ mila::SequentialMeanShiftProfiler::~SequentialMeanShiftProfiler() {
 mila::SequentialMeanShiftProfilingResults mila::SequentialMeanShiftProfiler::GetResults() const {
   return results_;
 }
-std::vector<mila::Point> mila::SequentialMeanShiftProfiler::Run(const std::vector<Point> &points, const float bandwidth) {
+std::vector<mila::Point> mila::SequentialMeanShiftProfiler::Run(const std::vector<Point> &points,
+                                                                const float bandwidth) {
   profiler_->Start("MeanShift");
   const auto output = mean_shift_->Run(points, bandwidth);
   profiler_->End("MeanShift");

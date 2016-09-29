@@ -5,7 +5,7 @@
 #include "statistics.h"
 
 namespace mila {
-class SequentialMeanShiftApp: public MeanShiftApp {
+class SequentialMeanShiftApp : public MeanShiftApp {
  public:
   SequentialMeanShiftApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialMeanShiftApp();
@@ -32,5 +32,4 @@ class SequentialMeanShiftApp: public MeanShiftApp {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-
 #endif  //MILA_MEAN_SHIFT_SEQUENTIAL_APP_H_

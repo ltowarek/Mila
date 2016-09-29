@@ -21,7 +21,7 @@ mila::SequentialMeanShiftApp::Parameters mila::SequentialMeanShiftApp::ParseComm
   auto config = Parameters();
   const auto number_of_points = static_cast<size_t>(atoi(argv[i++]));
   const auto number_of_dimensions = 4;
-  for (;i < number_of_dimensions * number_of_points;) {
+  for (; i < number_of_dimensions * number_of_points;) {
     auto point = Point{0};
     point.x = static_cast<float>(atof(argv[i++]));
     point.y = static_cast<float>(atof(argv[i++]));
@@ -42,7 +42,10 @@ std::vector<mila::SequentialMeanShiftProfilingResults> mila::SequentialMeanShift
 
     auto mean_shift = std::unique_ptr<mila::SequentialMeanShift>(new mila::SequentialMeanShift(logger_));
     auto profiler = mila::ProfilerFactory().MakeChrono(logger_);
-    auto mean_shift_profiler = std::unique_ptr<mila::SequentialMeanShiftProfiler>(new mila::SequentialMeanShiftProfiler(std::move(mean_shift), std::move(profiler), logger_));
+    auto mean_shift_profiler = std::unique_ptr<mila::SequentialMeanShiftProfiler>(new mila::SequentialMeanShiftProfiler(
+        std::move(mean_shift),
+        std::move(profiler),
+        logger_));
     auto points = mean_shift_profiler->Run(config.points, config.bandwidth);
     auto points_str = mila::to_string(points);
 
@@ -60,9 +63,9 @@ std::vector<mila::SequentialMeanShiftProfilingResults> mila::SequentialMeanShift
   }
   return results;
 }
-mila::SequentialMeanShiftApp::Results mila::SequentialMeanShiftApp::PrepareResults(const std::vector <mila::SequentialMeanShiftProfilingResults> &raw_results) const {
+mila::SequentialMeanShiftApp::Results mila::SequentialMeanShiftApp::PrepareResults(const std::vector<mila::SequentialMeanShiftProfilingResults> &raw_results) const {
   auto prepared_results = Results{};
-  for (const auto& result : raw_results) {
+  for (const auto &result : raw_results) {
     prepared_results.points_per_second.push_back(result.points_per_second);
     prepared_results.mean_shift_duration.push_back(result.mean_shift_duration.count());
   }

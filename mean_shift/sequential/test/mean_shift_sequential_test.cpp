@@ -100,7 +100,8 @@ class SequentialMeanShiftProfilerTest : public testing::Test {
   virtual void SetUp() {
     auto mean_shift = std::unique_ptr<mila::SequentialMeanShift>(new mila::SequentialMeanShift(nullptr));
     auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
-    auto mean_shift_profiler = new mila::SequentialMeanShiftProfiler(std::move(mean_shift), std::move(profiler), nullptr);
+    auto mean_shift_profiler =
+        new mila::SequentialMeanShiftProfiler(std::move(mean_shift), std::move(profiler), nullptr);
     mean_shift_ = std::unique_ptr<mila::SequentialMeanShiftProfiler>(mean_shift_profiler);
   }
   std::unique_ptr<mila::SequentialMeanShiftProfiler> mean_shift_;
@@ -124,11 +125,11 @@ TEST(SequentialMeanShiftAppTest, Run) {
   const auto logger_spy = std::shared_ptr<mila::LoggerSpy>(new mila::LoggerSpy());
   const auto number_of_points = std::string("2");
   const auto points = std::string("0.000000 1.000000 0.000000 0.000000\n"
-                                  "2.000000 3.000000 0.000000 0.000000\n");
+                                      "2.000000 3.000000 0.000000 0.000000\n");
   const auto bandwidth = std::string("3.000000");
   const auto number_of_iterations = std::string("10");
   const auto expected_output = std::string("0.999999 1.999999 0.000000 0.000000\n"
-                                           "1.000001 2.000001 0.000000 0.000000\n");
+                                               "1.000001 2.000001 0.000000 0.000000\n");
   const char *parameters[] = {"app", number_of_points.c_str(),
                               "0.0f", "1.0f", "0.0f", "0.0f",
                               "2.0f", "3.0f", "0.0f", "0.0f",
