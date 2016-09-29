@@ -30,7 +30,7 @@ mila::SequentialMeanShiftApp::Parameters mila::SequentialMeanShiftApp::ParseComm
     config.points.push_back(point);
   }
   config.bandwidth = static_cast<float>(atof(argv[i++]));
-  config.number_of_iterations = static_cast<size_t>(atoi(argv[i++]));
+  config.number_of_iterations = static_cast<size_t>(atoi(argv[i]));
   return config;
 }
 std::vector<mila::SequentialMeanShiftProfilingResults> mila::SequentialMeanShiftApp::RunIterations(

@@ -10,6 +10,7 @@
 #include "mean_shift_image_processing.h"
 #include "mean_shift_sequential.h"
 #include "mean_shift_sequential_profiler.h"
+#include "mean_shift_sequential_app.h"
 
 namespace mila {
 class MeanShiftFactory {
@@ -21,6 +22,7 @@ class MeanShiftFactory {
 
 class MeanShiftAppFactory {
  public:
+  std::unique_ptr<mila::MeanShiftApp> MakeSequential(const std::shared_ptr<Logger> logger) const;
 };
 
 class MeanShiftImageProcessingFactory {
