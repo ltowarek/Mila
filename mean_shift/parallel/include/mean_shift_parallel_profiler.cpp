@@ -130,3 +130,6 @@ std::string mila::ParallelMeanShiftProfiler::main_duration() const {
 std::map<std::string, float> mila::ParallelMeanShiftProfiler::results() const {
   return results_;
 }
+mila::ParallelMeanShiftProfiler::~ParallelMeanShiftProfiler() {
+
+}

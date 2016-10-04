@@ -15,6 +15,10 @@ mila::ParallelMeanShift::ParallelMeanShift(size_t platform_id,
 
 }
 
+mila::ParallelMeanShift::~ParallelMeanShift() {
+
+}
+
 float mila::ParallelMeanShift::precision() const {
   return precision_;
 }
@@ -79,7 +83,7 @@ void mila::ParallelMeanShift::Initialize() {
 }
 
 std::vector<mila::Point> mila::ParallelMeanShift::Run(const std::vector<Point> &points,
-                                                                 float bandwidth) {
+                                                                 const float bandwidth) {
   Initialize();
 
   auto output = points;

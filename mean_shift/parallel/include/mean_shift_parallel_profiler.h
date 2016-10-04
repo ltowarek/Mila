@@ -14,9 +14,10 @@ class ParallelMeanShiftProfiler: public ParallelMeanShift {
   ParallelMeanShiftProfiler();
   ParallelMeanShiftProfiler(size_t platform_id, size_t device_id);
   ParallelMeanShiftProfiler(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+  virtual ~ParallelMeanShiftProfiler() override;
 
   void Initialize() override;
-  std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
+  std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
   size_t GetBuildKernelAsMicroseconds();
   size_t GetCopyBufferAsMicroseconds();
   size_t GetReadBufferAsMicroseconds();

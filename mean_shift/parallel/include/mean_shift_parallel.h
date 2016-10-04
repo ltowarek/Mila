@@ -14,9 +14,10 @@ class ParallelMeanShift : public MeanShift {
   ParallelMeanShift();
   ParallelMeanShift(size_t platform_id, size_t device_id);
   ParallelMeanShift(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+  virtual ~ParallelMeanShift() override;
 
   virtual void Initialize();
-  virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth);
+  virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
 
   float precision() const;
   size_t max_iterations() const;

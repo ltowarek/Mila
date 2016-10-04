@@ -8,12 +8,12 @@ set(MEAN_SHIFT_UTILS_LIBRARIES mean_shift_utils_lib)
 add_subdirectory(utils)
 
 set(MEAN_SHIFT_PARALLEL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/parallel/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_PARALLEL_LIBRARIES mean_shift_parallel_lib)
+set(MEAN_SHIFT_PARALLEL_LIBRARIES mean_shift_parallel_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
 set(KERNEL_FILE ${PROJECT_SOURCE_DIR}/parallel/mean_shift.cl)
 add_subdirectory(parallel)
 
 set(MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/sequential/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_SEQUENTIAL_LIBRARIES mean_shift_sequential_lib)
+set(MEAN_SHIFT_SEQUENTIAL_LIBRARIES mean_shift_sequential_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
 add_subdirectory(sequential)
 
 set(MEAN_SHIFT_FACTORIES_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)

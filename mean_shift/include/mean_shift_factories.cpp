@@ -11,6 +11,13 @@ mila::MeanShiftFactory::MakeSequentialProfiler(std::unique_ptr<Profiler> profile
                                                                                 std::move(profiler),
                                                                                 logger));
 }
+std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallel(const std::shared_ptr<mila::Logger> logger) const {
+  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShift());
+}
+std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallelProfiler(std::unique_ptr<mila::Profiler> profiler,
+                                                                              const std::shared_ptr<mila::Logger> logger) const {
+  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShiftProfiler());
+}
 
 std::unique_ptr<mila::MeanShiftImageProcessing> mila::MeanShiftImageProcessingFactory::MakeSequential(
     const std::shared_ptr<mila::Logger> logger) const {

@@ -1,4 +1,3 @@
-#include <mean_shift_parallel.h>
 #include "gtest/gtest.h"
 #include "mean_shift_factories.h"
 
@@ -14,6 +13,17 @@ template<>
 std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::SequentialMeanShiftProfiler>() {
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
   return mila::MeanShiftFactory().MakeSequentialProfiler(std::move(profiler), nullptr);
+}
+
+template<>
+std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::ParallelMeanShift>() {
+  return mila::MeanShiftFactory().MakeParallel(nullptr);
+}
+
+template<>
+std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::ParallelMeanShiftProfiler>() {
+  auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
+  return mila::MeanShiftFactory().MakeParallelProfiler(std::move(profiler), nullptr);
 }
 
 template<typename T>
