@@ -4,24 +4,19 @@
 #include <cstddef>
 
 #include "clpp.h"
+#include "mean_shift.h"
 #include "mean_shift_utils.h"
 #include "utils.h"
 
 namespace mila {
-namespace meanshift {
-namespace parallel {
-
-std::vector<cl_float4> ConvertVectorToPoints(const std::vector<uint8_t> &data);
-std::vector<uint8_t> ConvertPointsToVector(const std::vector<cl_float4> &data);
-
-class MeanShift {
+class ParallelMeanShift : public MeanShift {
  public:
-  MeanShift();
-  MeanShift(size_t platform_id, size_t device_id);
-  MeanShift(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+  ParallelMeanShift();
+  ParallelMeanShift(size_t platform_id, size_t device_id);
+  ParallelMeanShift(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
 
   virtual void Initialize();
-  virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth);
+  virtual std::vector<Point> Run(const std::vector<Point> &points, float bandwidth);
 
   float precision() const;
   size_t max_iterations() const;
@@ -55,18 +50,5 @@ class MeanShift {
   clpp::Kernel kernel_;
 };
 
-class MeanShiftImageProcessing: public MeanShift {
- public:
-  MeanShiftImageProcessing();
-  MeanShiftImageProcessing(size_t platform_id, size_t device_id);
-  MeanShiftImageProcessing(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
-
-  virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
-  virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
-};
-
-}  // parallel
-}  // meanshift
 }  // mila
-
 #endif  // MILA_MEAN_SHIFT_PARALLEL_H_

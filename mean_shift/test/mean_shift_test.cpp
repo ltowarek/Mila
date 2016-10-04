@@ -1,3 +1,4 @@
+#include <mean_shift_parallel.h>
 #include "gtest/gtest.h"
 #include "mean_shift_factories.h"
 
@@ -22,7 +23,10 @@ class MeanShiftTest : public testing::Test {
   std::unique_ptr<mila::MeanShift> mean_shift_;
 };
 
-typedef testing::Types<mila::SequentialMeanShift, mila::SequentialMeanShiftProfiler> MeanShiftImplementations;
+typedef testing::Types<mila::SequentialMeanShift,
+                       mila::SequentialMeanShiftProfiler,
+                       mila::ParallelMeanShift,
+                       mila::ParallelMeanShiftProfiler> MeanShiftImplementations;
 
 TYPED_TEST_CASE(MeanShiftTest, MeanShiftImplementations);
 
@@ -335,7 +339,8 @@ class MeanShiftImageProcessingTest : public testing::Test {
   std::unique_ptr<mila::MeanShiftImageProcessing> mean_shift_;
 };
 
-typedef testing::Types<mila::MeanShiftImageProcessing, mila::MeanShiftImageProcessingProfiler> MeanShiftImageProcessingImplementations;
+typedef testing::Types<mila::MeanShiftImageProcessing, mila::MeanShiftImageProcessingProfiler>
+    MeanShiftImageProcessingImplementations;
 
 TYPED_TEST_CASE(MeanShiftImageProcessingTest, MeanShiftImageProcessingImplementations);
 

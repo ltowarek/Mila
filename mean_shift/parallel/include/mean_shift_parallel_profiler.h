@@ -9,17 +9,14 @@
 #include "utils.h"
 
 namespace mila {
-namespace meanshift {
-namespace parallel {
-
-class MeanShiftProfiler: public MeanShift {
+class ParallelMeanShiftProfiler: public ParallelMeanShift {
  public:
-  MeanShiftProfiler();
-  MeanShiftProfiler(size_t platform_id, size_t device_id);
-  MeanShiftProfiler(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+  ParallelMeanShiftProfiler();
+  ParallelMeanShiftProfiler(size_t platform_id, size_t device_id);
+  ParallelMeanShiftProfiler(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
 
   void Initialize() override;
-  std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
+  std::vector<Point> Run(const std::vector<Point> &points, float bandwidth) override;
   size_t GetBuildKernelAsMicroseconds();
   size_t GetCopyBufferAsMicroseconds();
   size_t GetReadBufferAsMicroseconds();
@@ -44,42 +41,5 @@ class MeanShiftProfiler: public MeanShift {
   float bandwidth_;
 };
 
-class MeanShiftImageProcessingProfiler: public MeanShiftImageProcessing {
- public:
-  MeanShiftImageProcessingProfiler();
-  MeanShiftImageProcessingProfiler(size_t platform_id, size_t device_id);
-  MeanShiftImageProcessingProfiler(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
-
-  void Initialize() override;
-  virtual std::vector<cl_float4> Run(const std::vector<cl_float4> &points, float bandwidth) override;
-  virtual void Run(const std::string &input_file, const std::string &output_file, float bandwidth);
-  size_t GetBuildKernelAsMicroseconds();
-  size_t GetCopyBufferAsMicroseconds();
-  size_t GetReadBufferAsMicroseconds();
-  size_t GetEnqueueNDRangeAsMicroseconds();
-  std::string GetOpenCLStatisticsAsString();
-  float GetBandwidth();
-
-  std::string main_result() const;
-  std::string main_duration() const;
-  std::map<std::string, float> results() const;
- private:
-  void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
-  void GetProfilingInfo();
-  size_t GetProfilingInfoAsMicroseconds(clpp::Event);
-  std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events);
-  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
-
-  mila::statistics::OpenCLStatistics device_statistics_;
-  const std::string main_result_;
-  const std::string main_duration_;
-  size_t number_of_points_;
-  std::map<std::string, float> results_;
-  float bandwidth_;
-};
-
-}  // parallel
-}  // meanshift
 }  // mila
-
 #endif  // MILA_MEAN_SHIFT_PARALLEL_PROFILER_H_
