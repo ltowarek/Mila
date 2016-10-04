@@ -19,42 +19,6 @@ mila::ParallelMeanShift::~ParallelMeanShift() {
 
 }
 
-float mila::ParallelMeanShift::precision() const {
-  return precision_;
-}
-
-size_t mila::ParallelMeanShift::max_iterations() const {
-  return max_iterations_;
-}
-
-size_t mila::ParallelMeanShift::platform_id() const {
-  return platform_id_;
-}
-
-size_t mila::ParallelMeanShift::device_id() const {
-  return device_id_;
-}
-
-clpp::Platform mila::ParallelMeanShift::platform() const {
-  return platform_;
-}
-
-clpp::Device mila::ParallelMeanShift::device() const {
-  return device_;
-}
-
-clpp::Context mila::ParallelMeanShift::context() const {
-  return context_;
-}
-
-clpp::Queue mila::ParallelMeanShift::queue() const {
-  return queue_;
-}
-
-clpp::Kernel mila::ParallelMeanShift::kernel() const {
-  return kernel_;
-}
-
 void mila::ParallelMeanShift::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
   try {
     program.build(device);

@@ -18,16 +18,6 @@ class ParallelMeanShift : public MeanShift {
 
   virtual void Initialize();
   virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
-
-  float precision() const;
-  size_t max_iterations() const;
-  size_t platform_id() const;
-  size_t device_id() const;
-  clpp::Platform platform() const;
-  clpp::Device device() const;
-  clpp::Context context() const;
-  clpp::Queue queue() const;
-  clpp::Kernel kernel() const;
  protected:
   virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device);
   void UpdateEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
