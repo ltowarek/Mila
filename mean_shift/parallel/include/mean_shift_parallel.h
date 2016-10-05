@@ -16,10 +16,8 @@ class ParallelMeanShift : public MeanShift {
                     const std::shared_ptr<Logger> logger);
   virtual ~ParallelMeanShift() override;
 
-  virtual void Initialize();
   virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
- protected:
-  void UpdateEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
+  virtual void Initialize();
 
   struct Events {
     std::vector<clpp::Event> copy_buffer;
@@ -27,6 +25,10 @@ class ParallelMeanShift : public MeanShift {
     std::vector<clpp::Event> enqueue_nd_range;
     clpp::Event read_buffer_with_output;
   };
+
+  virtual Events GetEvents() const;
+ private:
+  void SaveEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
 
   const std::shared_ptr<Logger> logger_;
   const std::unique_ptr<OpenCLApplication> ocl_app_;
