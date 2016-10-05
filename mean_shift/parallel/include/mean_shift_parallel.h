@@ -1,11 +1,8 @@
 #ifndef MILA_MEAN_SHIFT_PARALLEL_H_
 #define MILA_MEAN_SHIFT_PARALLEL_H_
 
-#include <cstddef>
-
 #include "clpp.h"
 #include "mean_shift.h"
-#include "mean_shift_utils.h"
 #include "ocl_app.h"
 #include "utils.h"
 
@@ -26,7 +23,7 @@ class ParallelMeanShift : public MeanShift {
     clpp::Event read_buffer_with_output;
   };
 
-  virtual Events GetEvents() const;
+  Events GetEvents() const;
  private:
   void SaveEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
 
