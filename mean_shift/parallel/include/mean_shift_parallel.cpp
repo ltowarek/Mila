@@ -15,8 +15,6 @@ void mila::ParallelMeanShift::Initialize() {
 
 std::vector<mila::Point> mila::ParallelMeanShift::Run(const std::vector<Point> &points,
                                                                  const float bandwidth) {
-  Initialize();
-
   const auto precision = 1e-5f;
   const auto max_iterations = 100;
 

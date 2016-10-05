@@ -13,7 +13,9 @@ mila::MeanShiftFactory::MakeSequentialProfiler(std::unique_ptr<Profiler> profile
 }
 std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
                                                                       const std::shared_ptr<Logger> logger) const {
-  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShift(std::move(ocl_app), logger));
+  auto mean_shift = new mila::ParallelMeanShift(std::move(ocl_app), logger);
+  mean_shift->Initialize();
+  return std::unique_ptr<mila::MeanShift>(mean_shift);
 }
 std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallelProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
                                                                               std::unique_ptr<mila::Profiler> profiler,
