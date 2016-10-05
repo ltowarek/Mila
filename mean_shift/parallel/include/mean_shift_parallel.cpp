@@ -1,9 +1,7 @@
 #include "mean_shift_parallel.h"
 
 mila::ParallelMeanShift::ParallelMeanShift(std::unique_ptr<mila::OpenCLApplication> ocl_app,
-                                           const std::shared_ptr<mila::Logger> logger) : ocl_app_(std::move(ocl_app)), logger_(logger),
-  source_file_path_("mean_shift.cl"),
-      kernel_name_("MeanShift") {
+                                           const std::shared_ptr<mila::Logger> logger) : ocl_app_(std::move(ocl_app)), logger_(logger) {
 
 }
 
@@ -12,7 +10,7 @@ mila::ParallelMeanShift::~ParallelMeanShift() {
 }
 
 void mila::ParallelMeanShift::Initialize() {
-  kernel_ = ocl_app_->CreateKernel(kernel_name_, source_file_path_);
+  kernel_ = ocl_app_->CreateKernel("MeanShift", "mean_shift.cl");
 }
 
 std::vector<mila::Point> mila::ParallelMeanShift::Run(const std::vector<Point> &points,

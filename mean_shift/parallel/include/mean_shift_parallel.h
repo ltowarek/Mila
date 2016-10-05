@@ -33,9 +33,6 @@ class ParallelMeanShift : public MeanShift {
 
   Events events_;
   clpp::Kernel kernel_;
-
-  const std::string source_file_path_;
-  const std::string kernel_name_;
 };
 
 }  // mila
