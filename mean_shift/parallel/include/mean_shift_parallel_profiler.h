@@ -9,11 +9,10 @@
 #include "utils.h"
 
 namespace mila {
-class ParallelMeanShiftProfiler: public ParallelMeanShift {
+class ParallelMeanShiftProfiler : public ParallelMeanShift {
  public:
-  ParallelMeanShiftProfiler();
-  ParallelMeanShiftProfiler(size_t platform_id, size_t device_id);
-  ParallelMeanShiftProfiler(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+  ParallelMeanShiftProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
+                            const std::shared_ptr<Logger> logger);
   virtual ~ParallelMeanShiftProfiler() override;
 
   void Initialize() override;
@@ -29,10 +28,9 @@ class ParallelMeanShiftProfiler: public ParallelMeanShift {
   std::string main_duration() const;
   std::map<std::string, float> results() const;
  private:
-  void BuildProgram(const clpp::Program& program, const clpp::Device& device) override;
   void GetProfilingInfo();
   size_t GetProfilingInfoAsMicroseconds(clpp::Event event);
-  std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event>& events);
+  std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event> &events);
   float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
 
   mila::statistics::OpenCLStatistics device_statistics_;

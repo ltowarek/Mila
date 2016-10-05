@@ -1,23 +1,8 @@
 #include "mean_shift_parallel_profiler.h"
 
-mila::ParallelMeanShiftProfiler::ParallelMeanShiftProfiler(): ParallelMeanShift(),
-                                                                   main_result_("Points per second"),
-                                                                   main_duration_("Run") {
-
-}
-
-mila::ParallelMeanShiftProfiler::ParallelMeanShiftProfiler(size_t platform_id, size_t device_id): ParallelMeanShift(platform_id, device_id),
-                                                                                                       main_result_("Points per second"),
-                                                                                                       main_duration_("Run") {
-
-}
-
-mila::ParallelMeanShiftProfiler::ParallelMeanShiftProfiler(size_t platform_id,
-                                                                size_t device_id,
-                                                                float precision,
-                                                                size_t max_iterations): ParallelMeanShift(platform_id, device_id, precision, max_iterations),
-                                                                                        main_result_("Points per second"),
-                                                                                        main_duration_("Run") {
+mila::ParallelMeanShiftProfiler::ParallelMeanShiftProfiler(std::unique_ptr<mila::OpenCLApplication> ocl_app,
+                                                           const std::shared_ptr<mila::Logger> logger)
+    : ParallelMeanShift(std::move(ocl_app), logger) {
 
 }
 
@@ -44,16 +29,6 @@ std::vector<mila::Point> mila::ParallelMeanShiftProfiler::Run(const std::vector<
   bandwidth_ = ComputeBandwidthAsGBPS(points.size(), GetEnqueueNDRangeAsMicroseconds());
 
   return output;
-}
-
-void mila::ParallelMeanShiftProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device) {
-  auto start_time = std::chrono::high_resolution_clock::now();
-  ParallelMeanShift::BuildProgram(program, device);
-  auto end_time = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration<float>(end_time - start_time);
-  auto duration_us = static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
-  device_statistics_.SetBuildKernelAsMicroseconds(duration_us);
 }
 
 size_t mila::ParallelMeanShiftProfiler::GetBuildKernelAsMicroseconds() {

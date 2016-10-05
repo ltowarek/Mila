@@ -17,13 +17,15 @@ std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::SequentialMeanShiftProfil
 
 template<>
 std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::ParallelMeanShift>() {
-  return mila::MeanShiftFactory().MakeParallel(nullptr);
+  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+  return mila::MeanShiftFactory().MakeParallel(std::move(ocl_app), nullptr);
 }
 
 template<>
 std::unique_ptr<mila::MeanShift> CreateMeanShift<mila::ParallelMeanShiftProfiler>() {
+  auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
   auto profiler = mila::ProfilerFactory().MakeChrono(nullptr);
-  return mila::MeanShiftFactory().MakeParallelProfiler(std::move(profiler), nullptr);
+  return mila::MeanShiftFactory().MakeParallelProfiler(std::move(ocl_app), std::move(profiler), nullptr);
 }
 
 template<typename T>

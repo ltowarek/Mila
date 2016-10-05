@@ -6,20 +6,19 @@
 #include "clpp.h"
 #include "mean_shift.h"
 #include "mean_shift_utils.h"
+#include "ocl_app.h"
 #include "utils.h"
 
 namespace mila {
 class ParallelMeanShift : public MeanShift {
  public:
-  ParallelMeanShift();
-  ParallelMeanShift(size_t platform_id, size_t device_id);
-  ParallelMeanShift(size_t platform_id, size_t device_id, float precision, size_t max_iterations);
+  ParallelMeanShift(std::unique_ptr<OpenCLApplication> ocl_app,
+                    const std::shared_ptr<Logger> logger);
   virtual ~ParallelMeanShift() override;
 
   virtual void Initialize();
   virtual std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
  protected:
-  virtual void BuildProgram(const clpp::Program& program, const clpp::Device& device);
   void UpdateEvents(clpp::Event copy_buffer, clpp::Event read_buffer, clpp::Event enqueue_nd_range);
 
   struct Events {
@@ -29,16 +28,14 @@ class ParallelMeanShift : public MeanShift {
     clpp::Event read_buffer_with_output;
   };
 
+  const std::shared_ptr<Logger> logger_;
+  const std::unique_ptr<OpenCLApplication> ocl_app_;
+
   Events events_;
-  const float precision_;
-  const size_t max_iterations_;
-  const size_t platform_id_;
-  const size_t device_id_;
-  clpp::Platform platform_;
-  clpp::Device device_;
-  clpp::Context context_;
-  clpp::Queue queue_;
   clpp::Kernel kernel_;
+
+  const std::string source_file_path_;
+  const std::string kernel_name_;
 };
 
 }  // mila

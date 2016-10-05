@@ -11,12 +11,14 @@ mila::MeanShiftFactory::MakeSequentialProfiler(std::unique_ptr<Profiler> profile
                                                                                 std::move(profiler),
                                                                                 logger));
 }
-std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallel(const std::shared_ptr<mila::Logger> logger) const {
-  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShift());
+std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app,
+                                                                      const std::shared_ptr<Logger> logger) const {
+  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShift(std::move(ocl_app), logger));
 }
-std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallelProfiler(std::unique_ptr<mila::Profiler> profiler,
+std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallelProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
+                                                                              std::unique_ptr<mila::Profiler> profiler,
                                                                               const std::shared_ptr<mila::Logger> logger) const {
-  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShiftProfiler());
+  return std::unique_ptr<mila::MeanShift>(new mila::ParallelMeanShiftProfiler(std::move(ocl_app), logger));
 }
 
 std::unique_ptr<mila::MeanShiftImageProcessing> mila::MeanShiftImageProcessingFactory::MakeSequential(

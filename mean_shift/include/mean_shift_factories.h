@@ -20,8 +20,9 @@ class MeanShiftFactory {
   std::unique_ptr<mila::MeanShift> MakeSequential(const std::shared_ptr<Logger> logger) const;
   std::unique_ptr<mila::MeanShift> MakeSequentialProfiler(std::unique_ptr<Profiler> profiler,
                                                           const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::MeanShift> MakeParallel(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::MeanShift> MakeParallelProfiler(std::unique_ptr<Profiler> profiler,
+  std::unique_ptr<mila::MeanShift> MakeParallel(std::unique_ptr<OpenCLApplication> ocl_app, const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::MeanShift> MakeParallelProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
+                                                        std::unique_ptr<Profiler> profiler,
                                                         const std::shared_ptr<Logger> logger) const;
 };
 
