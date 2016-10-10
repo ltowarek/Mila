@@ -8,9 +8,24 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include "clpp.h"
 
 namespace mila {
 namespace utils {
+
+template<typename T=std::chrono::nanoseconds>
+T GetProfilingInfo(const clpp::Event &event) {
+  return std::chrono::duration_cast<T>(std::chrono::nanoseconds(event.getProfilingCommandEnd() - event.getProfilingCommandStart()));
+}
+
+template<typename T>
+std::vector<T> GetProfilingInfo(const std::vector<clpp::Event> &events) {
+  auto output = std::vector<T>();
+  for (const auto &e : events) {
+    output.push_back(GetProfilingInfo<T>(e));
+  }
+  return output;
+}
 
 std::string ReadFile(const std::string &file);
 float GetValuePerSecond(size_t value, std::chrono::duration<float> duration);

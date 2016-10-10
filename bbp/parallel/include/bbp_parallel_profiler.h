@@ -36,7 +36,6 @@ class ParallelBBPProfiler: public BBPProfiler {
   ParallelBBPProfilingResults results_;
 
   float ComputeBandwidthAsGBPS(size_t number_of_work_items, long microseconds) const;
-  std::chrono::duration<long, std::nano> GetProfilingInfo(clpp::Event event) const;
   void SetResultsAfterComputeDigits(const size_t number_of_digits);
   void SetResultsAfterInitialize();
   void InitResults();

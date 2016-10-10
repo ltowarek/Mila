@@ -24,13 +24,13 @@ void mila::ParallelBBPProfiler::SetResultsAfterComputeDigits(const size_t number
   auto event = bbp_->GetEvents().enqueue_nd_range;
   if (event != nullptr) {
     results_.enqueue_nd_range_duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(mila::ParallelBBPProfiler::GetProfilingInfo(
+        std::chrono::duration_cast<std::chrono::microseconds>(mila::utils::GetProfilingInfo(
             event));
   }
   event = bbp_->GetEvents().read_buffer;
   if (event != nullptr) {
     results_.read_buffer_duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(mila::ParallelBBPProfiler::GetProfilingInfo(
+        std::chrono::duration_cast<std::chrono::microseconds>(mila::utils::GetProfilingInfo(
             event));
   }
 
@@ -61,10 +61,6 @@ mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, l
     gb_per_s = number_of_work_items * sizeof(cl_float) * read_writes / static_cast<float>(microseconds) / micro_to_giga;
   }
   return gb_per_s;
-}
-std::chrono::duration<long, std::nano>
-mila::ParallelBBPProfiler::GetProfilingInfo(clpp::Event event) const {
-  return std::chrono::nanoseconds(event.getProfilingCommandEnd() - event.getProfilingCommandStart());
 }
 mila::ParallelBBPProfilingResults mila::ParallelBBPProfiler::GetResults() const {
   return results_;

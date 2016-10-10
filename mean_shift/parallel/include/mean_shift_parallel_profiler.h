@@ -1,44 +1,43 @@
 #ifndef MILA_MEAN_SHIFT_PARALLEL_PROFILER_H_
 #define MILA_MEAN_SHIFT_PARALLEL_PROFILER_H_
 
-#include <chrono>
-#include <map>
-
 #include "mean_shift_parallel.h"
 #include "statistics.h"
 #include "utils.h"
+#include "profiler.h"
 
 namespace mila {
-class ParallelMeanShiftProfiler : public ParallelMeanShift {
+struct ParallelMeanShiftProfilingResults {
+  std::chrono::microseconds mean_shift_duration;
+  std::chrono::microseconds initialize_duration;
+  std::chrono::microseconds read_buffer_with_output_duration;
+  std::vector<std::chrono::microseconds> read_buffer_with_distances_durations;
+  std::vector<std::chrono::microseconds> copy_buffer_durations;
+  std::vector<std::chrono::microseconds> enqueue_nd_range_durations;
+  float points_per_second;
+  float bandwidth;
+};
+
+class ParallelMeanShiftProfiler : public MeanShiftProfiler {
  public:
-  ParallelMeanShiftProfiler(std::unique_ptr<OpenCLApplication> ocl_app,
+  ParallelMeanShiftProfiler(std::unique_ptr<ParallelMeanShift> mean_shift,
+                            std::unique_ptr<Profiler> profiler,
                             const std::shared_ptr<Logger> logger);
   virtual ~ParallelMeanShiftProfiler() override;
 
-  void Initialize() override;
+  void Initialize();
   std::vector<Point> Run(const std::vector<Point> &points, const float bandwidth) override;
-  size_t GetBuildKernelAsMicroseconds();
-  size_t GetCopyBufferAsMicroseconds();
-  size_t GetReadBufferAsMicroseconds();
-  size_t GetEnqueueNDRangeAsMicroseconds();
-  std::string GetOpenCLStatisticsAsString();
-  float GetBandwidth();
-
-  std::string main_result() const;
-  std::string main_duration() const;
-  std::map<std::string, float> results() const;
+  virtual ParallelMeanShiftProfilingResults GetResults() const;
  private:
-  void GetProfilingInfo();
-  size_t GetProfilingInfoAsMicroseconds(clpp::Event event);
-  std::vector<size_t> GetProfilingInfoAsMicroseconds(const std::vector<clpp::Event> &events);
-  float ComputeBandwidthAsGBPS(size_t number_of_work_items, float seconds);
+  const std::unique_ptr<mila::ParallelMeanShift> mean_shift_;
+  const std::unique_ptr<Profiler> profiler_;
+  const std::shared_ptr<Logger> logger_;
+  ParallelMeanShiftProfilingResults results_;
 
-  mila::statistics::OpenCLStatistics device_statistics_;
-  const std::string main_result_;
-  const std::string main_duration_;
-  std::map<std::string, float> results_;
-  float bandwidth_;
+  void InitResults();
+  float ComputeBandwidthAsGBPS(const size_t number_of_work_items, const float seconds);
+  void SetResultsAfterRun(const size_t number_of_points);
+  void SetResultsAfterInitialize();
 };
-
 }  // mila
 #endif  // MILA_MEAN_SHIFT_PARALLEL_PROFILER_H_

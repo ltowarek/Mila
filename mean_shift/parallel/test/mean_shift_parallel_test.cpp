@@ -1,102 +1,51 @@
 #include "gtest/gtest.h"
-#include "mean_shift_parallel.h"
 #include "mean_shift_parallel_profiler.h"
 
-TEST(MeanShiftParallelProfilerTest, InitializeWithProfiling) {
-  mila::ParallelMeanShiftProfiler mean_shift;
-  EXPECT_EQ(mean_shift.results().count("Initialize"), 0);
-  mean_shift.Initialize();
-  EXPECT_EQ(mean_shift.results().count("Initialize"), 1);
+class ParallelMeanShiftProfilerTest : public testing::Test {
+ protected:
+  virtual void SetUp() {
+    auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+    auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
+    auto mean_shift = std::unique_ptr<mila::ParallelMeanShift>(new mila::ParallelMeanShift(std::move(ocl_app),
+                                                                                           nullptr));
+    auto mean_shift_profiler = new mila::ParallelMeanShiftProfiler(std::move(mean_shift), std::move(profiler), nullptr);
+    mean_shift_ = std::unique_ptr<mila::ParallelMeanShiftProfiler>(mean_shift_profiler);
+  }
+  std::unique_ptr<mila::ParallelMeanShiftProfiler> mean_shift_;
+};
+
+TEST_F(ParallelMeanShiftProfilerTest, GetResultsAfterInitialize) {
+  this->mean_shift_->Initialize();
+  EXPECT_GT(this->mean_shift_->GetResults().initialize_duration.count(), 0);
 }
 
-TEST(MeanShiftParallelProfilerTest, RunWithProfiling) {
-  mila::ParallelMeanShiftProfiler mean_shift;
-
-  std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
-                                   {2.0f, 3.0f, 0.0f, 0.0f},
-                                   {10.0f, 11.0f, 0.0f, 0.0f},
-                                   {12.0f, 13.0f, 0.0f, 0.0f}
+TEST_F(ParallelMeanShiftProfilerTest, GetResultsAfterRun) {
+  const auto points = std::vector<mila::Point>{{0.0f, 1.0f, 0.0f, 0.0f},
+                                               {2.0f, 3.0f, 0.0f, 0.0f},
+                                               {10.0f, 11.0f, 0.0f, 0.0f},
+                                               {12.0f, 13.0f, 0.0f, 0.0f}
   };
-  float bandwidth = 3.0f;
+  const auto bandwidth = 3.0f;
 
-  EXPECT_EQ(mean_shift.results().count("Run"), 0);
-  EXPECT_EQ(mean_shift.results().count("Points per second"), 0);
-  mean_shift.Run(points, bandwidth);
-  EXPECT_EQ(mean_shift.results().count("Run"), 1);
-  EXPECT_EQ(mean_shift.results().count("Points per second"), 1);
-}
+  this->mean_shift_->Initialize();
+  this->mean_shift_->Run(points, bandwidth);
+  EXPECT_GT(this->mean_shift_->GetResults().read_buffer_with_output_duration.count(), 0);
+  EXPECT_GT(this->mean_shift_->GetResults().mean_shift_duration.count(), 0);
+  EXPECT_GT(this->mean_shift_->GetResults().points_per_second, 0.0f);
+  EXPECT_GT(this->mean_shift_->GetResults().bandwidth, 0.0f);
 
-TEST(MeanShiftParallelProfilerTest, GetBuildKernelAsMicroseconds) {
-  mila::ParallelMeanShiftProfiler mean_shift;
-  mean_shift.Initialize();
-  EXPECT_GT(mean_shift.GetBuildKernelAsMicroseconds(), 0);
-}
+  EXPECT_GT(this->mean_shift_->GetResults().enqueue_nd_range_durations.size(), 0);
+  for (const auto &d : this->mean_shift_->GetResults().enqueue_nd_range_durations) {
+    EXPECT_GT(d.count(), 0);
+  }
 
-TEST(MeanShiftParallelProfilerTest, GetCopyBufferAsMicroseconds) {
-  std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
-                                   {2.0f, 3.0f, 0.0f, 0.0f},
-                                   {10.0f, 11.0f, 0.0f, 0.0f},
-                                   {12.0f, 13.0f, 0.0f, 0.0f}
-  };
-  float bandwidth = 3.0f;
+  EXPECT_GT(this->mean_shift_->GetResults().read_buffer_with_distances_durations.size(), 0);
+  for (const auto &d : this->mean_shift_->GetResults().read_buffer_with_distances_durations) {
+    EXPECT_GT(d.count(), 0);
+  }
 
-  mila::ParallelMeanShiftProfiler mean_shift;
-  mean_shift.Run(points, bandwidth);
-  EXPECT_GT(mean_shift.GetCopyBufferAsMicroseconds(), 0);
-}
-
-TEST(MeanShiftParallelProfilerTest, GetReadBufferAsMicroseconds) {
-  std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
-                                   {2.0f, 3.0f, 0.0f, 0.0f},
-                                   {10.0f, 11.0f, 0.0f, 0.0f},
-                                   {12.0f, 13.0f, 0.0f, 0.0f}
-  };
-  float bandwidth = 3.0f;
-
-  mila::ParallelMeanShiftProfiler mean_shift;
-  mean_shift.Run(points, bandwidth);
-  EXPECT_GT(mean_shift.GetReadBufferAsMicroseconds(), 0);
-}
-
-TEST(MeanShiftParallelProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
-  std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
-                                   {2.0f, 3.0f, 0.0f, 0.0f},
-                                   {10.0f, 11.0f, 0.0f, 0.0f},
-                                   {12.0f, 13.0f, 0.0f, 0.0f}
-  };
-  float bandwidth = 3.0f;
-
-  mila::ParallelMeanShiftProfiler mean_shift;
-  mean_shift.Run(points, bandwidth);
-  EXPECT_GT(mean_shift.GetEnqueueNDRangeAsMicroseconds(), 0);
-}
-
-TEST(MeanShiftParallelProfilerTest, GetOpenCLStatisticsAsString) {
-  mila::ParallelMeanShiftProfiler mean_shift;
-  EXPECT_STREQ("", mean_shift.GetOpenCLStatisticsAsString().c_str());
-}
-
-TEST(MeanShiftParallelProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
-  std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
-                                   {2.0f, 3.0f, 0.0f, 0.0f},
-                                   {10.0f, 11.0f, 0.0f, 0.0f},
-                                   {12.0f, 13.0f, 0.0f, 0.0f}
-  };
-  float bandwidth = 3.0f;
-
-  mila::ParallelMeanShiftProfiler mean_shift;
-  mean_shift.Run(points, bandwidth);
-  EXPECT_STRNE("", mean_shift.GetOpenCLStatisticsAsString().c_str());
-}
-
-TEST(MeanShiftParallelProfilerTest, GetBandwidth) {
-  std::vector<mila::Point> points = {{0.0f, 1.0f, 0.0f, 0.0f},
-                                   {2.0f, 3.0f, 0.0f, 0.0f},
-                                   {10.0f, 11.0f, 0.0f, 0.0f},
-                                   {12.0f, 13.0f, 0.0f, 0.0f}
-  };
-  float bandwidth = 3.0f;
-  mila::ParallelMeanShiftProfiler mean_shift;
-  mean_shift.Run(points, bandwidth);
-  EXPECT_GT(mean_shift.GetBandwidth(), 0);
+  EXPECT_GT(this->mean_shift_->GetResults().copy_buffer_durations.size(), 0);
+  for (const auto &d : this->mean_shift_->GetResults().copy_buffer_durations) {
+    EXPECT_GT(d.count(), 0);
+  }
 }
