@@ -34,15 +34,21 @@ std::unique_ptr<mila::MeanShift> mila::MeanShiftFactory::MakeParallelProfiler(st
 std::unique_ptr<mila::MeanShiftImageProcessing> mila::MeanShiftImageProcessingFactory::MakeSequential(
     const std::shared_ptr<mila::Logger> logger) const {
   auto mean_shift = mila::MeanShiftFactory().MakeSequential(logger);
-  return std::unique_ptr<mila::MeanShiftImageProcessing>(new mila::MeanShiftImageProcessing(std::move(mean_shift),
-                                                                                            logger));
+  return std::unique_ptr<mila::MeanShiftImageProcessing>(new mila::GenericMeanShiftImageProcessing(std::move(mean_shift),
+                                                                                                   logger));
 }
 
 std::unique_ptr<mila::MeanShiftImageProcessing>
 mila::MeanShiftImageProcessingFactory::MakeSequentialProfiler(std::unique_ptr<Profiler> profiler,
                                                               const std::shared_ptr<Logger> logger) const {
   auto mean_shift = mila::MeanShiftFactory().MakeSequential(logger);
-  return std::unique_ptr<mila::MeanShiftImageProcessing>(new mila::MeanShiftImageProcessingProfiler(std::move(mean_shift),
+  auto mean_shift_image_processing =
+      std::unique_ptr<mila::GenericMeanShiftImageProcessing>(new mila::GenericMeanShiftImageProcessing(std::move(
+          mean_shift),
+                                                                                                       logger));
+  return std::unique_ptr<mila::MeanShiftImageProcessing>(new mila::MeanShiftImageProcessingProfiler(std::move(
+      mean_shift_image_processing),
+                                                                                                    std::move(profiler),
                                                                                                     logger));
 }
 

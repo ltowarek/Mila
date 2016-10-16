@@ -334,7 +334,7 @@ template<typename T>
 std::unique_ptr<mila::MeanShiftImageProcessing> CreateMeanShiftImageProcessing();
 
 template<>
-std::unique_ptr<mila::MeanShiftImageProcessing> CreateMeanShiftImageProcessing<mila::MeanShiftImageProcessing>() {
+std::unique_ptr<mila::MeanShiftImageProcessing> CreateMeanShiftImageProcessing<mila::GenericMeanShiftImageProcessing>() {
   return mila::MeanShiftImageProcessingFactory().MakeSequential(nullptr);
 }
 
@@ -351,12 +351,12 @@ class MeanShiftImageProcessingTest : public testing::Test {
   std::unique_ptr<mila::MeanShiftImageProcessing> mean_shift_;
 };
 
-typedef testing::Types<mila::MeanShiftImageProcessing, mila::MeanShiftImageProcessingProfiler>
+typedef testing::Types<mila::GenericMeanShiftImageProcessing, mila::MeanShiftImageProcessingProfiler>
     MeanShiftImageProcessingImplementations;
 
 TYPED_TEST_CASE(MeanShiftImageProcessingTest, MeanShiftImageProcessingImplementations);
 
-TYPED_TEST(MeanShiftImageProcessingTest, RunWithImage) {
+TYPED_TEST(MeanShiftImageProcessingTest, Run) {
   const auto input_file = std::string("test_image.png");
   const auto output_file = std::string("test_image_output.png");
   const auto reference_file = std::string("test_image_reference.png");
@@ -373,19 +373,4 @@ TYPED_TEST(MeanShiftImageProcessingTest, RunWithImage) {
   for (size_t i = 0; i < reference.size(); ++i) {
     EXPECT_EQ(output[i], reference[i]);
   }
-}
-
-TEST(MeanShiftImageProcessingProfilerTest, RunWithImageWithProfiling) {
-  auto m = std::unique_ptr<mila::MeanShift>(new mila::SequentialMeanShift(std::shared_ptr<mila::Logger>()));
-  // TODO: Move constructor is deleted
-  mila::MeanShiftImageProcessingProfiler mean_shift(std::move(m), nullptr);
-  const auto input_file = std::string("test_image.png");
-  const auto output_file = std::string("test_image_output.png");
-  const auto bandwidth = 25.0f;
-
-  EXPECT_EQ(mean_shift.results().count("RunWithImage"), 0);
-  EXPECT_EQ(mean_shift.results().count("Pixels per second"), 0);
-  mean_shift.Run(input_file, output_file, bandwidth);
-  EXPECT_EQ(mean_shift.results().count("RunWithImage"), 1);
-  EXPECT_EQ(mean_shift.results().count("Pixels per second"), 1);
 }
