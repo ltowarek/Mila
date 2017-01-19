@@ -10,3 +10,12 @@ std::string mila::utils::ReadFile(const std::string &file) {
   auto content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   return content;
 }
+
+std::vector<float> mila::utils::ExtractTimeCountFromVector(const std::vector<std::chrono::microseconds> &input) {
+  auto output = std::vector<float>();
+  std::transform(input.begin(),
+                 input.end(),
+                 std::back_inserter(output),
+                 [](const std::chrono::microseconds &time) { return time.count(); });
+  return output;
+}

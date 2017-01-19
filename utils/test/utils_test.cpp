@@ -68,3 +68,13 @@ TEST(UtilsTest, GetDigitsPerSecond) {
   auto sample_duration = std::chrono::duration<float>(0.243811563f);
   EXPECT_NEAR(mila::utils::GetValuePerSecond(540, sample_duration), 2214.825225496f, 1e-5f);
 }
+
+TEST(UtilsTest, ExtractTimeCountFromVector) {
+  const auto input = std::vector<std::chrono::microseconds>{
+      std::chrono::microseconds(1),
+      std::chrono::microseconds(2),
+      std::chrono::microseconds(3)
+  };
+  const auto expected = std::vector<float>{1.0f, 2.0f, 3.0f};
+  EXPECT_EQ(mila::utils::ExtractTimeCountFromVector(input), expected);
+}

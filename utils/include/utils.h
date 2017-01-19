@@ -15,7 +15,8 @@ namespace utils {
 
 template<typename T=std::chrono::nanoseconds>
 T GetProfilingInfo(const clpp::Event &event) {
-  return std::chrono::duration_cast<T>(std::chrono::nanoseconds(event.getProfilingCommandEnd() - event.getProfilingCommandStart()));
+  return std::chrono::duration_cast<T>(std::chrono::nanoseconds(
+      event.getProfilingCommandEnd() - event.getProfilingCommandStart()));
 }
 
 template<typename T>
@@ -60,7 +61,7 @@ template<typename T>
 T Variance(const std::vector<T> &values) {
   auto mean = Mean(values);
   auto differences = std::vector<T>(values.size());
-  std::transform(values.begin(), values.end(), differences.begin(), [mean](T x) {return x - mean;});
+  std::transform(values.begin(), values.end(), differences.begin(), [mean](T x) { return x - mean; });
   auto square_sum = std::inner_product(differences.begin(), differences.end(), differences.begin(), 0.0f);
   auto variance = square_sum / (values.size() - 1);
   return static_cast<T>(variance);
@@ -81,6 +82,7 @@ T CoefficientOfVariation(const std::vector<T> &values) {
   return static_cast<T>(coefficient_of_variation);
 }
 
+std::vector<float> ExtractTimeCountFromVector(const std::vector<std::chrono::microseconds> &input);
 };  // utils
 }  // mila
 

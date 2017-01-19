@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <chrono>
 
 namespace mila {
 struct Point {
@@ -15,6 +16,7 @@ struct Point {
 
 std::string to_string(const Point &p);
 std::string to_string(const std::vector<Point> &v);
+std::string to_string(const std::vector<std::chrono::microseconds> &v);
 
 class MeanShift {
  public:

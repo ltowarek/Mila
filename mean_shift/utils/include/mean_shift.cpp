@@ -12,6 +12,15 @@ std::string mila::to_string(const std::vector<mila::Point> &v) {
   return s;
 }
 
+std::string mila::to_string(const std::vector<std::chrono::microseconds> &v) {
+  auto s = std::string("");
+  for (const auto &e : v) {
+    s += e.count() + "us ";
+  }
+  s += "\n";
+  return s;
+}
+
 mila::MeanShift::~MeanShift() {
 
 }
