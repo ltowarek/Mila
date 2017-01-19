@@ -9,6 +9,7 @@
 #include "mean_shift.h"
 #include "mean_shift_image_processing.h"
 #include "mean_shift_image_processing_profiler.h"
+#include "mean_shift_image_processing_app.h"
 #include "mean_shift_sequential.h"
 #include "mean_shift_sequential_profiler.h"
 #include "mean_shift_sequential_app.h"
@@ -32,6 +33,8 @@ class MeanShiftAppFactory {
  public:
   std::unique_ptr<mila::MeanShiftApp> MakeSequential(const std::shared_ptr<Logger> logger) const;
   std::unique_ptr<mila::MeanShiftApp> MakeParallel(const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::MeanShiftApp> MakeSequentialImageProcessing(const std::shared_ptr<Logger> logger) const;
+  std::unique_ptr<mila::MeanShiftApp> MakeParallelImageProcessing(const std::shared_ptr<Logger> logger) const;
 };
 
 class MeanShiftImageProcessingFactory {

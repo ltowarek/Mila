@@ -38,6 +38,10 @@ int main(int argc, char **argv) {
     mean_shift = mila::MeanShiftAppFactory().MakeParallel(logger);
   } else if (config.test_case.compare("sequential") == 0) {
     mean_shift = mila::MeanShiftAppFactory().MakeSequential(logger);
+  } else if (config.test_case.compare("sequential_image_processing") == 0) {
+    mean_shift = mila::MeanShiftAppFactory().MakeSequentialImageProcessing(logger);
+  } else if (config.test_case.compare("parallel_image_processing") == 0) {
+    mean_shift = mila::MeanShiftAppFactory().MakeParallelImageProcessing(logger);
   }
   mean_shift->Run(argc, argv);
 
