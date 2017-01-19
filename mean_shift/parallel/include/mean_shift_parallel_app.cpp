@@ -119,9 +119,9 @@ void mila::ParallelMeanShiftApp::PrintResults(const ParallelMeanShiftProfilingRe
   logger_->Debug("Initialize duration: %llu us", results.initialize_duration);
   logger_->Debug("Read buffer with output duration: %llu us", results.read_buffer_with_output_duration);
   logger_->Debug("Read buffer with distances duration:\n%s",
-                 mila::to_string(results.read_buffer_with_distances_durations));
-  logger_->Debug("Copy buffer duration:\n%s", mila::to_string(results.copy_buffer_durations));
-  logger_->Debug("Enqueue ND range duration:\n%s", mila::to_string(results.enqueue_nd_range_durations));
+                 mila::to_string(results.read_buffer_with_distances_durations).c_str());
+  logger_->Debug("Copy buffer duration:\n%s", mila::to_string(results.copy_buffer_durations).c_str());
+  logger_->Debug("Enqueue ND range duration:\n%s", mila::to_string(results.enqueue_nd_range_durations).c_str());
 }
 void mila::ParallelMeanShiftApp::PrintResultsStatistics(const mila::ParallelMeanShiftApp::Results &results) const {
   mila::PrintResultStatistics("Bandwidth", "GB/s", results.bandwidth, *logger_);
