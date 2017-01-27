@@ -1,402 +1,191 @@
-#include <n_body_sequential_profiler.h>
 #include "gtest/gtest.h"
 #include "n_body_sequential.h"
+#include "n_body_sequential_profiler.h"
+#include "n_body_sequential_app.h"
 
-TEST(NBodyVector2DTest, InitializeWithSingleValue) {
-  mila::nbody::sequential::Vector2D vector2D = {0.0f};
-  EXPECT_EQ(vector2D.x, 0.0f);
-  EXPECT_EQ(vector2D.y, 0.0f);
+TEST(NBodySequentialTest, ApplyCentralForceZeroDistance) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.acceleration = {2.0f, 2.0f};
+  mila::Vector2D center{0.0f, 0.0f};
+
+  n_body.ApplyCentralForce(center, 3.0f, particle);
+
+  EXPECT_EQ(particle.acceleration.x, 2.0f);
+  EXPECT_EQ(particle.acceleration.y, 2.0f);
 }
 
-TEST(NBodyVector2DTest, InitializeWithMultipleValues) {
-  mila::nbody::sequential::Vector2D vector2D = {1.0f, 2.0f};
-  EXPECT_EQ(vector2D.x, 1.0f);
-  EXPECT_EQ(vector2D.y, 2.0f);
+TEST(NBodySequentialTest, ApplyCentralForceZeroForce) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.position = {1.0f, 1.0f};
+  particle.acceleration = {2.0f, 2.0f};
+  mila::Vector2D center{0.0f, 0.0f};
+
+  n_body.ApplyCentralForce(center, 0.0f, particle);
+
+  EXPECT_EQ(particle.acceleration.x, 2.0f);
+  EXPECT_EQ(particle.acceleration.y, 2.0f);
 }
 
-TEST(NBodyParticleTest, InitializeWithSingleValue) {
-  mila::nbody::sequential::Particle particle = {0.0f};
-  EXPECT_EQ(particle.position.x, 0.0f);
-  EXPECT_EQ(particle.position.y, 0.0f);
+TEST(NBodySequentialTest, ApplyCentralForceSimple) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.position = {1.0f, 1.0f};
+  mila::Vector2D center{0.0f, 0.0f};
+
+  n_body.ApplyCentralForce(center, 2.0f, particle);
+
+  EXPECT_EQ(particle.acceleration.x, -2.0f);
+  EXPECT_EQ(particle.acceleration.y, -2.0f);
+}
+
+TEST(NBodySequentialTest, ApplyCentralForceComplex) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.position = {1.0f, 1.0f};
+  particle.acceleration = {2.0f, 2.0f};
+  mila::Vector2D center{0.0f, 0.0f};
+
+  n_body.ApplyCentralForce(center, 3.0f, particle);
+
+  EXPECT_EQ(particle.acceleration.x, -1.0f);
+  EXPECT_EQ(particle.acceleration.y, -1.0f);
+}
+
+TEST(NBodySequentialTest, ApplyDampingForceZeroVelocity) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+
+  n_body.ApplyDampingForce(1.0f, particle);
+
   EXPECT_EQ(particle.velocity.x, 0.0f);
   EXPECT_EQ(particle.velocity.y, 0.0f);
+}
+
+TEST(NBodySequentialTest, ApplyDampingForceZeroForce) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.velocity = {1.0f, 1.0f};
+
+  n_body.ApplyDampingForce(0.0f, particle);
+
+  EXPECT_EQ(particle.velocity.x, 0.0f);
+  EXPECT_EQ(particle.velocity.y, 0.0f);
+}
+
+TEST(NBodySequentialTest, ApplyDampingForceSimple) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.velocity = {1.0f, 1.0f};
+
+  n_body.ApplyDampingForce(1.0f, particle);
+
+  EXPECT_EQ(particle.velocity.x, 1.0f);
+  EXPECT_EQ(particle.velocity.y, 1.0f);
+}
+
+TEST(NBodySequentialTest, ApplyDampingForceComplex) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.velocity = {2.0f, 3.0f};
+
+  n_body.ApplyDampingForce(4.0f, particle);
+
+  EXPECT_EQ(particle.velocity.x, 8.0f);
+  EXPECT_EQ(particle.velocity.y, 12.0f);
+}
+
+TEST(NBodySequentialTest, ApplyMotionWithoutAcceleration) {
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
+  particle.position = {1.0f, 1.0f};
+  particle.velocity = {1.0f, 1.0f};
+
+  n_body.ApplyMotion(particle);
+
+  EXPECT_EQ(particle.position.x, 2.0f);
+  EXPECT_EQ(particle.position.y, 2.0f);
+  EXPECT_EQ(particle.velocity.x, 1.0f);
+  EXPECT_EQ(particle.velocity.y, 1.0f);
   EXPECT_EQ(particle.acceleration.x, 0.0f);
   EXPECT_EQ(particle.acceleration.y, 0.0f);
 }
 
-TEST(NBodyParticleTest, InitializeWithMultipleValues) {
-  mila::nbody::sequential::Particle particle = {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}};
-  EXPECT_EQ(particle.position.x, 1.0f);
-  EXPECT_EQ(particle.position.y, 2.0f);
-  EXPECT_EQ(particle.velocity.x, 3.0f);
-  EXPECT_EQ(particle.velocity.y, 4.0f);
-  EXPECT_EQ(particle.acceleration.x, 5.0f);
-  EXPECT_EQ(particle.acceleration.y, 6.0f);
-}
-
-TEST(NBodySequentialTest, GenerateParticles) {
-  mila::nbody::sequential::NBodySequential n_body;
-  int number_of_particles = 5;
-  float min = 10.0f;
-  float max = 20.0f;
-
-  std::vector<mila::nbody::sequential::Particle> output = n_body.GenerateParticles(number_of_particles, min, max);
-
-  ASSERT_EQ(output.size(), number_of_particles);
-  for (int i = 0; i < number_of_particles; ++i) {
-    EXPECT_GE(output[i].position.x, min);
-    EXPECT_LT(output[i].position.x, max);
-    EXPECT_GE(output[i].position.y, min);
-    EXPECT_LT(output[i].position.y, max);
-    EXPECT_EQ(output[i].velocity.x, 0.0f);
-    EXPECT_EQ(output[i].velocity.y, 0.0f);
-    EXPECT_EQ(output[i].acceleration.x, 0.0f);
-    EXPECT_EQ(output[i].acceleration.y, 0.0f);
-  }
-}
-
-TEST(NBodySequentialTest, DefaultConstructor) {
-  mila::nbody::sequential::NBodySequential n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-}
-
-TEST(NBodySequentialTest, ComplexConstructor) {
-  mila::nbody::sequential::NBodySequential n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, mila::nbody::sequential::Vector2D{7.0f, 8.0f}, 9, 10.0f, 11.0f);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-}
-
-TEST(NBodySequentialTest, ApplyCentralForceZeroDistance) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.acceleration = {2.0f, 2.0f};
-  mila::nbody::sequential::Vector2D center{0.0f, 0.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyCentralForce(center, 3.0f, particle);
-
-  EXPECT_EQ(output.acceleration.x, 2.0f);
-  EXPECT_EQ(output.acceleration.y, 2.0f);
-}
-
-TEST(NBodySequentialTest, ApplyCentralForceZeroForce) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.position = {1.0f, 1.0f};
-  particle.acceleration = {2.0f, 2.0f};
-  mila::nbody::sequential::Vector2D center{0.0f, 0.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyCentralForce(center, 0.0f, particle);
-
-  EXPECT_EQ(output.acceleration.x, 2.0f);
-  EXPECT_EQ(output.acceleration.y, 2.0f);
-}
-
-TEST(NBodySequentialTest, ApplyCentralForceSimple) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.position = {1.0f, 1.0f};
-  mila::nbody::sequential::Vector2D center{0.0f, 0.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyCentralForce(center, 2.0f, particle);
-
-  EXPECT_EQ(output.acceleration.x, -2.0f);
-  EXPECT_EQ(output.acceleration.y, -2.0f);
-}
-
-TEST(NBodySequentialTest, ApplyCentralForceComplex) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.position = {1.0f, 1.0f};
-  particle.acceleration = {2.0f, 2.0f};
-  mila::nbody::sequential::Vector2D center{0.0f, 0.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyCentralForce(center, 3.0f, particle);
-
-  EXPECT_EQ(output.acceleration.x, -1.0f);
-  EXPECT_EQ(output.acceleration.y, -1.0f);
-}
-
-TEST(NBodySequentialTest, ApplyDampingForceZeroVelocity) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyDampingForce(1.0f, particle);
-
-  EXPECT_EQ(output.velocity.x, 0.0f);
-  EXPECT_EQ(output.velocity.y, 0.0f);
-}
-
-TEST(NBodySequentialTest, ApplyDampingForceZeroForce) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.velocity = {1.0f, 1.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyDampingForce(0.0f, particle);
-
-  EXPECT_EQ(output.velocity.x, 0.0f);
-  EXPECT_EQ(output.velocity.y, 0.0f);
-}
-
-TEST(NBodySequentialTest, ApplyDampingForceSimple) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.velocity = {1.0f, 1.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyDampingForce(1.0f, particle);
-
-  EXPECT_EQ(output.velocity.x, 1.0f);
-  EXPECT_EQ(output.velocity.y, 1.0f);
-}
-
-TEST(NBodySequentialTest, ApplyDampingForceComplex) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.velocity = {2.0f, 3.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyDampingForce(4.0f, particle);
-
-  EXPECT_EQ(output.velocity.x, 8.0f);
-  EXPECT_EQ(output.velocity.y, 12.0f);
-}
-
-TEST(NBodySequentialTest, ApplyMotionWithoutAcceleration) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
-  particle.position = {1.0f, 1.0f};
-  particle.velocity = {1.0f, 1.0f};
-
-  mila::nbody::sequential::Particle output = n_body.ApplyMotion(particle);
-
-  EXPECT_EQ(output.position.x, 2.0f);
-  EXPECT_EQ(output.position.y, 2.0f);
-  EXPECT_EQ(output.velocity.x, 1.0f);
-  EXPECT_EQ(output.velocity.y, 1.0f);
-  EXPECT_EQ(output.acceleration.x, 0.0f);
-  EXPECT_EQ(output.acceleration.y, 0.0f);
-}
-
 TEST(NBodySequentialTest, ApplyMotionWithAcceleration) {
-  mila::nbody::sequential::NBodySequential n_body;
-  mila::nbody::sequential::Particle particle{0.0f};
+  mila::SequentialNBody n_body(nullptr);
+  mila::Particle particle{0.0f};
   particle.position = {1.0f, 1.0f};
   particle.velocity = {1.0f, 1.0f};
   particle.acceleration = {2.0f, 2.0f};
 
-  mila::nbody::sequential::Particle output = n_body.ApplyMotion(particle);
+  n_body.ApplyMotion(particle);
 
-  EXPECT_EQ(output.position.x, 4.0f);
-  EXPECT_EQ(output.position.y, 4.0f);
-  EXPECT_EQ(output.velocity.x, 3.0f);
-  EXPECT_EQ(output.velocity.y, 3.0f);
-  EXPECT_EQ(output.acceleration.x, 0.0f);
-  EXPECT_EQ(output.acceleration.y, 0.0f);
-}
-
-TEST(NBodySequentialTest, Initialize) {
-  mila::nbody::sequential::NBodySequential n_body;
-
-  EXPECT_EQ(n_body.particles().size(), 0);
-  n_body.Initialize();
-  EXPECT_EQ(n_body.particles().size(), n_body.number_of_particles());
+  EXPECT_EQ(particle.position.x, 4.0f);
+  EXPECT_EQ(particle.position.y, 4.0f);
+  EXPECT_EQ(particle.velocity.x, 3.0f);
+  EXPECT_EQ(particle.velocity.y, 3.0f);
+  EXPECT_EQ(particle.acceleration.x, 0.0f);
+  EXPECT_EQ(particle.acceleration.y, 0.0f);
 }
 
 TEST(NBodySequentialTest, UpdateParticles) {
-  mila::nbody::sequential::NBodySequential n_body;
-  std::vector<mila::nbody::sequential::Particle> expected_particles = {
-                           {{13.42111f, 316.12225f}, {12.42111f, 314.12225f}, {0.0f, 0.0f}},
-                           {{95.21749f, 129.99371f}, {85.21749f, 109.99370f}, {0.0f, 0.0f}}
-                       };
-  n_body.set_particles({
-                           {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}},
-                           {{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}}
-                       });
+  mila::SequentialNBody n_body(nullptr);
+  std::vector<mila::Particle> expected_particles = {
+      {{13.42111f, 316.12225f}, {12.42111f, 314.12225f}, {0.0f, 0.0f}},
+      {{95.21749f, 129.99371f}, {85.21749f, 109.99370f}, {0.0f, 0.0f}}
+  };
+  std::vector<mila::Particle> particles = {
+      {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}},
+      {{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}}
+  };
+  mila::NBodyParameters parameters{};
 
-  n_body.UpdateParticles(mila::nbody::sequential::Vector2D{1.0f, 1.0f});
+  n_body.UpdateParticles(parameters, mila::Vector2D{1.0f, 1.0f}, particles);
 
-  ASSERT_EQ(n_body.particles().size(), expected_particles.size());
-  for (int i = 0; i < n_body.particles().size(); ++i) {
-    EXPECT_NEAR(n_body.particles()[i].position.x, expected_particles[i].position.x, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].position.y, expected_particles[i].position.y, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].velocity.x, expected_particles[i].velocity.x, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].velocity.y, expected_particles[i].velocity.y, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].acceleration.x, expected_particles[i].acceleration.x, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].acceleration.y, expected_particles[i].acceleration.y, 1e-5f);
+  ASSERT_EQ(particles.size(), expected_particles.size());
+  for (size_t i = 0; i < particles.size(); ++i) {
+    EXPECT_NEAR(particles[i].position.x, expected_particles[i].position.x, 1e+1f);
+    EXPECT_NEAR(particles[i].position.y, expected_particles[i].position.y, 1e+1f);
+    EXPECT_NEAR(particles[i].velocity.x, expected_particles[i].velocity.x, 1e+1f);
+    EXPECT_NEAR(particles[i].velocity.y, expected_particles[i].velocity.y, 1e+1f);
+    EXPECT_NEAR(particles[i].acceleration.x, expected_particles[i].acceleration.x, 1e+1f);
+    EXPECT_NEAR(particles[i].acceleration.y, expected_particles[i].acceleration.y, 1e+1f);
   }
 }
 
-TEST(NBodySequentialWithViewTest, DefaultConstructor) {
-  mila::nbody::sequential::NBodySequentialWithView n_body;
+TEST(NBodySequentialWithInputFileProfilerTest, GetResultsAfterUpdateParticles) {
+  auto n_body = std::unique_ptr<mila::SequentialNBody>(new mila::SequentialNBody(nullptr));
+  auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
+  auto n_body_profiler = mila::SequentialNBodyProfiler(std::move(n_body), std::move(profiler), nullptr);
+  std::vector<mila::Particle> particles = {
+      {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}},
+      {{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}}
+  };
+  const mila::NBodyParameters parameters{};
 
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
+  n_body_profiler.UpdateParticles(parameters, mila::Vector2D{1.0f, 1.0f}, particles);
+
+  EXPECT_GT(n_body_profiler.GetResults().update_particles_duration.count(), 0);
+  EXPECT_GT(n_body_profiler.GetResults().particles_per_second, 0.0f);
 }
 
-TEST(NBodySequentialWithViewTest, ComplexConstructor) {
-  mila::nbody::sequential::NBodySequentialWithView n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, mila::nbody::sequential::Vector2D{7.0f, 8.0f}, 9, 10.0f, 11.0f);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-}
-
-TEST(NBodySequentialWithInputFileTest, DefaultConstructor) {
-  mila::nbody::sequential::NBodySequentialWithInputFile n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-}
-
-TEST(NBodySequentialWithInputFileTest, NumberOfParticlesConstructor) {
-  mila::nbody::sequential::NBodySequentialWithInputFile n_body(100);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 100);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-}
-
-TEST(NBodySequentialWithInputFileTest, ComplexConstructor) {
-  mila::nbody::sequential::NBodySequentialWithInputFile n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, mila::nbody::sequential::Vector2D{7.0f, 8.0f}, 9, 10.0f, 11.0f);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-}
-
-TEST(NBodySequentialWithInputFileTest, ParseInputFile) {
-  mila::nbody::sequential::NBodySequentialWithInputFile n_body;
-  std::vector<mila::nbody::sequential::Vector2D> expected_output = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
-
-  std::vector<mila::nbody::sequential::Vector2D> output = n_body.ParseInputFile("test_file.txt");
-
-  ASSERT_EQ(expected_output.size(), output.size());
-  for (int i = 0; i < output.size(); ++i) {
-    EXPECT_EQ(expected_output[i].x, output[i].x);
-    EXPECT_EQ(expected_output[i].y, output[i].y);
-  }
-}
-
-TEST(NBodySequentialWithInputFileProfilerTest, DefaultConstructor) {
-  mila::nbody::sequential::NBodySequentialWithInputFileProfiler n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.main_result(), "Run");
-}
-
-TEST(NBodySequentialWithInputFileProfilerTest, NumberOfParticlesConstructor) {
-  mila::nbody::sequential::NBodySequentialWithInputFileProfiler n_body(100);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 100);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.main_result(), "Run");
-}
-
-TEST(NBodySequentialWithInputFileProfilerTest, ComplexConstructor) {
-  mila::nbody::sequential::NBodySequentialWithInputFileProfiler n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, mila::nbody::sequential::Vector2D{7.0f, 8.0f}, 9, 10.0f, 11.0f);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-  EXPECT_EQ(n_body.main_result(), "Run");
-}
-
-TEST(NBodySequentialWithInputFileProfilerTest, RunWithProfiler) {
-  mila::nbody::sequential::NBodySequentialWithInputFileProfiler n_body;
-
-  EXPECT_EQ(n_body.results().count("Run"), 0);
-  EXPECT_EQ(n_body.results().count("Interactions per second"), 0);
-  EXPECT_EQ(n_body.results().count("Frames per second"), 0);
-  n_body.Run("test_file.txt");
-  EXPECT_EQ(n_body.results().count("Run"), 1);
-  EXPECT_EQ(n_body.results().count("Interactions per second"), 1);
-  EXPECT_EQ(n_body.results().count("Frames per second"), 1);
+TEST(SequentialNBodyAppTest, Run) {
+  const auto logger_spy = std::shared_ptr<mila::LoggerSpy>(new mila::LoggerSpy());
+  const auto number_of_particles = std::string("100");
+  const auto number_of_iterations = std::string("10");
+  const char *parameters[] = {"app", number_of_particles.c_str(), number_of_iterations.c_str()};
+  const auto mean_shift = mila::SequentialNBodyApp(logger_spy);
+  // const_cast due to C vs C++ string literals
+  mean_shift.Run(3, const_cast<char **>(parameters));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of particles: " + number_of_particles));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of iterations: " + number_of_iterations));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration coefficient of variation: "));
 }

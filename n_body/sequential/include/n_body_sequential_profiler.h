@@ -1,44 +1,36 @@
 #ifndef MILA_N_BODY_SEQUENTIAL_PROFILER_H_
 #define MILA_N_BODY_SEQUENTIAL_PROFILER_H_
 
-#include <chrono>
-#include <map>
-
 #include "n_body_sequential.h"
+#include "profiler.h"
 #include "utils.h"
 
 namespace mila {
-namespace nbody {
-namespace sequential {
-
-class NBodySequentialWithInputFileProfiler: public NBodySequentialWithInputFile {
- public:
-  NBodySequentialWithInputFileProfiler();
-  NBodySequentialWithInputFileProfiler(int number_of_particles);
-  NBodySequentialWithInputFileProfiler(float active_repulsion_force_,
-                               float active_repulsion_min_distance_,
-                               float passive_repulsion_force_,
-                               float passive_repulsion_min_distance_,
-                               float damping_force_,
-                               float central_force_,
-                               Vector2D center_,
-                               int number_of_particles_,
-                               float min_position_,
-                               float max_position_);
-
-  void Run(const std::string &input_file) override;
-
-  std::string main_result() const;
-  std::string main_duration() const;
-  std::map<std::string, float> results() const;
- private:
-  const std::string main_result_;
-  const std::string main_duration_;
-  std::map<std::string, float> results_;
+struct SequentialNBodyProfilingResults {
+  std::chrono::microseconds update_particles_duration;
+  float particles_per_second;
 };
+class SequentialNBodyProfiler : public NBody {
+ public:
+  SequentialNBodyProfiler(std::unique_ptr<mila::SequentialNBody> n_body,
+                          std::unique_ptr<mila::Profiler> profiler,
+                          const std::shared_ptr<mila::Logger> logger);
+  SequentialNBodyProfiler(SequentialNBodyProfiler &&profiler);
+  virtual ~SequentialNBodyProfiler();
 
-}  // sequential
-}  // nbody
+  virtual void UpdateParticles(const NBodyParameters &parameters,
+                               const Vector2D &active_repulsion_force_position,
+                               std::vector<Particle> &particles);
+
+  SequentialNBodyProfilingResults GetResults() const;
+ private:
+  std::unique_ptr<mila::SequentialNBody> n_body_;
+  std::unique_ptr<mila::Profiler> profiler_;
+  std::shared_ptr<mila::Logger> logger_;
+  SequentialNBodyProfilingResults results_;
+
+  void SetResultsAfterUpdateParticles(const size_t number_of_particles);
+  void InitResults();
+};
 }  // mila
-
 #endif  // MILA_N_BODY_SEQUENTIAL_PROFILER_H_
