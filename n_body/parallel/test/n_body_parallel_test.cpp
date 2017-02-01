@@ -1,357 +1,80 @@
 #include "gtest/gtest.h"
 #include "n_body_parallel.h"
 #include "n_body_parallel_profiler.h"
+#include "n_body_parallel_app.h"
 
-TEST(NBodyParticleTest, InitializeWithSingleValue) {
-  mila::nbody::parallel::Particle particle = mila::nbody::parallel::Particle{{0.0f}};
-  EXPECT_EQ(particle.position.x, 0.0f);
-  EXPECT_EQ(particle.position.y, 0.0f);
-  EXPECT_EQ(particle.velocity.x, 0.0f);
-  EXPECT_EQ(particle.velocity.y, 0.0f);
-  EXPECT_EQ(particle.acceleration.x, 0.0f);
-  EXPECT_EQ(particle.acceleration.y, 0.0f);
-}
-
-TEST(NBodyParticleTest, InitializeWithMultipleValues) {
-  mila::nbody::parallel::Particle particle = {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}};
-  EXPECT_EQ(particle.position.x, 1.0f);
-  EXPECT_EQ(particle.position.y, 2.0f);
-  EXPECT_EQ(particle.velocity.x, 3.0f);
-  EXPECT_EQ(particle.velocity.y, 4.0f);
-  EXPECT_EQ(particle.acceleration.x, 5.0f);
-  EXPECT_EQ(particle.acceleration.y, 6.0f);
-}
-
-TEST(NBodyParallelTest, DefaultConstructor) {
-  mila::nbody::parallel::NBodyParallel n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 0);
-  EXPECT_EQ(n_body.device_id(), 0);
-}
-
-TEST(NBodyParallelTest, NumberOfParticlesConstructor) {
-  mila::nbody::parallel::NBodyParallel n_body(100, 1, 2);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 100);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 1);
-  EXPECT_EQ(n_body.device_id(), 2);
-}
-
-TEST(NBodyParallelTest, ComplexConstructor) {
-  mila::nbody::parallel::NBodyParallel n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, cl_float2{7.0f, 8.0f}, 9, 10.0f, 11.0f, 12, 13);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-  EXPECT_EQ(n_body.platform_id(), 12);
-  EXPECT_EQ(n_body.device_id(), 13);
-}
-
-TEST(NBodyParallelTest, GenerateParticles) {
-  mila::nbody::parallel::NBodyParallel n_body;
-  int number_of_particles = 5;
-  float min = 10.0f;
-  float max = 20.0f;
-
-  std::vector<mila::nbody::parallel::Particle> output = n_body.GenerateParticles(number_of_particles, min, max);
-
-  ASSERT_EQ(output.size(), number_of_particles);
-  for (int i = 0; i < number_of_particles; ++i) {
-    EXPECT_GE(output[i].position.x, min);
-    EXPECT_LT(output[i].position.x, max);
-    EXPECT_GE(output[i].position.y, min);
-    EXPECT_LT(output[i].position.y, max);
-    EXPECT_EQ(output[i].velocity.x, 0.0f);
-    EXPECT_EQ(output[i].velocity.y, 0.0f);
-    EXPECT_EQ(output[i].acceleration.x, 0.0f);
-    EXPECT_EQ(output[i].acceleration.y, 0.0f);
+class ParallelNBodyProfilerTest : public testing::Test {
+ protected:
+  virtual void SetUp() {
+    auto ocl_app = mila::OpenCLApplicationFactory().MakeGeneric(0, 0, nullptr);
+    auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());
+    auto n_body = std::unique_ptr<mila::ParallelNBody>(new mila::ParallelNBody(std::move(ocl_app),
+                                                                               nullptr));
+    auto n_body_profiler = new mila::ParallelNBodyProfiler(std::move(n_body), std::move(profiler), nullptr);
+    n_body_ = std::unique_ptr<mila::ParallelNBodyProfiler>(n_body_profiler);
   }
+  std::unique_ptr<mila::ParallelNBodyProfiler> n_body_;
+};
+
+TEST_F(ParallelNBodyProfilerTest, GetResultsAfterInitialize) {
+  this->n_body_->Initialize();
+  EXPECT_GT(this->n_body_->GetResults().initialize_duration.count(), 0);
 }
 
-TEST(NBodyParallelTest, Initialize) {
-  mila::nbody::parallel::NBodyParallel n_body;
-
-  EXPECT_EQ(n_body.particles().size(), 0);
-  n_body.Initialize();
-  EXPECT_EQ(n_body.particles().size(), n_body.number_of_particles());
-}
-
-TEST(NBodyParallelTest, UpdateParticles) {
-  mila::nbody::parallel::NBodyParallel n_body;
-  std::vector<mila::nbody::parallel::Particle> expected_particles = {
-      {{13.42111f, 316.12225f}, {12.42111f, 314.12225f}, {0.0f, 0.0f}},
-      {{95.21749f, 129.99371f}, {85.21749f, 109.99370f}, {0.0f, 0.0f}}
+TEST_F(ParallelNBodyProfilerTest, GetResultsAfterRun) {
+  auto particles = std::vector<mila::Particle>{
+      {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}},
+      {{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}}
   };
-  n_body.set_particles({
-                           {{1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f}},
-                           {{10.0f, 20.0f}, {30.0f, 40.0f}, {50.0f, 60.0f}}
-                       });
+  const mila::NBodyParameters parameters{};
 
-  n_body.InitializeOpenCL();
-  n_body.UpdateParticles(cl_float2{1.0f, 1.0f});
-
-  ASSERT_EQ(n_body.particles().size(), expected_particles.size());
-  for (int i = 0; i < n_body.particles().size(); ++i) {
-    EXPECT_NEAR(n_body.particles()[i].position.x, expected_particles[i].position.x, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].position.y, expected_particles[i].position.y, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].velocity.x, expected_particles[i].velocity.x, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].velocity.y, expected_particles[i].velocity.y, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].acceleration.x, expected_particles[i].acceleration.x, 1e-5f);
-    EXPECT_NEAR(n_body.particles()[i].acceleration.y, expected_particles[i].acceleration.y, 1e-5f);
-  }
+  this->n_body_->Initialize();
+  this->n_body_->UpdateParticles(parameters, mila::Vector2D{1.0f, 1.0f}, particles);
+  EXPECT_GT(this->n_body_->GetResults().update_particles_duration.count(), 0);
+  EXPECT_GT(this->n_body_->GetResults().initialize_duration.count(), 0);
+  EXPECT_GT(this->n_body_->GetResults().enqueue_nd_range_duration.count(), 0);
+  EXPECT_GT(this->n_body_->GetResults().read_buffer_duration.count(), 0);
+  EXPECT_GT(this->n_body_->GetResults().particles_per_second, 0.0f);
+  EXPECT_GT(this->n_body_->GetResults().bandwidth, 0.0f);
 }
 
-TEST(NBodyParallelWithViewTest, DefaultConstructor) {
-  mila::nbody::parallel::NBodyParallelWithView n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 0);
-  EXPECT_EQ(n_body.device_id(), 0);
-}
-
-TEST(NBodyParallelWithViewTest, NumberOfParticlesConstructor) {
-  mila::nbody::parallel::NBodyParallelWithView n_body(100, 1, 2);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 100);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 1);
-  EXPECT_EQ(n_body.device_id(), 2);
-}
-
-TEST(NBodyParallelWithViewTest, ComplexConstructor) {
-  mila::nbody::parallel::NBodyParallelWithView n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, cl_float2{7.0f, 8.0f}, 9, 10.0f, 11.0f, 12, 13);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-  EXPECT_EQ(n_body.platform_id(), 12);
-  EXPECT_EQ(n_body.device_id(), 13);
-}
-
-TEST(NBodyParallelWithInputFileTest, DefaultConstructor) {
-  mila::nbody::parallel::NBodyParallelWithInputFile n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 0);
-  EXPECT_EQ(n_body.device_id(), 0);
-}
-
-TEST(NBodyParallelWithInputFileTest, NumberOfParticlesConstructor) {
-  mila::nbody::parallel::NBodyParallelWithInputFile n_body(100, 1, 2);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 100);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 1);
-  EXPECT_EQ(n_body.device_id(), 2);
-}
-
-TEST(NBodyParallelWithInputFileTest, ComplexConstructor) {
-  mila::nbody::parallel::NBodyParallelWithInputFile n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, cl_float2{7.0f, 8.0f}, 9, 10.0f, 11.0f, 12, 13);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-  EXPECT_EQ(n_body.platform_id(), 12);
-  EXPECT_EQ(n_body.device_id(), 13);
-}
-
-TEST(NBodyParallelWithInputFileTest, ParseInputFile) {
-  mila::nbody::parallel::NBodyParallelWithInputFile n_body;
-  std::vector<cl_float2> expected_output = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
-
-  std::vector<cl_float2> output = n_body.ParseInputFile("test_file.txt");
-
-  ASSERT_EQ(expected_output.size(), output.size());
-  for (int i = 0; i < output.size(); ++i) {
-    EXPECT_EQ(expected_output[i].x, output[i].x);
-    EXPECT_EQ(expected_output[i].y, output[i].y);
-  }
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, DefaultConstructor) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 500);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 0);
-  EXPECT_EQ(n_body.device_id(), 0);
-  EXPECT_EQ(n_body.main_result(), "Frames per second");
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, NumberOfParticlesConstructor) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body(100, 1, 2);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 300.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 100.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 4.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 50.0f);
-  EXPECT_EQ(n_body.damping_force(), 0.8f);
-  EXPECT_EQ(n_body.central_force(), 0.01f);
-  EXPECT_EQ(n_body.center().x, 512.0f);
-  EXPECT_EQ(n_body.center().y, 512.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 100);
-  EXPECT_EQ(n_body.min_position(), 0.0f);
-  EXPECT_EQ(n_body.max_position(), 1024.0f);
-  EXPECT_EQ(n_body.platform_id(), 1);
-  EXPECT_EQ(n_body.device_id(), 2);
-  EXPECT_EQ(n_body.main_result(), "Frames per second");
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, ComplexConstructor) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, cl_float2{7.0f, 8.0f}, 9, 10.0f, 11.0f, 12, 13);
-
-  EXPECT_EQ(n_body.active_repulsion_force(), 1.0f);
-  EXPECT_EQ(n_body.active_repulsion_min_distance(), 2.0f);
-  EXPECT_EQ(n_body.passive_repulsion_force(), 3.0f);
-  EXPECT_EQ(n_body.passive_repulsion_min_distance(), 4.0f);
-  EXPECT_EQ(n_body.damping_force(), 5.0f);
-  EXPECT_EQ(n_body.central_force(), 6.0f);
-  EXPECT_EQ(n_body.center().x, 7.0f);
-  EXPECT_EQ(n_body.center().y, 8.0f);
-  EXPECT_EQ(n_body.number_of_particles(), 9);
-  EXPECT_EQ(n_body.min_position(), 10.0f);
-  EXPECT_EQ(n_body.max_position(), 11.0f);
-  EXPECT_EQ(n_body.platform_id(), 12);
-  EXPECT_EQ(n_body.device_id(), 13);
-  EXPECT_EQ(n_body.main_result(), "Frames per second");
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, RunWithProfiler) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-
-  EXPECT_EQ(n_body.results().count("Run"), 0);
-  EXPECT_EQ(n_body.results().count("Interactions per second"), 0);
-  EXPECT_EQ(n_body.results().count("Frames per second"), 0);
-  n_body.Run("test_file.txt");
-  EXPECT_EQ(n_body.results().count("Run"), 1);
-  EXPECT_EQ(n_body.results().count("Interactions per second"), 1);
-  EXPECT_EQ(n_body.results().count("Frames per second"), 1);
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, GetBuildKernelAsMicroseconds) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-  n_body.Initialize();
-  EXPECT_GT(n_body.GetBuildKernelAsMicroseconds(), 0);
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, GetReadBufferAsMicroseconds) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-  n_body.Run("test_file.txt");
-  EXPECT_GT(n_body.GetReadBufferAsMicroseconds(), 0);
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, GetEnqueueNDRangeAsMicroseconds) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-  n_body.Run("test_file.txt");
-  EXPECT_GT(n_body.GetEnqueueNDRangeAsMicroseconds(), 0);
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, GetOpenCLStatisticsAsString) {
-  auto n_body = mila::nbody::parallel::NBodyParallelWithInputFileProfiler();
-  EXPECT_STREQ("", n_body.GetOpenCLStatisticsAsString().c_str());
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, GetOpenCLStatisticsAsStringWithRun) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-  n_body.Run("test_file.txt");
-  EXPECT_STRNE("", n_body.GetOpenCLStatisticsAsString().c_str());
-}
-
-TEST(NBodyParallelWithInputFileProfilerTest, GetBandwidth) {
-  mila::nbody::parallel::NBodyParallelWithInputFileProfiler n_body;
-  n_body.Run("test_file.txt");
-  auto tmp = n_body.GetBandwidth();
-  EXPECT_GT(n_body.GetBandwidth(), 0);
+TEST(ParallelNBodyAppTest, Run) {
+  const auto logger_spy = std::shared_ptr<mila::LoggerSpy>(new mila::LoggerSpy());
+  const auto number_of_particles = std::string("100");
+  const auto platform_id = std::string("0");
+  const auto device_id = std::string("0");
+  const auto number_of_iterations = std::string("10");
+  const char *parameters[] =
+      {"app", number_of_particles.c_str(), platform_id.c_str(), device_id.c_str(), number_of_iterations.c_str()};
+  const auto n_body = mila::ParallelNBodyApp(logger_spy);
+  // const_cast due to C vs C++ string literals
+  n_body.Run(5, const_cast<char **>(parameters));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of particles: " + number_of_particles));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Number of iterations: " + number_of_iterations));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Platform id: " + platform_id));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Device id: " + device_id));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Bandwidth mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Bandwidth median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Bandwidth standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Bandwidth coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Initialize duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Initialize duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Initialize duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Initialize duration coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Update particles duration coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Enqueue ND range duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Enqueue ND range duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Enqueue ND range duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Enqueue ND range duration coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Read buffer duration mean: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Read buffer duration median: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Read buffer duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Read buffer duration coefficient of variation: "));
 }

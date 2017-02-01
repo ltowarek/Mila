@@ -6,21 +6,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIR})
 
-find_package(OpenGL REQUIRED)
-
-set(KERNEL_FILE ${PROJECT_SOURCE_DIR}/n_body.cl)
 configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-set(N_BODY_PARALLEL_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include ${N_BODY_UTILS_INCLUDE_DIRS} ${UTILS_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIR} ${CLPP_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
-set(N_BODY_PARALLEL_LIBRARIES n_body_parallel_lib ${N_BODY_UTILS_LIBRARIES} ${UTILS_LIBRARIES} glfw ${GLFW_LIBRARIES} ${OpenCL_LIBRARIES} ${OPENGL_LIBRARIES})
-add_library(n_body_parallel_lib include/n_body_parallel.h include/n_body_parallel.cpp
-        include/n_body_parallel_profiler.h include/n_body_parallel_profiler.cpp)
-target_link_libraries(n_body_parallel_lib ${UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
+include_directories(${UTILS_INCLUDE_DIRS} ${N_BODY_UTILS_INCLUDE_DIRS})
+add_library(n_body_parallel_lib
+    include/n_body_parallel.h include/n_body_parallel.cpp
+    include/n_body_parallel_profiler.h include/n_body_parallel_profiler.cpp
+    include/n_body_parallel_app.h include/n_body_parallel_app.cpp)
+target_link_libraries(n_body_parallel_lib ${UTILS_LIBRARIES} ${N_BODY_UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
 
 add_subdirectory(test)
 
-configure_file(sample_input.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-
-include_directories(${UTILS_INCLUDE_DIRS} ${N_BODY_PARALLEL_INCLUDE_DIRS})
+include_directories(${N_BODY_PARALLEL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${UTILS_LIBRARIES} ${N_BODY_PARALLEL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${N_BODY_PARALLEL_LIBRARIES})

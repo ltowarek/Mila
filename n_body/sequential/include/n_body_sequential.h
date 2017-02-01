@@ -3,10 +3,8 @@
 
 #include "logger.h"
 #include "n_body.h"
-#include "n_body_utils.h"
 
 namespace mila {
-
 class SequentialNBody : public NBody {
  public:
   SequentialNBody(const std::shared_ptr<mila::Logger> logger);
@@ -30,7 +28,5 @@ class SequentialNBody : public NBody {
  private:
   const std::shared_ptr<mila::Logger> logger_;
 };
-
 }  // mila
-
 #endif  // MILA_N_BODY_SEQUENTIAL_H_

@@ -1,142 +1,74 @@
 #include "n_body_parallel_profiler.h"
 
-mila::nbody::parallel::NBodyParallelWithInputFileProfiler::NBodyParallelWithInputFileProfiler() : NBodyParallelWithInputFileProfiler(300.0f,
-                                                                                                             100.0f,
-                                                                                                             4.0f,
-                                                                                                             50.0f,
-                                                                                                             0.8f,
-                                                                                                             0.01f,
-                                                                                                             cl_float2{512.0f, 512.0f},
-                                                                                                             500,
-                                                                                                             0.0f,
-                                                                                                             1024.0f,
-                                                                                                             0,
-                                                                                                             0) {
+mila::ParallelNBodyProfiler::ParallelNBodyProfiler(std::unique_ptr<mila::ParallelNBody> n_body,
+                                                   std::unique_ptr<mila::Profiler> profiler,
+                                                   const std::shared_ptr<mila::Logger> logger)
+    : n_body_(std::move(n_body)), profiler_(std::move(profiler)), logger_(logger) {
+  InitResults();
 }
 
-mila::nbody::parallel::NBodyParallelWithInputFileProfiler::NBodyParallelWithInputFileProfiler(int number_of_particles, size_t platform_id, size_t device_id)
-    : NBodyParallelWithInputFileProfiler(300.0f,
-                                 100.0f,
-                                 4.0f,
-                                 50.0f,
-                                 0.8f,
-                                 0.01f,
-                                 cl_float2{512.0f, 512.0f},
-                                 number_of_particles,
-                                 0.0f,
-                                 1024.0f,
-                                 platform_id,
-                                 device_id) {
+mila::ParallelNBodyProfiler::~ParallelNBodyProfiler() {
 }
 
-mila::nbody::parallel::NBodyParallelWithInputFileProfiler::NBodyParallelWithInputFileProfiler(float active_repulsion_force,
-                                                                              float active_repulsion_min_distance,
-                                                                              float passive_repulsion_force,
-                                                                              float passive_repulsion_min_distance,
-                                                                              float damping_force,
-                                                                              float central_force,
-                                                                              cl_float2 center,
-                                                                              int number_of_particles,
-                                                                              float min_position,
-                                                                              float max_position,
-                                                                              size_t platform_id,
-                                                                              size_t device_id) : NBodyParallelWithInputFile(active_repulsion_force,
-                                                                                                                             active_repulsion_min_distance,
-                                                                                                                             passive_repulsion_force,
-                                                                                                                             passive_repulsion_min_distance,
-                                                                                                                             damping_force,
-                                                                                                                             central_force,
-                                                                                                                             center,
-                                                                                                                             number_of_particles,
-                                                                                                                             min_position,
-                                                                                                                             max_position,
-                                                                                                                             platform_id,
-                                                                                                                             device_id),
-                                                                                                  main_result_("Frames per second"),
-                                                                                                  main_duration_("Run") {
+void mila::ParallelNBodyProfiler::Initialize() {
+  profiler_->Start("Initialize");
+  n_body_->Initialize();
+  profiler_->End("Initialize");
+  SetResultsAfterInitialize();
 }
 
-void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::BuildProgram(const clpp::Program &program, const clpp::Device &device, const std::string& build_options) {
-  auto start_time = std::chrono::high_resolution_clock::now();
-  NBodyParallelWithInputFile::BuildProgram(program, device, build_options);
-  auto end_time = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration<float>(end_time - start_time);
-  auto duration_us = static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
-  device_statistics_.SetBuildKernelAsMicroseconds(duration_us);
+mila::ParallelNBodyProfilingResults mila::ParallelNBodyProfiler::GetResults() const {
+  return results_;
 }
 
-void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::Run(const std::string &input_file) {
-  auto start_time = std::chrono::high_resolution_clock::now();
-  NBodyParallelWithInputFile::Run(input_file);
-  auto end_time = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration<float>(end_time - start_time);
-  auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-  results_.insert(std::pair<std::string, float>("Run", duration_us));
-  results_.insert(std::pair<std::string, float>("Interactions per second", mila::utils::GetValuePerSecond((number_of_particles_ * number_of_particles_), duration)));
-  results_.insert(std::pair<std::string, float>("Frames per second", mila::utils::GetValuePerSecond(number_of_frames_, duration)));
-
-  GetProfilingInfo();
-  bandwidth_ = ComputeBandwidthAsGBPS(number_of_particles_, GetEnqueueNDRangeAsMicroseconds());
+void mila::ParallelNBodyProfiler::UpdateParticles(const NBodyParameters &parameters,
+                                                  const Vector2D &active_repulsion_force_position,
+                                                  std::vector<Particle> &particles) {
+  profiler_->Start("UpdateParticles");
+  n_body_->UpdateParticles(parameters, active_repulsion_force_position, particles);
+  profiler_->End("UpdateParticles");
+  SetResultsAfterUpdateParticles(particles.size());
 }
 
-size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetBuildKernelAsMicroseconds() {
-  return device_statistics_.GetBuildKernelAsMicroseconds();
+void mila::ParallelNBodyProfiler::InitResults() {
+  results_.update_particles_duration = std::chrono::seconds(0);
+  results_.initialize_duration = std::chrono::seconds(0);
+  results_.enqueue_nd_range_duration = std::chrono::seconds(0);
+  results_.read_buffer_duration = std::chrono::seconds(0);
+  results_.particles_per_second = 0.0f;
+  results_.bandwidth = 0.0f;
 }
 
-size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetReadBufferAsMicroseconds() {
-  return device_statistics_.GetReadBufferAsMicroseconds();
+void mila::ParallelNBodyProfiler::SetResultsAfterInitialize() {
+  results_.initialize_duration = profiler_->GetDuration("Initialize");
 }
 
-size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetEnqueueNDRangeAsMicroseconds() {
-  return device_statistics_.GetEnqueueNDRangeAsMicroseconds();
+void mila::ParallelNBodyProfiler::SetResultsAfterUpdateParticles(const size_t number_of_particles) {
+  results_.update_particles_duration = profiler_->GetDuration("UpdateParticles");
+  results_.enqueue_nd_range_duration =
+      mila::utils::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().enqueue_nd_range);
+  results_.read_buffer_duration =
+      mila::utils::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().read_buffer);
+  results_.particles_per_second = mila::utils::GetValuePerSecond(number_of_particles,
+                                                                 results_.update_particles_duration);
+  results_.bandwidth = ComputeBandwidthAsGBPS(number_of_particles, results_.update_particles_duration.count());
 }
 
-std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetOpenCLStatisticsAsString() {
-  return device_statistics_.GetOpenCLStatisticsAsString();
-}
-
-void mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetProfilingInfo() {
-  if (events_.read_buffer != nullptr) {
-    device_statistics_.SetReadBufferAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.read_buffer));
-  }
-  if (events_.enqueue_nd_range != nullptr) {
-    device_statistics_.SetEnqueueNDRangeAsMicroseconds(GetProfilingInfoAsMicroseconds(events_.enqueue_nd_range));
-  }
-}
-
-size_t mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetProfilingInfoAsMicroseconds(clpp::Event event) {
-  auto nanoseconds = event.getProfilingCommandEnd() - event.getProfilingCommandStart();
-  auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(nanoseconds));
-  return static_cast<size_t>(microseconds.count());
-}
-
-float mila::nbody::parallel::NBodyParallelWithInputFileProfiler::ComputeBandwidthAsGBPS(size_t number_of_work_items, float microseconds) {
+float mila::ParallelNBodyProfiler::ComputeBandwidthAsGBPS(const size_t number_of_work_items,
+                                                          const float microseconds) {
   auto gb_per_s = 0.0f;
   if (microseconds > 0) {
-    auto current_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items + 1);
-    auto original_points_bytes = sizeof(cl_float4) * number_of_work_items * (number_of_work_items * 2);
-    auto shifted_points_bytes = sizeof(cl_float4) * number_of_work_items * 2;
-    auto distances_bytes = sizeof(cl_float) * number_of_work_items * 1;
-    auto micro_to_giga = 1e3f;
-    gb_per_s = (current_points_bytes + original_points_bytes + shifted_points_bytes + distances_bytes) / microseconds / micro_to_giga;
+    const auto input_particles_bytes = sizeof(mila::Particle) * number_of_work_items * number_of_work_items;
+    const auto output_particles_bytes = sizeof(mila::Particle) * number_of_work_items * 1;
+    const auto parameters_bytes = sizeof(mila::NBodyParameters) * number_of_work_items * 1;
+    const auto force_position_bytes = sizeof(cl_float2) * number_of_work_items * 1;
+    const auto micro_to_giga = 1e3f;
+    gb_per_s = (input_particles_bytes + output_particles_bytes + parameters_bytes + force_position_bytes) / microseconds
+        / micro_to_giga;
   }
   return gb_per_s;
 }
 
-float mila::nbody::parallel::NBodyParallelWithInputFileProfiler::GetBandwidth() {
-  return bandwidth_;
-}
-
-std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::main_result() const {
-  return main_result_;
-}
-
-std::string mila::nbody::parallel::NBodyParallelWithInputFileProfiler::main_duration() const {
-  return main_duration_;
-}
-
-std::map<std::string, float> mila::nbody::parallel::NBodyParallelWithInputFileProfiler::results() const {
-  return results_;
+mila::ParallelNBodyProfiler::ParallelNBodyProfiler(mila::ParallelNBodyProfiler &&profiler) :
+    n_body_(std::move(profiler.n_body_)), profiler_(std::move(profiler.profiler_)), logger_(profiler.logger_) {
 }

@@ -33,6 +33,5 @@ class ParallelMeanShift : public MeanShift {
   Events events_;
   clpp::Kernel kernel_;
 };
-
 }  // mila
 #endif  // MILA_MEAN_SHIFT_PARALLEL_H_

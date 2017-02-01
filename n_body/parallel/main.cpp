@@ -1,72 +1,12 @@
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <vector>
+#include <memory>
 
-#include "utils.h"
+#include "n_body_parallel_app.h"
 #include "version.h"
-#include "n_body_parallel_profiler.h"
-
-struct parameters {
-  std::string input_file;
-  int number_of_particles;
-  size_t platform_id;
-  size_t device_id;
-  size_t number_of_iterations;
-};
-
-parameters ParseCommandLine(int argc, char **argv) {
-  auto config = parameters{};
-  // TODO: Verify input and add help message
-  config.input_file = std::string(argv[1]);
-  config.number_of_particles = atoi(argv[2]);
-  config.platform_id = static_cast<size_t>(atoi(argv[3]));
-  config.device_id = static_cast<size_t>(atoi(argv[4]));
-  config.number_of_iterations = static_cast<size_t>(atoi(argv[5]));
-  return config;
-}
 
 int main(int argc, char **argv) {
-  auto config = ParseCommandLine(argc, argv);
-  printf("%s\n", mila::version::GetVersion().c_str());
-
-  auto n_body_initial = mila::nbody::parallel::NBodyParallelWithInputFileProfiler(config.number_of_particles,
-                                                                                  config.platform_id,
-                                                                                  config.device_id);
-  n_body_initial.Run(config.input_file);
-  auto result = n_body_initial.results().at(n_body_initial.main_result());
-  auto duration = n_body_initial.results().at(n_body_initial.main_duration());
-  printf("Initial results\n");
-  printf("%s: %f\n", n_body_initial.main_result().c_str(), result);
-  printf("Duration [us]: %f\n", duration);
-  printf("Platform: %s\n", n_body_initial.platform().getName().c_str());
-  printf("Device: %s\n", n_body_initial.device().getName().c_str());
-  printf("Input file: %s\n", config.input_file.c_str());
-  printf("Number of particles: %d\n", config.number_of_particles);
-
-  auto results = std::vector<float>(config.number_of_iterations);
-  printf("Iterations\n");
-  for (size_t i = 0; i < config.number_of_iterations; ++i) {
-    auto n_body = mila::nbody::parallel::NBodyParallelWithInputFileProfiler(config.number_of_particles,
-                                                                            config.platform_id,
-                                                                            config.device_id);
-    n_body.Run(config.input_file);
-    result = n_body.results().at(n_body.main_result());
-    duration = n_body.results().at(n_body.main_duration());
-    printf("Iteration: %lu\n", i);
-    printf("Host statistics:\n");
-    printf("Duration: %f us, %s: %f, Bandwidth: %f GB/s\n", duration, n_body.main_result().c_str(), result, n_body.GetBandwidth());
-    printf("OpenCL statistics:\n");
-    printf("%s\n", n_body.GetOpenCLStatisticsAsString().c_str());
-    results[i] = duration;
-  }
-
-  printf("Statistics\n");
-  printf("Mean: %f\n", mila::utils::Mean(results));
-  printf("Median: %f\n", mila::utils::Median(results));
-  printf("Variance: %f\n", mila::utils::Variance(results));
-  printf("Standard Deviation: %f\n", mila::utils::StandardDeviation(results));
-  printf("Coefficient of Variation: %f\n", mila::utils::CoefficientOfVariation(results));
+  auto logger = std::shared_ptr<mila::Logger>(mila::LoggerFactory().MakePrintf());
+  logger->Info("Version: %s", mila::version::GetVersion().c_str());
+  mila::ParallelNBodyApp(logger).Run(argc, argv);
 
   return 0;
 }
