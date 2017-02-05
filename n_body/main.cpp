@@ -38,6 +38,10 @@ int main(int argc, char **argv) {
     n_body = mila::NBodyAppFactory().MakeParallel(logger);
   } else if (config.test_case.compare("sequential") == 0) {
     n_body = mila::NBodyAppFactory().MakeSequential(logger);
+  } else if (config.test_case.compare("parallel_interactive_view") == 0) {
+    n_body = mila::NBodyAppFactory().MakeParallelInteractiveView(logger);
+  } else if (config.test_case.compare("sequential_interactive_view") == 0) {
+    n_body = mila::NBodyAppFactory().MakeSequentialInteractiveView(logger);
   }
   n_body->Run(argc, argv);
 

@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_H_
-#define MILA_MEAN_SHIFT_H_
+#ifndef MILA_N_BODY_H_
+#define MILA_N_BODY_H_
 
 #include <cstddef>
 #include <vector>
@@ -10,6 +10,8 @@ namespace mila {
 struct Vector2D {
   float x;
   float y;
+
+  static bool AreEqual(const Vector2D &lhs, const Vector2D &rhs, const double epsilon);
 };
 
 struct Particle {
@@ -46,4 +48,4 @@ class NBodyApp {
   virtual void Run(int argc, char **argv) const = 0;
 };
 }  // mila
-#endif  // MILA_UTILS_MEAN_SHIFT_H_
+#endif  // MILA_N_BODY_H_
