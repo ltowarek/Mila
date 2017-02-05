@@ -3,7 +3,7 @@ compiler: gcc
 group: edge
 env:
     global:
-        - GCC_VERSION="4.9"
+        - GCC_VERSION="5"
 before_install:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update -qq
