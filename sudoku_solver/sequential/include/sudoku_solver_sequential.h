@@ -2,6 +2,7 @@
 #define MILA_SUDOKU_SOLVER_SEQUENTIAL_H_
 
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 #include "sudoku_solver_utils.h"

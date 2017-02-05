@@ -46,7 +46,7 @@ bool mila::sudokusolver::sequential::SudokuSolver::IsValidInBoxes(const std::vec
                                                                   int n,
                                                                   int row,
                                                                   int column) const {
-  const auto box_size = int(sqrt(n));
+  const auto box_size = int(std::sqrt(n));
   const auto box_row = row / box_size;
   const auto box_column = column / box_size;
   auto is_valid = true;
@@ -110,7 +110,7 @@ void mila::sudokusolver::sequential::SudokuSolverBasedOnFiles::Run(const std::st
   auto output_file = mila::sudokusolver::utils::SudokuFile(output_file_name);
 
   auto input_grid = input_file.Read();
-  auto output_grid = Run(input_grid, sqrt(input_grid.size()));
+  auto output_grid = Run(input_grid, std::sqrt(input_grid.size()));
 
   output_file.Write(output_grid);
 }
