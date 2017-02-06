@@ -36,7 +36,7 @@ void mila::GenericNBodyInteractiveView::Record(const mila::NBodyParameters &para
   }
 
   glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
+  glfwSwapInterval(0);
 
   // Intentional infinite loop when number_of_frames is negative
   for (auto frame = number_of_frames; frame != 0 && !glfwWindowShouldClose(window); --frame) {
@@ -81,7 +81,7 @@ bool mila::GenericNBodyInteractiveView::Replay(const mila::NBodyParameters &para
   }
 
   glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
+  glfwSwapInterval(0);
 
   for (auto frame = 0; frame < number_of_frames && !glfwWindowShouldClose(window); ++frame) {
     const auto mouse_position = mouse_positions[frame];
