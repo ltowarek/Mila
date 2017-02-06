@@ -10,3 +10,5 @@ add_library(mean_shift_utils_lib
     include/mean_shift.h include/mean_shift.cpp)
 
 add_subdirectory(test)
+
+set_property(TARGET mean_shift_utils_lib PROPERTY FOLDER "mean_shift")

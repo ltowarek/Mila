@@ -20,3 +20,6 @@ add_subdirectory(test)
 include_directories(${BBP_PARALLEL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${BBP_PARALLEL_LIBRARIES})
+
+set_property(TARGET bbp_parallel_lib PROPERTY FOLDER "bbp")
+set_property(TARGET bbp_parallel PROPERTY FOLDER "bbp")

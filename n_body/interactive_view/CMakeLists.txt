@@ -13,3 +13,5 @@ add_library(n_body_interactive_view_lib
 target_link_libraries(n_body_interactive_view_lib ${N_BODY_UTILS_LIBRARIES} ${UTILS_LIBRARIES} ${N_BODY_SEQUENTIAL_LIBRARIES} ${N_BODY_PARALLEL_LIBRARIES} ${GLFW_LIBRARIES} ${OPENGL_LIBRARY})
 
 add_subdirectory(test)
+
+set_property(TARGET n_body_interactive_view_lib PROPERTY FOLDER "n_body")

@@ -6,3 +6,5 @@ add_executable(${PROJECT_NAME} test.cpp)
 target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${BBP_UTILS_LIBRARIES})
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+set_property(TARGET bbp_utils_test PROPERTY FOLDER "bbp")

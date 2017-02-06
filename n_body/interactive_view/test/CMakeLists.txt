@@ -10,3 +10,5 @@ add_executable(${PROJECT_NAME} n_body_interactive_view_test.cpp)
 target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${N_BODY_INTERACTIVE_VIEW_LIBRARIES})
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+set_property(TARGET n_body_interactive_view_test PROPERTY FOLDER "n_body")

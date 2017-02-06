@@ -16,3 +16,5 @@ add_library(utils_lib
 target_link_libraries(utils_lib ${OpenCL_LIBRARIES})
 
 add_subdirectory(test)
+
+set_property(TARGET utils_lib PROPERTY FOLDER "utils")

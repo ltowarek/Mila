@@ -43,3 +43,6 @@ add_executable(mean_shift main.cpp)
 target_link_libraries(mean_shift ${UTILS_LIBRARIES} ${MEAN_SHIFT_FACTORIES_LIBRARIES})
 
 add_subdirectory(test)
+
+set_property(TARGET mean_shift_factories_lib PROPERTY FOLDER "mean_shift")
+set_property(TARGET mean_shift PROPERTY FOLDER "mean_shift")

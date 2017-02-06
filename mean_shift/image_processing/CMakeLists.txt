@@ -12,3 +12,5 @@ target_link_libraries(mean_shift_image_processing_lib ${MEAN_SHIFT_UTILS_LIBRARI
     ${MEAN_SHIFT_PARALLEL_LIBRARIES})
 
 add_subdirectory(test)
+
+set_property(TARGET mean_shift_image_processing_lib PROPERTY FOLDER "mean_shift")

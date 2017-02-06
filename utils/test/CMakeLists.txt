@@ -15,3 +15,5 @@ target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${UTILS_LIBRARIES})
 file(COPY test.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+set_property(TARGET utils_test PROPERTY FOLDER "utils")

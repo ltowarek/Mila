@@ -9,3 +9,4 @@ target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${MEAN_SHIFT_PARALLEL_L
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
+set_property(TARGET mean_shift_parallel_test PROPERTY FOLDER "mean_shift")

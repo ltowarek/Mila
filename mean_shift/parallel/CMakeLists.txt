@@ -20,3 +20,6 @@ add_subdirectory(test)
 include_directories(${MEAN_SHIFT_PARALLEL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${MEAN_SHIFT_PARALLEL_LIBRARIES})
+
+set_property(TARGET mean_shift_parallel_lib PROPERTY FOLDER "mean_shift")
+set_property(TARGET mean_shift_parallel PROPERTY FOLDER "mean_shift")

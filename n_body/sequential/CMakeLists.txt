@@ -15,3 +15,6 @@ add_subdirectory(test)
 include_directories(${N_BODY_SEQUENTIAL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${N_BODY_SEQUENTIAL_LIBRARIES})
+
+set_property(TARGET n_body_sequential_lib PROPERTY FOLDER "n_body")
+set_property(TARGET n_body_sequential PROPERTY FOLDER "n_body")

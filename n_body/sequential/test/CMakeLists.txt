@@ -8,3 +8,5 @@ target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES} ${N_BODY_SEQUENTIAL_LIB
 configure_file(test_file.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
+set_property(TARGET n_body_sequential_test PROPERTY FOLDER "n_body")

@@ -9,6 +9,8 @@ configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h"
 )
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
 set(GTEST_INCLUDE_DIRS ${GTEST_ROOT}/include ${GTEST_ROOT})
@@ -29,3 +31,6 @@ add_subdirectory(mean_shift)
 add_subdirectory(n_body)
 add_subdirectory(sudoku_solver)
 add_subdirectory(ocl2json)
+
+set_property(TARGET gtest PROPERTY FOLDER "deps")
+set_property(TARGET gtest_main PROPERTY FOLDER "deps")

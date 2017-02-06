@@ -14,3 +14,6 @@ find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIR} ${JSON11_INCLUDE_DIR})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCL_LIBRARIES} ${JSON11_LIBRARIES})
+
+set_property(TARGET ocl2json PROPERTY FOLDER "ocl2json")
+set_property(TARGET json11 PROPERTY FOLDER "ocl2json")

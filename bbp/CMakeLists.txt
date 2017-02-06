@@ -28,3 +28,6 @@ add_executable(bbp main.cpp)
 target_link_libraries(bbp ${UTILS_LIBRARIES} ${BBP_FACTORIES_LIBRARIES})
 
 add_subdirectory(test)
+
+set_property(TARGET bbp PROPERTY FOLDER "bbp")
+set_property(TARGET bbp_factories_lib PROPERTY FOLDER "bbp")

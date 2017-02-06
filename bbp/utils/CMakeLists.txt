@@ -7,3 +7,5 @@ add_library(bbp_utils_lib
     include/bbp.h include/bbp.cpp)
 
 add_subdirectory(test)
+
+set_property(TARGET bbp_utils_lib PROPERTY FOLDER "bbp")

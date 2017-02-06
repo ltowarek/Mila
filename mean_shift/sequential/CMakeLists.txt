@@ -15,3 +15,6 @@ add_subdirectory(test)
 include_directories(${MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${MEAN_SHIFT_SEQUENTIAL_LIBRARIES})
+
+set_property(TARGET mean_shift_sequential_lib PROPERTY FOLDER "mean_shift")
+set_property(TARGET mean_shift_sequential PROPERTY FOLDER "mean_shift")
