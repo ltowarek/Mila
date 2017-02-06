@@ -29,7 +29,6 @@ configure_file(CTestCustom.cmake ${CMAKE_BINARY_DIR})
 add_subdirectory(bbp)
 add_subdirectory(mean_shift)
 add_subdirectory(n_body)
-add_subdirectory(sudoku_solver)
 add_subdirectory(ocl2json)
 
 set_property(TARGET gtest PROPERTY FOLDER "deps")
