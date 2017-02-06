@@ -34,7 +34,7 @@ void ApplyCentralForce(const float2 center,
 
 void ApplyRepulsionForceBetweenParticles(const float force_value,
                                          const float min_distance,
-                                         const Particle particles[],
+                                         const global Particle particles[],
                                          size_t number_of_particles,
                                          Particle *particle) {
   for (size_t i = 0; i < number_of_particles; ++i) {
