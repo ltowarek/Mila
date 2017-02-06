@@ -17,15 +17,15 @@ TEST(BBPSequentialTest, ComputeDigit) {
   mila::SequentialBBP bbp(nullptr);
   EXPECT_NEAR(bbp.ComputeDigit(0), 0.141587316989899f, 1e-5f);
   EXPECT_NEAR(bbp.ComputeDigit(1), 0.265479207038879f, 1e-5f);
-  EXPECT_NEAR(bbp.ComputeDigit(1000), 1.7962465286254883f, 1e-5f);
+  EXPECT_NEAR(bbp.ComputeDigit(500), 1.5261161327362061f, 1e-5f);
 }
 
 TEST(BBPSequentialTest, Series) {
   mila::SequentialBBP bbp(nullptr);
-  EXPECT_NEAR(bbp.Series(1, 1000), 0.93149524927139282f, 1e-5f);
-  EXPECT_NEAR(bbp.Series(4, 1000), 0.36730793118476868f, 1e-5f);
-  EXPECT_NEAR(bbp.Series(5, 1000), 0.70736938714981079f, 1e-5f);
-  EXPECT_NEAR(bbp.Series(6, 1000), 0.48774918913841248f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(1, 500), 0.86922550201416016f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(4, 500), 0.29369428753852844f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(5, 500), 0.76753216981887817f, 1e-5f);
+  EXPECT_NEAR(bbp.Series(6, 500), 0.59586530923843384f, 1e-5f);
 }
 
 TEST(BBPSequentialTest, LargestPowerOfTwoLessOrEqual) {

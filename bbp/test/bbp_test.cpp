@@ -50,6 +50,8 @@ TYPED_TEST(BBPTest, ComputeDigits) {
   EXPECT_NEAR(this->bbp_->ComputeDigits(2, 0)[1], 0.265479207038879f, 1e-5f);
   ASSERT_EQ(this->bbp_->ComputeDigits(1, 1).size(), 1);
   EXPECT_NEAR(this->bbp_->ComputeDigits(1, 1)[0], 0.265479207038879f, 1e-5f);
+  ASSERT_EQ(this->bbp_->ComputeDigits(1, 500).size(), 1);
+  EXPECT_NEAR(this->bbp_->ComputeDigits(1, 500)[0], 1.5261161327362061f, 1e-5f);
 }
 
 TYPED_TEST(BBPTest, GetDigits) {

@@ -11,6 +11,23 @@ configure_file (
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+include(CheckCXXCompilerFlag)
+
+check_cxx_compiler_flag(/fp:strict HAS_FP_STRICT)
+if (HAS_FP_STRICT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+endif()
+
+check_cxx_compiler_flag(-msse2 HAS_MSSE2)
+if (HAS_MSSE2)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+endif()
+
+check_cxx_compiler_flag(-mfpmath HAS_MFPMATH)
+if (HAS_MFPMATH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
+endif()
+
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
 set(GTEST_INCLUDE_DIRS ${GTEST_ROOT}/include ${GTEST_ROOT})
