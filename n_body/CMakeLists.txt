@@ -55,3 +55,6 @@ add_subdirectory(test)
 set_property(TARGET n_body_factories_lib PROPERTY FOLDER "n_body")
 set_property(TARGET n_body PROPERTY FOLDER "n_body")
 set_property(TARGET glfw PROPERTY FOLDER "n_body")
+
+install(TARGETS n_body DESTINATION ${CMAKE_BINARY_DIR}/bin)
+install(FILES ${KERNEL_FILE} DESTINATION ${CMAKE_BINARY_DIR}/bin)

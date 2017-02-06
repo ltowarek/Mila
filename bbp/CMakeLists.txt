@@ -31,3 +31,6 @@ add_subdirectory(test)
 
 set_property(TARGET bbp PROPERTY FOLDER "bbp")
 set_property(TARGET bbp_factories_lib PROPERTY FOLDER "bbp")
+
+install(TARGETS bbp DESTINATION ${CMAKE_BINARY_DIR}/bin)
+install(FILES ${KERNEL_FILE} DESTINATION ${CMAKE_BINARY_DIR}/bin)

@@ -17,3 +17,5 @@ target_link_libraries(${PROJECT_NAME} ${OpenCL_LIBRARIES} ${JSON11_LIBRARIES})
 
 set_property(TARGET ocl2json PROPERTY FOLDER "ocl2json")
 set_property(TARGET json11 PROPERTY FOLDER "ocl2json")
+
+install(TARGETS ocl2json DESTINATION ${CMAKE_BINARY_DIR}/bin)

@@ -46,3 +46,6 @@ add_subdirectory(test)
 
 set_property(TARGET mean_shift_factories_lib PROPERTY FOLDER "mean_shift")
 set_property(TARGET mean_shift PROPERTY FOLDER "mean_shift")
+
+install(TARGETS mean_shift DESTINATION ${CMAKE_BINARY_DIR}/bin)
+install(FILES ${KERNEL_FILE} DESTINATION ${CMAKE_BINARY_DIR}/bin)
