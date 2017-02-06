@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(n_body_interactive_view)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-
 find_package(OpenGL REQUIRED)
 
 include_directories(${N_BODY_INTERACTIVE_VIEW_INCLUDE_DIRS})

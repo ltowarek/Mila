@@ -37,7 +37,6 @@ target_link_libraries(mean_shift_factories_lib
     ${MEAN_SHIFT_UTILS_LIBRARIES})
 
 configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 include_directories(${UTILS_INCLUDE_DIRS} ${MEAN_SHIFT_FACTORIES_INCLUDE_DIRS})
 add_executable(mean_shift main.cpp)
 target_link_libraries(mean_shift ${UTILS_LIBRARIES} ${MEAN_SHIFT_FACTORIES_LIBRARIES})

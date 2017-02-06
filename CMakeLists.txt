@@ -28,6 +28,11 @@ if (HAS_MFPMATH)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
 endif()
 
+check_cxx_compiler_flag(-std=gnu++11 HAS_CPP11)
+if (HAS_CPP11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+endif()
+
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
 set(GTEST_INCLUDE_DIRS ${GTEST_ROOT}/include ${GTEST_ROOT})

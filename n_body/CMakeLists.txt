@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(n_body)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-
 set(GLFW_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/include)
 set(GLFW_LIBRARIES glfw)
 option(GLFW_BUILD_EXAMPLES OFF)
@@ -45,7 +43,6 @@ target_link_libraries(n_body_factories_lib
     ${N_BODY_UTILS_LIBRARIES})
 
 configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 include_directories(${UTILS_INCLUDE_DIRS} ${N_BODY_FACTORIES_INCLUDE_DIRS})
 add_executable(n_body main.cpp)
 target_link_libraries(n_body ${UTILS_LIBRARIES} ${N_BODY_FACTORIES_LIBRARIES})

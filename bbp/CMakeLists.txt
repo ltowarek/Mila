@@ -22,7 +22,6 @@ add_library(bbp_factories_lib
 target_link_libraries(bbp_factories_lib ${UTILS_LIBRARIES} ${BBP_PARALLEL_LIBRARIES} ${BBP_SEQUENTIAL_LIBRARIES})
 
 configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 include_directories(${UTILS_INCLUDE_DIRS} ${BBP_FACTORIES_INCLUDE_DIRS})
 add_executable(bbp main.cpp)
 target_link_libraries(bbp ${UTILS_LIBRARIES} ${BBP_FACTORIES_LIBRARIES})
