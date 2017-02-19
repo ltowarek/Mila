@@ -16,26 +16,26 @@ void PrintResultStatistics(const std::string &name,
                            const mila::Logger &logger);
 class OpenCLStatistics {
  public:
-   size_t GetBuildKernelAsMicroseconds();
-   void SetBuildKernelAsMicroseconds(size_t microseconds);
-   std::string GetBuildKernelAsString();
+  size_t GetBuildKernelAsMicroseconds();
+  void SetBuildKernelAsMicroseconds(size_t microseconds);
+  std::string GetBuildKernelAsString();
 
-   size_t GetCopyBufferAsMicroseconds();
-   void SetCopyBufferAsMicroseconds(size_t microseconds);
-   std::string GetCopyBufferAsString();
+  size_t GetCopyBufferAsMicroseconds();
+  void SetCopyBufferAsMicroseconds(size_t microseconds);
+  std::string GetCopyBufferAsString();
 
-   size_t GetReadBufferAsMicroseconds();
-   void SetReadBufferAsMicroseconds(size_t microseconds);
-   std::string GetReadBufferAsString();
+  size_t GetReadBufferAsMicroseconds();
+  void SetReadBufferAsMicroseconds(size_t microseconds);
+  std::string GetReadBufferAsString();
 
-   size_t GetEnqueueNDRangeAsMicroseconds();
-   void SetEnqueueNDRangeAsMicroseconds(size_t microseconds);
-   std::string GetEnqueueNDRangeAsString();
+  size_t GetEnqueueNDRangeAsMicroseconds();
+  void SetEnqueueNDRangeAsMicroseconds(size_t microseconds);
+  std::string GetEnqueueNDRangeAsString();
 
-   std::string GetOpenCLStatisticsAsString();
+  std::string GetOpenCLStatisticsAsString();
 
  private:
-   std::string GetStatisticsAsString(const std::string &name, size_t value);
+  std::string GetStatisticsAsString(const std::string &name, size_t value);
 
   std::chrono::microseconds build_kernel_ = std::chrono::microseconds(0);
   std::chrono::microseconds enqueue_nd_range_ = std::chrono::microseconds(0);

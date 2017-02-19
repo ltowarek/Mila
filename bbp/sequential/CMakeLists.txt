@@ -3,9 +3,9 @@ project(bbp_sequential)
 
 include_directories(${BBP_SEQUENTIAL_INCLUDE_DIRS})
 add_library(bbp_sequential_lib
-    include/bbp_sequential.hpp src/bbp_sequential.cpp
-    include/bbp_sequential_profiler.hpp src/bbp_sequential_profiler.cpp
-    include/bbp_sequential_app.hpp src/bbp_sequential_app.cpp)
+            include/bbp_sequential.hpp src/bbp_sequential.cpp
+            include/bbp_sequential_profiler.hpp src/bbp_sequential_profiler.cpp
+            include/bbp_sequential_app.hpp src/bbp_sequential_app.cpp)
 target_link_libraries(${BBP_SEQUENTIAL_LIBRARIES})
 
 add_subdirectory(test)

@@ -10,7 +10,7 @@ if __name__ == '__main__':
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_40_sequential_output.png 40.0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_80_sequential_output.png 80.0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_160_sequential_output.png 160.0 10',
-        
+
         'mean_shift_sequential.exe test_image_32x24.png test_image_32x24_25_sequential_output.png 25.0 10',
         'mean_shift_sequential.exe test_image_63x47.png test_image_63x47_25_sequential_output.png 25.0 10',
         'mean_shift_sequential.exe test_image_125x94.png test_image_125x94_25_sequential_output.png 25.0 10',
@@ -26,9 +26,9 @@ if __name__ == '__main__':
         'mean_shift_parallel.exe test_image_63x47.png test_image_63x47_25_parallel_output.png 25.0 0 0 10',
         'mean_shift_parallel.exe test_image_125x94.png test_image_125x94_25_parallel_output.png 25.0 0 0 10',
 
-		'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_5_parallel_output.png 5.0 0 0 10',
-		'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_20_parallel_output.png 20.0 0 0 10',
-		'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_80_parallel_output.png 80.0 0 0 10',
+        'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_5_parallel_output.png 5.0 0 0 10',
+        'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_20_parallel_output.png 20.0 0 0 10',
+        'mean_shift_parallel.exe test_image_250x188.png test_image_250x188_80_parallel_output.png 80.0 0 0 10',
     ]
 
     results = []
@@ -105,6 +105,8 @@ if __name__ == '__main__':
 
     with open('results_mean_shift.csv', 'wt', encoding='utf-8', newline='') as results_file:
         csv_writer = csv.DictWriter(results_file,
-                                    ['Nazwa urządzenia', 'Plik wejściowy', 'Plik wyjściowy', 'Rozmiar obrazka', 'Rozmiar okna', 'Średnia[us]', 'Mediana[us]', 'Standardowe odchylenie[us]', 'Kowariancja', 'CMD'])
+                                    ['Nazwa urządzenia', 'Plik wejściowy', 'Plik wyjściowy', 'Rozmiar obrazka',
+                                     'Rozmiar okna', 'Średnia[us]', 'Mediana[us]', 'Standardowe odchylenie[us]',
+                                     'Kowariancja', 'CMD'])
         csv_writer.writeheader()
         csv_writer.writerows(results)

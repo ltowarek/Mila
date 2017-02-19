@@ -1,6 +1,6 @@
 #include "bbp_sequential.hpp"
 
-mila::SequentialBBP::SequentialBBP(const std::shared_ptr<mila::Logger> logger): logger_(logger) {
+mila::SequentialBBP::SequentialBBP(const std::shared_ptr<mila::Logger> logger) : logger_(logger) {
 
 }
 mila::SequentialBBP::~SequentialBBP() {

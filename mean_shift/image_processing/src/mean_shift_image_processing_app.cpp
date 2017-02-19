@@ -123,7 +123,8 @@ std::vector<mila::MeanShiftImageProcessingProfilingResults> mila::ParallelMeanSh
       logger_->Info("Device name: %s", ocl_app->GetDeviceName().c_str());
     }
 
-    auto mean_shift = std::unique_ptr<mila::ParallelMeanShift>(new mila::ParallelMeanShift(std::move(ocl_app), logger_));
+    auto
+        mean_shift = std::unique_ptr<mila::ParallelMeanShift>(new mila::ParallelMeanShift(std::move(ocl_app), logger_));
     mean_shift->Initialize();
     auto mean_shift_image_processing =
         std::unique_ptr<mila::MeanShiftImageProcessing>(new mila::GenericMeanShiftImageProcessing(std::move(mean_shift),

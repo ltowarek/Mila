@@ -32,9 +32,9 @@ std::vector<uint8_t> mila::ConvertPointsToVector(const std::vector<Point> &data)
   return output;
 }
 
-mila::Image::Image(): Image("") {}
+mila::Image::Image() : Image("") {}
 
-mila::Image::Image(const std::string &file_name): width_(0), height_(0), file_name_(file_name) {}
+mila::Image::Image(const std::string &file_name) : width_(0), height_(0), file_name_(file_name) {}
 
 std::vector<uint8_t> mila::Image::Read() {
   auto data = std::vector<uint8_t>();

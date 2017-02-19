@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace mila {
-enum class LEVELS : int {DEBUG = 0, INFO = 1, WARNING = 2, ERROR = 3, CRITICAL = 4};
+enum class LEVELS : int { DEBUG = 0, INFO = 1, WARNING = 2, ERROR = 3, CRITICAL = 4 };
 
 class Logger {
  public:
@@ -22,11 +22,11 @@ class Logger {
 };
 
 class LoggerFactory {
-public:
+ public:
   std::unique_ptr<Logger> MakePrintf() const;
 };
 
-class PrintfLogger: public Logger {
+class PrintfLogger : public Logger {
  public:
   PrintfLogger();
   virtual ~PrintfLogger();

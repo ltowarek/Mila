@@ -50,7 +50,7 @@ void mila::ParallelNBodyProfiler::SetResultsAfterUpdateParticles(const size_t nu
   results_.read_buffer_duration =
       mila::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().read_buffer);
   results_.particles_per_second = mila::GetValuePerSecond(number_of_particles,
-                                                                 results_.update_particles_duration);
+                                                          results_.update_particles_duration);
   results_.bandwidth = ComputeBandwidthAsGBPS(number_of_particles, results_.update_particles_duration.count());
 }
 

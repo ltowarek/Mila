@@ -30,7 +30,7 @@ class OpenCLApplicationFactory {
   std::unique_ptr<OpenCLApplication>
   MakeGeneric(const size_t platform_id, const size_t device_id, const std::shared_ptr<mila::Logger> logger);
 };
-class GenericOpenCLApplication: public OpenCLApplication {
+class GenericOpenCLApplication : public OpenCLApplication {
  public:
   GenericOpenCLApplication();
   GenericOpenCLApplication(const size_t platform_id,

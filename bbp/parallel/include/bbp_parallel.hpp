@@ -13,7 +13,7 @@
 #include "bbp.hpp"
 
 namespace mila {
-class ParallelBBP: public GenericBBP {
+class ParallelBBP : public GenericBBP {
  public:
   ParallelBBP();
   ParallelBBP(std::unique_ptr<OpenCLApplication> ocl_app,

@@ -7,7 +7,8 @@ TEST(OpenCLStatisticsTest, GetOpenCLStatisticsAsString) {
   statistics.SetCopyBufferAsMicroseconds(2);
   statistics.SetReadBufferAsMicroseconds(3);
   statistics.SetEnqueueNDRangeAsMicroseconds(4);
-  EXPECT_STREQ("Build kernel: 1 us, Copy buffer: 2 us, Read buffer: 3 us, Enqueue ND range: 4 us", statistics.GetOpenCLStatisticsAsString().c_str());
+  EXPECT_STREQ("Build kernel: 1 us, Copy buffer: 2 us, Read buffer: 3 us, Enqueue ND range: 4 us",
+               statistics.GetOpenCLStatisticsAsString().c_str());
 }
 
 TEST(OpenCLStatisticsTest, GetBuildKernelAsString) {

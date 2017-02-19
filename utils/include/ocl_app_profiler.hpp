@@ -8,7 +8,7 @@
 #include "ocl_app.hpp"
 
 namespace mila {
-class OpenCLApplicationProfiler: public OpenCLApplication {
+class OpenCLApplicationProfiler : public OpenCLApplication {
  public:
   OpenCLApplicationProfiler();
   OpenCLApplicationProfiler(std::unique_ptr<mila::OpenCLApplication> app);

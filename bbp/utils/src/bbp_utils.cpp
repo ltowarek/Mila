@@ -11,8 +11,8 @@ std::string mila::ConvertFractionToHex(float number, size_t number_of_digits) {
   return digit;
 }
 
-std::vector <std::string> mila::ConvertFractionsToHex(const std::vector<float> &numbers,
-                                                      size_t number_of_digits) {
+std::vector<std::string> mila::ConvertFractionsToHex(const std::vector<float> &numbers,
+                                                     size_t number_of_digits) {
   auto digits = std::vector<std::string>(numbers.size(), "-");
   for (size_t i = 0; i < digits.size(); ++i) {
     digits[i] = ConvertFractionToHex(numbers[i], number_of_digits);

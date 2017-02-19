@@ -27,5 +27,5 @@ void mila::SequentialMeanShiftProfiler::InitResults() {
 void mila::SequentialMeanShiftProfiler::SetResultsAfterComputeDigits(const size_t number_of_points) {
   results_.mean_shift_duration = profiler_->GetDuration("MeanShift");
   results_.points_per_second = mila::GetValuePerSecond(number_of_points,
-                                                              results_.mean_shift_duration);
+                                                       results_.mean_shift_duration);
 }

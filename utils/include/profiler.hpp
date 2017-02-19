@@ -19,7 +19,7 @@ class Profiler {
   ) const = 0;
 };
 
-class ChronoProfiler: public Profiler {
+class ChronoProfiler : public Profiler {
  public:
   ChronoProfiler();
   explicit ChronoProfiler(const std::shared_ptr<Logger> logger);

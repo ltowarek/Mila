@@ -36,7 +36,7 @@ void mila::ParallelBBPProfiler::SetResultsAfterComputeDigits(const size_t number
 
   results_.compute_digits_duration = profiler_->GetDuration("ComputeDigits");
   results_.digits_per_second = mila::GetValuePerSecond(number_of_digits,
-                                                              results_.compute_digits_duration);
+                                                       results_.compute_digits_duration);
   results_.bandwidth = mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(number_of_digits,
                                                                          results_.compute_digits_duration.count());
 }

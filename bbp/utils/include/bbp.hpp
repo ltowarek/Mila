@@ -20,7 +20,7 @@ class GenericBBP : public BBP {
   virtual std::string GetDigits(const std::vector<float> &digits) const override;
 };
 
-class BBPProfiler: public BBP {
+class BBPProfiler : public BBP {
  public:
   virtual ~BBPProfiler() = 0;
 };

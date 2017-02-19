@@ -1,6 +1,6 @@
 #include "bbp_sequential_app.hpp"
 
-mila::SequentialBBPApp::SequentialBBPApp(const std::shared_ptr<mila::Logger> logger): logger_(logger) {
+mila::SequentialBBPApp::SequentialBBPApp(const std::shared_ptr<mila::Logger> logger) : logger_(logger) {
 
 }
 mila::SequentialBBPApp::~SequentialBBPApp() {
@@ -31,7 +31,9 @@ std::vector<mila::SequentialBBPProfilingResults> mila::SequentialBBPApp::RunIter
 
     auto bbp = std::unique_ptr<mila::SequentialBBP>(new mila::SequentialBBP(logger_));
     auto profiler = mila::ProfilerFactory().MakeChrono(logger_);
-    auto bbp_profiler = std::unique_ptr<mila::SequentialBBPProfiler>(new mila::SequentialBBPProfiler(std::move(bbp), std::move(profiler), logger_));
+    auto bbp_profiler = std::unique_ptr<mila::SequentialBBPProfiler>(new mila::SequentialBBPProfiler(std::move(bbp),
+                                                                                                     std::move(profiler),
+                                                                                                     logger_));
     auto digits = bbp_profiler->ComputeDigits(config.number_of_digits, config.starting_position);
     auto digits_str = bbp_profiler->GetDigits(digits);
 
@@ -51,7 +53,7 @@ std::vector<mila::SequentialBBPProfilingResults> mila::SequentialBBPApp::RunIter
 }
 mila::SequentialBBPApp::Results mila::SequentialBBPApp::PrepareResults(const std::vector<mila::SequentialBBPProfilingResults> &raw_results) const {
   auto prepared_results = Results{};
-  for (const auto& result : raw_results) {
+  for (const auto &result : raw_results) {
     prepared_results.digits_per_second.push_back(result.digits_per_second);
     prepared_results.compute_digits_duration.push_back(result.compute_digits_duration.count());
   }

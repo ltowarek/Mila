@@ -73,6 +73,6 @@ void mila::ParallelMeanShiftProfiler::SetResultsAfterRun(const size_t number_of_
 
   results_.mean_shift_duration = profiler_->GetDuration("Run");
   results_.points_per_second = mila::GetValuePerSecond(number_of_points,
-                                                              results_.mean_shift_duration);
+                                                       results_.mean_shift_duration);
   results_.bandwidth = ComputeBandwidthAsGBPS(number_of_points, results_.mean_shift_duration.count());
 }

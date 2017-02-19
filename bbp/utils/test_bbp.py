@@ -105,6 +105,7 @@ if __name__ == '__main__':
 
     with open('results_bbp.csv', 'wt', encoding='utf-8', newline='') as results_file:
         csv_writer = csv.DictWriter(results_file,
-                                    ['Nazwa urządzenia', 'Liczba cyfr', 'Pozycja początkowa', 'Średnia[us]', 'Mediana[us]', 'Standardowe odchylenie[us]', 'Kowariancja', 'CMD'])
+                                    ['Nazwa urządzenia', 'Liczba cyfr', 'Pozycja początkowa', 'Średnia[us]',
+                                     'Mediana[us]', 'Standardowe odchylenie[us]', 'Kowariancja', 'CMD'])
         csv_writer.writeheader()
         csv_writer.writerows(results)

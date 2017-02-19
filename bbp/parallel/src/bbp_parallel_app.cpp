@@ -1,6 +1,6 @@
 #include "bbp_parallel_app.hpp"
 
-mila::ParallelBBPApp::ParallelBBPApp(std::shared_ptr<mila::Logger> logger): logger_(logger) {
+mila::ParallelBBPApp::ParallelBBPApp(std::shared_ptr<mila::Logger> logger) : logger_(logger) {
 
 }
 void mila::ParallelBBPApp::Run(int argc, char **argv) const {
@@ -37,7 +37,9 @@ std::vector<mila::ParallelBBPProfilingResults> mila::ParallelBBPApp::RunIteratio
 
     auto bbp = std::unique_ptr<mila::ParallelBBP>(new mila::ParallelBBP(std::move(ocl_app), logger_));
     auto profiler = mila::ProfilerFactory().MakeChrono(logger_);
-    auto bbp_profiler = std::unique_ptr<mila::ParallelBBPProfiler>(new mila::ParallelBBPProfiler(std::move(bbp), std::move(profiler), logger_));
+    auto bbp_profiler = std::unique_ptr<mila::ParallelBBPProfiler>(new mila::ParallelBBPProfiler(std::move(bbp),
+                                                                                                 std::move(profiler),
+                                                                                                 logger_));
     bbp_profiler->Initialize();
     auto digits = bbp_profiler->ComputeDigits(config.number_of_digits, config.starting_position);
     auto digits_str = bbp_profiler->GetDigits(digits);
@@ -58,7 +60,7 @@ std::vector<mila::ParallelBBPProfilingResults> mila::ParallelBBPApp::RunIteratio
 }
 mila::ParallelBBPApp::Results mila::ParallelBBPApp::PrepareResults(const std::vector<mila::ParallelBBPProfilingResults> &raw_results) const {
   auto prepared_results = Results{};
-  for (const auto& result : raw_results) {
+  for (const auto &result : raw_results) {
     prepared_results.bandwidth.push_back(result.bandwidth);
     prepared_results.digits_per_second.push_back(result.digits_per_second);
     prepared_results.initialize_duration.push_back(result.initialize_duration.count());

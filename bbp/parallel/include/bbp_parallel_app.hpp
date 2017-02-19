@@ -6,7 +6,7 @@
 #include "statistics.hpp"
 
 namespace mila {
-class ParallelBBPApp: public Plugin {
+class ParallelBBPApp : public Plugin {
  public:
   ParallelBBPApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~ParallelBBPApp();

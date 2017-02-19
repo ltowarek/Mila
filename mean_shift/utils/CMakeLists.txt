@@ -3,9 +3,9 @@ project(mean_shift_utils)
 
 include_directories(${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
 add_library(mean_shift_utils_lib
-    ${LODEPNG_INCLUDE_DIRS}/lodepng.cpp
-    include/mean_shift_utils.hpp src/mean_shift_utils.cpp
-    include/mean_shift.hpp src/mean_shift.cpp)
+            ${LODEPNG_INCLUDE_DIRS}/lodepng.cpp
+            include/mean_shift_utils.hpp src/mean_shift_utils.cpp
+            include/mean_shift.hpp src/mean_shift.cpp)
 
 add_subdirectory(test)
 

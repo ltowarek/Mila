@@ -16,7 +16,7 @@ struct ParallelBBPProfilingResults {
   float bandwidth;
 };
 
-class ParallelBBPProfiler: public BBPProfiler {
+class ParallelBBPProfiler : public BBPProfiler {
  public:
   ParallelBBPProfiler();
   ParallelBBPProfiler(std::unique_ptr<mila::ParallelBBP> bbp,

@@ -14,11 +14,11 @@ mila::OpenCLApplicationProfiler::CreateProgramFromSource(const std::string &sour
   return app_->CreateProgramFromSource(source_file_path);
 }
 void mila::OpenCLApplicationProfiler::BuildProgram(const clpp::Program &program,
-                                             const clpp::Device &device) const {
+                                                   const clpp::Device &device) const {
   app_->BuildProgram(program, device);
 }
 clpp::Kernel mila::OpenCLApplicationProfiler::CreateKernel(const std::string &kernel_name,
-                                                     const std::string &source_file_path) {
+                                                           const std::string &source_file_path) {
   return app_->CreateKernel(kernel_name, source_file_path);
 }
 clpp::Platform mila::OpenCLApplicationProfiler::GetPlatform() const {

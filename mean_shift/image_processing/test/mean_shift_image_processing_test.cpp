@@ -40,8 +40,10 @@ TEST(SequentialMeanShiftImageProcessingAppTest, Run) {
   EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput coefficient of variation: "));
   EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration mean: "));
   EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration median: "));
-  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration standard deviation: "));
-  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages,
+                                "I Mean shift image processing duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages,
+                                "I Mean shift image processing duration coefficient of variation: "));
 }
 
 TEST(ParallelMeanShiftImageProcessingAppTest, Run) {
@@ -69,6 +71,8 @@ TEST(ParallelMeanShiftImageProcessingAppTest, Run) {
   EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Throughput coefficient of variation: "));
   EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration mean: "));
   EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration median: "));
-  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration standard deviation: "));
-  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages, "I Mean shift image processing duration coefficient of variation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages,
+                                "I Mean shift image processing duration standard deviation: "));
+  EXPECT_TRUE(mila::ContainsStr(mila::logger_spy_messages,
+                                "I Mean shift image processing duration coefficient of variation: "));
 }
