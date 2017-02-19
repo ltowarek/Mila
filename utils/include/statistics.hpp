@@ -14,7 +14,6 @@ void PrintResultStatistics(const std::string &name,
                            const std::string &unit,
                            const std::vector<float> &result,
                            const mila::Logger &logger);
-namespace statistics {
 class OpenCLStatistics {
  public:
    size_t GetBuildKernelAsMicroseconds();
@@ -43,6 +42,5 @@ class OpenCLStatistics {
   std::chrono::microseconds copy_buffer_ = std::chrono::microseconds(0);
   std::chrono::microseconds read_buffer_ = std::chrono::microseconds(0);
 };
-};  // statistics
 }  // mila
 #endif  //MILA_STATISTICS_H
