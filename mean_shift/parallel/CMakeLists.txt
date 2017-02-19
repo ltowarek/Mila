@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(mean_shift_parallel)
 
-find_package(OpenCL REQUIRED)
-include_directories(${OpenCL_INCLUDE_DIR})
-
 configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 include_directories(${MEAN_SHIFT_PARALLEL_INCLUDE_DIRS})

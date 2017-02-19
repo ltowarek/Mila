@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(n_body_parallel)
 
-find_package(OpenCL REQUIRED)
-include_directories(${OpenCL_INCLUDE_DIR})
-
 configure_file(${N_BODY_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 include_directories(${N_BODY_PARALLEL_INCLUDE_DIRS})

@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 project(utils)
 
-find_package(OpenCL REQUIRED)
-include_directories(${OpenCL_INCLUDE_DIR} ${UTILS_INCLUDE_DIRS})
+include_directories(${UTILS_INCLUDE_DIRS})
 add_library(utils_lib
     include/utils.hpp src/utils.cpp
     include/version.hpp src/version.cpp
@@ -12,7 +11,7 @@ add_library(utils_lib
     include/ocl_app.hpp src/ocl_app.cpp
     include/ocl_app_profiler.hpp src/ocl_app_profiler.cpp
     include/plugin.hpp src/plugin.cpp)
-target_link_libraries(utils_lib ${OpenCL_LIBRARIES})
+target_link_libraries(${UTILS_LIBRARIES})
 
 add_subdirectory(test)
 

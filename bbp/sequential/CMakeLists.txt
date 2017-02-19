@@ -6,7 +6,7 @@ add_library(bbp_sequential_lib
     include/bbp_sequential.hpp src/bbp_sequential.cpp
     include/bbp_sequential_profiler.hpp src/bbp_sequential_profiler.cpp
     include/bbp_sequential_app.hpp src/bbp_sequential_app.cpp)
-target_link_libraries(bbp_sequential_lib ${BBP_UTILS_LIBRARIES} ${UTILS_LIBRARIES})
+target_link_libraries(${BBP_SEQUENTIAL_LIBRARIES})
 
 add_subdirectory(test)
 
