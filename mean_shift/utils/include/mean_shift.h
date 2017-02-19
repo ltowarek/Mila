@@ -28,11 +28,5 @@ class MeanShiftProfiler : public MeanShift {
  public:
   virtual ~MeanShiftProfiler() = 0;
 };
-
-class MeanShiftApp {
- public:
-  virtual ~MeanShiftApp() = 0;
-  virtual void Run(int argc, char **argv) const = 0;
-};
 }  // mila
 #endif  // MILA_UTILS_MEAN_SHIFT_H_

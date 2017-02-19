@@ -1,6 +1,7 @@
 #include "plugin_manager.h"
 
-std::unique_ptr<mila::Plugin> mila::PluginManager::Create(const std::string &name, const std::shared_ptr<mila::Logger> logger) {
+std::unique_ptr<mila::Plugin> mila::PluginManager::Create(const std::string &name,
+                                                          const std::shared_ptr<mila::Logger> logger) {
   auto plugin = std::unique_ptr<mila::Plugin>();
 
   if (name.compare("bbp_sequential") == 0) {

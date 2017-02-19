@@ -41,11 +41,5 @@ class NBody {
                                                  const float min,
                                                  const float max);
 };
-
-class NBodyApp {
- public:
-  virtual ~NBodyApp() = 0;
-  virtual void Run(int argc, char **argv) const = 0;
-};
 }  // mila
 #endif  // MILA_N_BODY_H_

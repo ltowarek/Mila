@@ -20,5 +20,3 @@ std::vector<mila::Particle> mila::NBody::GenerateParticles(const size_t number_o
   }
   return particles;
 }
-
-mila::NBodyApp::~NBodyApp() {}
