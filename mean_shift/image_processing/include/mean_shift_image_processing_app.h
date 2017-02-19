@@ -1,13 +1,14 @@
 #ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_H_
 #define MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_H_
 
+#include "plugin.h"
 #include "mean_shift_image_processing_profiler.h"
 #include "mean_shift_sequential.h"
 #include "mean_shift_parallel.h"
 #include "statistics.h"
 
 namespace mila {
-class SequentialMeanShiftImageProcessingApp : public MeanShiftApp {
+class SequentialMeanShiftImageProcessingApp : public Plugin {
  public:
   SequentialMeanShiftImageProcessingApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialMeanShiftImageProcessingApp();
@@ -35,7 +36,7 @@ class SequentialMeanShiftImageProcessingApp : public MeanShiftApp {
   const std::shared_ptr<mila::Logger> logger_;
 };
 
-class ParallelMeanShiftImageProcessingApp : public MeanShiftApp {
+class ParallelMeanShiftImageProcessingApp : public Plugin {
  public:
   ParallelMeanShiftImageProcessingApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~ParallelMeanShiftImageProcessingApp();

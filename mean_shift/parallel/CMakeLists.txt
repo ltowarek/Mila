@@ -4,7 +4,7 @@ project(mean_shift_parallel)
 find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIR})
 
-configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 include_directories(${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
 add_library(mean_shift_parallel_lib

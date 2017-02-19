@@ -2,7 +2,7 @@
 
 #include "logger.h"
 #include "version.h"
-#include "bbp_factories.h"
+#include "plugin_manager.h"
 
 struct Parameters {
   std::string test_case;
@@ -11,7 +11,7 @@ struct Parameters {
 std::string RemoveArgFromArgv(int arg, int &argc, char **argv) {
   std::string output = argv[arg];
   for (int i = arg; i < argc - 1; ++i) {
-    argv[i] = argv[i+1];
+    argv[i] = argv[i + 1];
   }
   free(argv[argc]);
   argc--;
@@ -33,8 +33,12 @@ int main(int argc, char **argv) {
   auto logger = std::shared_ptr<mila::Logger>(mila::LoggerFactory().MakePrintf());
   logger->Info("Version: %s", mila::version::GetVersion().c_str());
 
-  auto bbp = std::unique_ptr<mila::BBPApp>();
-  bbp->Run(argc, argv);
+  auto plugin = mila::PluginManager::Create(config.test_case, logger);
+  if (plugin == nullptr) {
+    logger->Error("Unknown test case: %s", config.test_case.c_str());
+    return 1;
+  }
+  plugin->Run(argc, argv);
 
   return 0;
 }

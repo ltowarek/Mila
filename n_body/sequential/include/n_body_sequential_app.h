@@ -1,11 +1,12 @@
 #ifndef MILA_N_BODY_SEQUENTIAL_APP_H_
 #define MILA_N_BODY_SEQUENTIAL_APP_H_
 
+#include "plugin.h"
 #include "n_body_sequential_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class SequentialNBodyApp : public NBodyApp {
+class SequentialNBodyApp : public Plugin {
  public:
   SequentialNBodyApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialNBodyApp();

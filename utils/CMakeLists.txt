@@ -10,7 +10,8 @@ add_library(utils_lib
         include/logger.h include/logger.cpp
         include/profiler.h include/profiler.cpp
         include/ocl_app.h include/ocl_app.cpp
-        include/ocl_app_profiler.h include/ocl_app_profiler.cpp)
+        include/ocl_app_profiler.h include/ocl_app_profiler.cpp
+        include/plugin.h include/plugin.cpp)
 target_link_libraries(utils_lib ${OpenCL_LIBRARIES})
 
 add_subdirectory(test)

@@ -30,19 +30,3 @@ std::unique_ptr<mila::NBody> mila::NBodyFactory::MakeParallelProfiler(std::uniqu
   n_body_profiler->Initialize();
   return std::unique_ptr<mila::NBody>(n_body_profiler);
 }
-
-std::unique_ptr<mila::NBodyApp> mila::NBodyAppFactory::MakeSequential(const std::shared_ptr<mila::Logger> logger) const {
-  return std::unique_ptr<mila::NBodyApp>(new mila::SequentialNBodyApp(logger));
-}
-
-std::unique_ptr<mila::NBodyApp> mila::NBodyAppFactory::MakeParallel(const std::shared_ptr<mila::Logger> logger) const {
-  return std::unique_ptr<mila::NBodyApp>(new mila::ParallelNBodyApp(logger));
-}
-
-std::unique_ptr<mila::NBodyApp> mila::NBodyAppFactory::MakeParallelInteractiveView(const std::shared_ptr<mila::Logger> logger) const {
-  return std::unique_ptr<mila::NBodyApp>(new mila::ParallelNBodyInteractiveViewApp(logger));
-}
-
-std::unique_ptr<mila::NBodyApp> mila::NBodyAppFactory::MakeSequentialInteractiveView(const std::shared_ptr<mila::Logger> logger) const {
-  return std::unique_ptr<mila::NBodyApp>(new mila::SequentialNBodyInteractiveViewApp(logger));
-}

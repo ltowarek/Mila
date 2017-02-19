@@ -28,12 +28,5 @@ class NBodyFactory {
                                                     const std::shared_ptr<Logger> logger) const;
 };
 
-class NBodyAppFactory {
- public:
-  std::unique_ptr<mila::NBodyApp> MakeSequential(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::NBodyApp> MakeParallel(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::NBodyApp> MakeParallelInteractiveView(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::NBodyApp> MakeSequentialInteractiveView(const std::shared_ptr<Logger> logger) const;
-};
 }  // mila
 #endif  // MILA_N_BODY_FACTORIES_H_

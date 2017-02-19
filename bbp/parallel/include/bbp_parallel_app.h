@@ -1,11 +1,12 @@
 #ifndef MILA_BBP_PARALLEL_APP_H
 #define MILA_BBP_PARALLEL_APP_H
 
+#include "plugin.h"
 #include "bbp_parallel_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class ParallelBBPApp: public BBPApp {
+class ParallelBBPApp: public Plugin {
  public:
   ParallelBBPApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~ParallelBBPApp();

@@ -1,11 +1,12 @@
 #ifndef MILA_MEAN_SHIFT_SEQUENTIAL_APP_H_
 #define MILA_MEAN_SHIFT_SEQUENTIAL_APP_H_
 
+#include "plugin.h"
 #include "mean_shift_sequential_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class SequentialMeanShiftApp : public MeanShiftApp {
+class SequentialMeanShiftApp : public Plugin {
  public:
   SequentialMeanShiftApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialMeanShiftApp();

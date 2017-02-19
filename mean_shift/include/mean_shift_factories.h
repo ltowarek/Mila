@@ -29,14 +29,6 @@ class MeanShiftFactory {
                                                         const std::shared_ptr<Logger> logger) const;
 };
 
-class MeanShiftAppFactory {
- public:
-  std::unique_ptr<mila::MeanShiftApp> MakeSequential(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::MeanShiftApp> MakeParallel(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::MeanShiftApp> MakeSequentialImageProcessing(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::MeanShiftApp> MakeParallelImageProcessing(const std::shared_ptr<Logger> logger) const;
-};
-
 class MeanShiftImageProcessingFactory {
  public:
   std::unique_ptr<mila::MeanShiftImageProcessing> MakeSequential(const std::shared_ptr<Logger> logger) const;

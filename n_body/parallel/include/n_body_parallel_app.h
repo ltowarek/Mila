@@ -1,11 +1,12 @@
 #ifndef MILA_N_BODY_PARALLEL_APP_H_
 #define MILA_N_BODY_PARALLEL_APP_H_
 
+#include "plugin.h"
 #include "n_body_parallel_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class ParallelNBodyApp : public NBodyApp {
+class ParallelNBodyApp : public Plugin {
  public:
   ParallelNBodyApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~ParallelNBodyApp();

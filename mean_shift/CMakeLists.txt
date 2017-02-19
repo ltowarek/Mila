@@ -1,23 +1,10 @@
 cmake_minimum_required(VERSION 3.4)
 project(mean_shift)
 
-set(LODEPNG_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/deps/lodepng)
 
-set(MEAN_SHIFT_UTILS_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/utils/include ${LODEPNG_INCLUDE_DIRS})
-set(MEAN_SHIFT_UTILS_LIBRARIES mean_shift_utils_lib)
 add_subdirectory(utils)
-
-set(MEAN_SHIFT_PARALLEL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/parallel/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_PARALLEL_LIBRARIES mean_shift_parallel_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
-set(KERNEL_FILE ${PROJECT_SOURCE_DIR}/parallel/mean_shift.cl)
 add_subdirectory(parallel)
-
-set(MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/sequential/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_SEQUENTIAL_LIBRARIES mean_shift_sequential_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
 add_subdirectory(sequential)
-
-set(MEAN_SHIFT_IMAGE_PROCESSING_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/image_processing/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_IMAGE_PROCESSING_LIBRARIES mean_shift_image_processing_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
 add_subdirectory(image_processing)
 
 set(MEAN_SHIFT_FACTORIES_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
@@ -36,7 +23,7 @@ target_link_libraries(mean_shift_factories_lib
     ${MEAN_SHIFT_IMAGE_PROCESSING_LIBRARIES}
     ${MEAN_SHIFT_UTILS_LIBRARIES})
 
-configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 include_directories(${UTILS_INCLUDE_DIRS} ${MEAN_SHIFT_FACTORIES_INCLUDE_DIRS})
 add_executable(mean_shift main.cpp)
 target_link_libraries(mean_shift ${UTILS_LIBRARIES} ${MEAN_SHIFT_FACTORIES_LIBRARIES})
@@ -45,6 +32,3 @@ add_subdirectory(test)
 
 set_property(TARGET mean_shift_factories_lib PROPERTY FOLDER "mean_shift")
 set_property(TARGET mean_shift PROPERTY FOLDER "mean_shift")
-
-install(TARGETS mean_shift DESTINATION ${CMAKE_BINARY_DIR}/bin)
-install(FILES ${KERNEL_FILE} DESTINATION ${CMAKE_BINARY_DIR}/bin)

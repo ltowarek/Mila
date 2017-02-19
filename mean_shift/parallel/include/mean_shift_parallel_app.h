@@ -1,11 +1,12 @@
 #ifndef MILA_MEAN_SHIFT_PARALLEL_APP_H_
 #define MILA_MEAN_SHIFT_PARALLEL_APP_H_
 
+#include "plugin.h"
 #include "mean_shift_parallel_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class ParallelMeanShiftApp : public MeanShiftApp {
+class ParallelMeanShiftApp : public Plugin {
  public:
   ParallelMeanShiftApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~ParallelMeanShiftApp();

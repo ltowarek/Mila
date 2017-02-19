@@ -27,12 +27,6 @@ class BBPFactory {
                                                        const std::shared_ptr<Logger> logger) const;
 };
 
-class BBPAppFactory {
- public:
-  std::unique_ptr<mila::BBPApp> MakeParallel(const std::shared_ptr<Logger> logger) const;
-  std::unique_ptr<mila::BBPApp> MakeSequential(const std::shared_ptr<Logger> logger) const;
-};
-
 }  // mila
 
 #endif  // MILA_BBP_FACTORIES_H_

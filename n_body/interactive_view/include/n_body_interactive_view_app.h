@@ -1,13 +1,14 @@
 #ifndef MILA_N_BODY_INTERACTIVE_VIEW_APP_H_
 #define MILA_N_BODY_INTERACTIVE_VIEW_APP_H_
 
+#include "plugin.h"
 #include "n_body_sequential.h"
 #include "n_body_parallel.h"
 #include "n_body_interactive_view_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class ParallelNBodyInteractiveViewApp : public NBodyApp {
+class ParallelNBodyInteractiveViewApp : public Plugin {
  public:
   ParallelNBodyInteractiveViewApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~ParallelNBodyInteractiveViewApp();
@@ -38,7 +39,7 @@ class ParallelNBodyInteractiveViewApp : public NBodyApp {
   const std::shared_ptr<mila::Logger> logger_;
 };
 
-class SequentialNBodyInteractiveViewApp : public NBodyApp {
+class SequentialNBodyInteractiveViewApp : public Plugin {
  public:
   SequentialNBodyInteractiveViewApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialNBodyInteractiveViewApp();

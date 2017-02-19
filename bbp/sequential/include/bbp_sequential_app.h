@@ -1,11 +1,12 @@
 #ifndef MILA_BBP_SEQUENTIAL_APP_H
 #define MILA_BBP_SEQUENTIAL_APP_H
 
+#include "plugin.h"
 #include "bbp_sequential_profiler.h"
 #include "statistics.h"
 
 namespace mila {
-class SequentialBBPApp: public BBPApp {
+class SequentialBBPApp: public Plugin {
  public:
   SequentialBBPApp(const std::shared_ptr<mila::Logger> logger);
   virtual ~SequentialBBPApp();

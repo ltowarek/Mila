@@ -3,7 +3,7 @@ project(mean_shift_image_processing_test)
 
 configure_file(test_image.png ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(test_image_reference.png ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 include_directories(${GTEST_INCLUDE_DIRS} ${MEAN_SHIFT_IMAGE_PROCESSING_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} mean_shift_image_processing_test.cpp)

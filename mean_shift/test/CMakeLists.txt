@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 project(mean_shift_test)
 
-configure_file(${KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(test_image.png ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(test_image_reference.png ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
