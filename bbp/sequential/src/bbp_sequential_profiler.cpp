@@ -26,7 +26,7 @@ mila::SequentialBBPProfilingResults mila::SequentialBBPProfiler::GetResults() co
 }
 void mila::SequentialBBPProfiler::SetResultsAfterComputeDigits(const size_t number_of_digits) {
   results_.compute_digits_duration = profiler_->GetDuration("ComputeDigits");
-  results_.digits_per_second = mila::utils::GetValuePerSecond(number_of_digits,
+  results_.digits_per_second = mila::GetValuePerSecond(number_of_digits,
                                                               results_.compute_digits_duration);
 }
 void mila::SequentialBBPProfiler::InitResults() {

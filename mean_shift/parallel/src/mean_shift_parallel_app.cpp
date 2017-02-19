@@ -81,21 +81,21 @@ mila::ParallelMeanShiftApp::Results mila::ParallelMeanShiftApp::PrepareResults(c
     prepared_results.initialize_duration.push_back(result.initialize_duration.count());
     prepared_results.read_buffer_with_output_duration.push_back(result.read_buffer_with_output_duration.count());
 
-    prepared_results.read_buffer_with_distances_durations.push_back(mila::utils::Sum(mila::utils::ExtractTimeCountFromVector(
+    prepared_results.read_buffer_with_distances_durations.push_back(mila::Sum(mila::ExtractTimeCountFromVector(
         result.read_buffer_with_distances_durations)));
-    prepared_results.copy_buffer_durations.push_back(mila::utils::Sum(mila::utils::ExtractTimeCountFromVector(result.copy_buffer_durations)));
-    prepared_results.enqueue_nd_range_durations.push_back(mila::utils::Sum(mila::utils::ExtractTimeCountFromVector(
+    prepared_results.copy_buffer_durations.push_back(mila::Sum(mila::ExtractTimeCountFromVector(result.copy_buffer_durations)));
+    prepared_results.enqueue_nd_range_durations.push_back(mila::Sum(mila::ExtractTimeCountFromVector(
         result.enqueue_nd_range_durations)));
 
-    auto tmp_values = mila::utils::ExtractTimeCountFromVector(result.read_buffer_with_distances_durations);
+    auto tmp_values = mila::ExtractTimeCountFromVector(result.read_buffer_with_distances_durations);
     prepared_results.read_buffer_with_distances_duration.insert(prepared_results.read_buffer_with_distances_duration.end(),
                                                                 tmp_values.begin(),
                                                                 tmp_values.end());
-    tmp_values = mila::utils::ExtractTimeCountFromVector(result.copy_buffer_durations);
+    tmp_values = mila::ExtractTimeCountFromVector(result.copy_buffer_durations);
     prepared_results.copy_buffer_duration.insert(prepared_results.copy_buffer_duration.end(),
                                                  tmp_values.begin(),
                                                  tmp_values.end());
-    tmp_values = mila::utils::ExtractTimeCountFromVector(result.enqueue_nd_range_durations);
+    tmp_values = mila::ExtractTimeCountFromVector(result.enqueue_nd_range_durations);
     prepared_results.enqueue_nd_range_duration.insert(prepared_results.enqueue_nd_range_duration.end(),
                                                       tmp_values.begin(),
                                                       tmp_values.end());

@@ -26,7 +26,7 @@ void mila::SequentialNBodyProfiler::InitResults() {
 }
 void mila::SequentialNBodyProfiler::SetResultsAfterUpdateParticles(const size_t number_of_particles) {
   results_.update_particles_duration = profiler_->GetDuration("UpdateParticles");
-  results_.particles_per_second = mila::utils::GetValuePerSecond(number_of_particles,
+  results_.particles_per_second = mila::GetValuePerSecond(number_of_particles,
                                                                  results_.update_particles_duration);
 }
 mila::SequentialNBodyProfiler::SequentialNBodyProfiler(mila::SequentialNBodyProfiler &&profiler) :

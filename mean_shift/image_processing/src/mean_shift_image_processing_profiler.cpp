@@ -30,6 +30,6 @@ void mila::MeanShiftImageProcessingProfiler::InitResults() {
 
 void mila::MeanShiftImageProcessingProfiler::SetResultsAfterRun(const size_t number_of_pixels) {
   results_.mean_shift_image_processing_duration = profiler_->GetDuration("Run");
-  results_.pixels_per_second = mila::utils::GetValuePerSecond(number_of_pixels,
+  results_.pixels_per_second = mila::GetValuePerSecond(number_of_pixels,
                                                               results_.mean_shift_image_processing_duration);
 }

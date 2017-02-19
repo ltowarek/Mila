@@ -24,7 +24,7 @@ mila::GenericOpenCLApplication::~GenericOpenCLApplication() {
 }
 clpp::Program
 mila::GenericOpenCLApplication::CreateProgramFromSource(const std::string &source_file_path) const {
-  const auto source_file = mila::utils::ReadFile(source_file_path);
+  const auto source_file = mila::ReadFile(source_file_path);
   return clpp::Program(context_, source_file);
 }
 void mila::GenericOpenCLApplication::BuildProgram(const clpp::Program &program,

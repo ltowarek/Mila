@@ -4,10 +4,10 @@ void mila::PrintResultStatistics(const std::string &name,
                                  const std::string &unit,
                                  const std::vector<float> &result,
                                  const mila::Logger &logger) {
-  logger.Info("%s mean: %f %s", name.c_str(), mila::utils::Mean(result), unit.c_str());
-  logger.Info("%s median: %f %s", name.c_str(), mila::utils::Median(result), unit.c_str());
-  logger.Info("%s standard deviation: %f %s", name.c_str(), mila::utils::StandardDeviation(result), unit.c_str());
-  logger.Info("%s coefficient of variation: %f", name.c_str(), mila::utils::CoefficientOfVariation(result), unit.c_str());
+  logger.Info("%s mean: %f %s", name.c_str(), mila::Mean(result), unit.c_str());
+  logger.Info("%s median: %f %s", name.c_str(), mila::Median(result), unit.c_str());
+  logger.Info("%s standard deviation: %f %s", name.c_str(), mila::StandardDeviation(result), unit.c_str());
+  logger.Info("%s coefficient of variation: %f", name.c_str(), mila::CoefficientOfVariation(result), unit.c_str());
 }
 size_t mila::statistics::OpenCLStatistics::GetBuildKernelAsMicroseconds() {
   return static_cast<size_t>(build_kernel_.count());

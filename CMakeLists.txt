@@ -4,7 +4,7 @@ project(Mila)
 set(MILA_VERSION_MAJOR 0)
 set(MILA_VERSION_MINOR 4)
 set(MILA_VERSION_PATCH 0)
-configure_file (
+configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.hpp.in"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.hpp"
 )
@@ -15,23 +15,23 @@ include(CheckCXXCompilerFlag)
 
 check_cxx_compiler_flag(/fp:strict HAS_FP_STRICT)
 if (HAS_FP_STRICT)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+endif ()
 
 check_cxx_compiler_flag(-msse2 HAS_MSSE2)
 if (HAS_MSSE2)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+endif ()
 
 check_cxx_compiler_flag(-mfpmath HAS_MFPMATH)
 if (HAS_MFPMATH)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
+endif ()
 
 check_cxx_compiler_flag(-std=gnu++11 HAS_CPP11)
 if (HAS_CPP11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+endif ()
 
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)

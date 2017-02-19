@@ -11,7 +11,6 @@
 #include "clpp.h"
 
 namespace mila {
-namespace utils {
 template<typename T=std::chrono::nanoseconds>
 T GetProfilingInfo(const clpp::Event &event) {
   return std::chrono::duration_cast<T>(std::chrono::nanoseconds(
@@ -82,6 +81,5 @@ T CoefficientOfVariation(const std::vector<T> &values) {
 }
 
 std::vector<float> ExtractTimeCountFromVector(const std::vector<std::chrono::microseconds> &input);
-};  // utils
 }  // mila
 #endif  // MILA_UTILS_H

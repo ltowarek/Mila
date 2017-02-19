@@ -24,18 +24,18 @@ void mila::ParallelBBPProfiler::SetResultsAfterComputeDigits(const size_t number
   auto event = bbp_->GetEvents().enqueue_nd_range;
   if (event != nullptr) {
     results_.enqueue_nd_range_duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(mila::utils::GetProfilingInfo(
+        std::chrono::duration_cast<std::chrono::microseconds>(mila::GetProfilingInfo(
             event));
   }
   event = bbp_->GetEvents().read_buffer;
   if (event != nullptr) {
     results_.read_buffer_duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(mila::utils::GetProfilingInfo(
+        std::chrono::duration_cast<std::chrono::microseconds>(mila::GetProfilingInfo(
             event));
   }
 
   results_.compute_digits_duration = profiler_->GetDuration("ComputeDigits");
-  results_.digits_per_second = mila::utils::GetValuePerSecond(number_of_digits,
+  results_.digits_per_second = mila::GetValuePerSecond(number_of_digits,
                                                               results_.compute_digits_duration);
   results_.bandwidth = mila::ParallelBBPProfiler::ComputeBandwidthAsGBPS(number_of_digits,
                                                                          results_.compute_digits_duration.count());

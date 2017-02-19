@@ -46,10 +46,10 @@ void mila::ParallelNBodyProfiler::SetResultsAfterInitialize() {
 void mila::ParallelNBodyProfiler::SetResultsAfterUpdateParticles(const size_t number_of_particles) {
   results_.update_particles_duration = profiler_->GetDuration("UpdateParticles");
   results_.enqueue_nd_range_duration =
-      mila::utils::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().enqueue_nd_range);
+      mila::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().enqueue_nd_range);
   results_.read_buffer_duration =
-      mila::utils::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().read_buffer);
-  results_.particles_per_second = mila::utils::GetValuePerSecond(number_of_particles,
+      mila::GetProfilingInfo<std::chrono::microseconds>(n_body_->GetEvents().read_buffer);
+  results_.particles_per_second = mila::GetValuePerSecond(number_of_particles,
                                                                  results_.update_particles_duration);
   results_.bandwidth = ComputeBandwidthAsGBPS(number_of_particles, results_.update_particles_duration.count());
 }

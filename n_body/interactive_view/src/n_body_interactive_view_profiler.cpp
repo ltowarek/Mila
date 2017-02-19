@@ -40,6 +40,6 @@ void mila::NBodyInteractiveViewProfiler::InitResults() {
 
 void mila::NBodyInteractiveViewProfiler::SetResultsAfterReplay(const size_t number_of_frames) {
   results_.replay_duration = profiler_->GetDuration("Replay");
-  results_.frames_per_second = mila::utils::GetValuePerSecond(number_of_frames,
+  results_.frames_per_second = mila::GetValuePerSecond(number_of_frames,
                                                               results_.replay_duration);
 }

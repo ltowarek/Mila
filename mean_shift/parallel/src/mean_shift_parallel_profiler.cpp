@@ -63,16 +63,16 @@ void mila::ParallelMeanShiftProfiler::SetResultsAfterInitialize() {
 
 void mila::ParallelMeanShiftProfiler::SetResultsAfterRun(const size_t number_of_points) {
   results_.enqueue_nd_range_durations =
-      mila::utils::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().enqueue_nd_range);
+      mila::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().enqueue_nd_range);
   results_.copy_buffer_durations =
-      mila::utils::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().copy_buffer);
+      mila::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().copy_buffer);
   results_.read_buffer_with_distances_durations =
-      mila::utils::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().read_buffer_with_distances);
+      mila::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().read_buffer_with_distances);
   results_.read_buffer_with_output_duration =
-      mila::utils::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().read_buffer_with_output);
+      mila::GetProfilingInfo<std::chrono::microseconds>(mean_shift_->GetEvents().read_buffer_with_output);
 
   results_.mean_shift_duration = profiler_->GetDuration("Run");
-  results_.points_per_second = mila::utils::GetValuePerSecond(number_of_points,
+  results_.points_per_second = mila::GetValuePerSecond(number_of_points,
                                                               results_.mean_shift_duration);
   results_.bandwidth = ComputeBandwidthAsGBPS(number_of_points, results_.mean_shift_duration.count());
 }
