@@ -31,7 +31,7 @@ Parameters ParseCommandLine(int &argc, char **argv) {
 int main(int argc, char **argv) {
   auto config = ParseCommandLine(argc, argv);
   auto logger = std::shared_ptr<mila::Logger>(mila::LoggerFactory().MakePrintf());
-  logger->Info("Version: %s", mila::version::GetVersion().c_str());
+  logger->Info("Version: %s", mila::GetVersion().c_str());
 
   auto plugin = mila::PluginManager::Create(config.test_case, logger);
   if (plugin == nullptr) {
