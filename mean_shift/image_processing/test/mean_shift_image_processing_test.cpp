@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "mean_shift_image_processing_app.h"
+#include "mean_shift_image_processing_app.hpp"
 
 TEST(MeanShiftImageProcessingProfilerTest, GetResultsAfterRun) {
   auto profiler = std::unique_ptr<mila::Profiler>(new mila::ProfilerStub());

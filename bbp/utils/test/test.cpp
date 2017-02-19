@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "bbp_utils.h"
+#include "bbp_utils.hpp"
 
 TEST(BBPUtilsTest, ConvertFractionToHex) {
   EXPECT_EQ(mila::bbp::utils::ConvertFractionToHex(0.141587316989899f, 6), "243F11");

@@ -1,7 +1,7 @@
 #include <memory>
 
-#include "mean_shift_sequential_app.h"
-#include "version.h"
+#include "mean_shift_sequential_app.hpp"
+#include "version.hpp"
 
 int main(int argc, char **argv) {
   auto logger = std::shared_ptr<mila::Logger>(mila::LoggerFactory().MakePrintf());

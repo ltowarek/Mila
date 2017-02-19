@@ -1,7 +1,7 @@
 #include <memory>
 
-#include "bbp_parallel_app.h"
-#include "version.h"
+#include "bbp_parallel_app.hpp"
+#include "version.hpp"
 
 int main(int argc, char **argv) {
   auto logger = std::shared_ptr<mila::Logger>(mila::LoggerFactory().MakePrintf());

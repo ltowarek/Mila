@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "mean_shift_sequential.h"
-#include "mean_shift_sequential_profiler.h"
-#include "mean_shift_sequential_app.h"
+#include "mean_shift_sequential.hpp"
+#include "mean_shift_sequential_profiler.hpp"
+#include "mean_shift_sequential_app.hpp"
 
 TEST(SequentialMeanShiftTest, DistanceZero) {
   const auto mean_shift = mila::SequentialMeanShift(nullptr);

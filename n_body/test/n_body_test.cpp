@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "n_body_factories.h"
+#include "n_body_factories.hpp"
 
 TEST(NBodyVector2DTest, InitializeWithSingleValue) {
   const auto vector2D = mila::Vector2D{0.0f};

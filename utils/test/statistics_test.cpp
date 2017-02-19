@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "statistics.h"
+#include "statistics.hpp"
 
 TEST(OpenCLStatisticsTest, GetOpenCLStatisticsAsString) {
   auto statistics = mila::statistics::OpenCLStatistics();

@@ -5,8 +5,8 @@ set(MILA_VERSION_MAJOR 0)
 set(MILA_VERSION_MINOR 4)
 set(MILA_VERSION_PATCH 0)
 configure_file (
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h.in"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.hpp.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.hpp"
 )
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -117,7 +117,7 @@ configure_file(${BBP_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(${N_BODY_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 include_directories(${PLUGIN_MANAGER_INCLUDE_DIRS})
-add_executable(mila main.cpp)
+add_executable(mila src/main.cpp)
 target_link_libraries(mila ${PLUGIN_MANAGER_LIBRARIES})
 
 set_property(TARGET gtest PROPERTY FOLDER "deps")

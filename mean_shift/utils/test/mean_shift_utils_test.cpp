@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "mean_shift_utils.h"
+#include "mean_shift_utils.hpp"
 
 TEST(MeanShiftUtilsPointTest, InitializeWithSingleValue) {
   mila::Point point = {0.0f};

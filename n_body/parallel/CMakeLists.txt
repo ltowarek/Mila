@@ -8,9 +8,9 @@ configure_file(${N_BODY_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 include_directories(${UTILS_INCLUDE_DIRS} ${N_BODY_UTILS_INCLUDE_DIRS})
 add_library(n_body_parallel_lib
-    include/n_body_parallel.h include/n_body_parallel.cpp
-    include/n_body_parallel_profiler.h include/n_body_parallel_profiler.cpp
-    include/n_body_parallel_app.h include/n_body_parallel_app.cpp)
+    include/n_body_parallel.hpp src/n_body_parallel.cpp
+    include/n_body_parallel_profiler.hpp src/n_body_parallel_profiler.cpp
+    include/n_body_parallel_app.hpp src/n_body_parallel_app.cpp)
 target_link_libraries(n_body_parallel_lib ${UTILS_LIBRARIES} ${N_BODY_UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
 
 add_subdirectory(test)

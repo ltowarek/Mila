@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "utils.h"
+#include "utils.hpp"
 
 TEST(UtilsTest, Mean) {
   std::vector<float> values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};

@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "n_body_sequential.h"
-#include "n_body_interactive_view.h"
-#include "n_body_interactive_view_profiler.h"
-#include "n_body_interactive_view_app.h"
+#include "n_body_sequential.hpp"
+#include "n_body_interactive_view.hpp"
+#include "n_body_interactive_view_profiler.hpp"
+#include "n_body_interactive_view_app.hpp"
 
 TEST(NBodyInteractiveViewTest, Record) {
   const auto logger_spy = std::shared_ptr<mila::LoggerSpy>(new mila::LoggerSpy());

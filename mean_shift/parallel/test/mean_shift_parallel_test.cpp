@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "mean_shift_parallel_profiler.h"
-#include "mean_shift_parallel_app.h"
+#include "mean_shift_parallel_profiler.hpp"
+#include "mean_shift_parallel_app.hpp"
 
 class ParallelMeanShiftProfilerTest : public testing::Test {
  protected:

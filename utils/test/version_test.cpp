@@ -6,7 +6,7 @@
 #define MILA_VERSION_PATCH 1
 
 #include "gtest/gtest.h"
-#include "version.h"
+#include "version.hpp"
 
 TEST(VersionTest, GetVersion) {
 

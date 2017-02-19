@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "mean_shift_factories.h"
+#include "mean_shift_factories.hpp"
 
 template<typename T>
 std::unique_ptr<mila::MeanShift> CreateMeanShift();

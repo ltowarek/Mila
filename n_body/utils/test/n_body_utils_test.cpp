@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "n_body_utils.h"
+#include "n_body_utils.hpp"
 
 TEST(NBodyUtilsTest, GenerateRandomValue) {
   for (int i = 0; i < 10; ++i) {

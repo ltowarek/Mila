@@ -1,7 +1,7 @@
 #include <thread>
 
 #include "gtest/gtest.h"
-#include "profiler.h"
+#include "profiler.hpp"
 
 template<typename T>
 std::unique_ptr<mila::Profiler> CreateProfiler();

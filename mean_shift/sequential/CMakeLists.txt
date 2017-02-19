@@ -3,9 +3,9 @@ project(mean_shift_sequential)
 
 include_directories(${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
 add_library(mean_shift_sequential_lib
-    include/mean_shift_sequential.h include/mean_shift_sequential.cpp
-    include/mean_shift_sequential_profiler.h include/mean_shift_sequential_profiler.cpp
-    include/mean_shift_sequential_app.h include/mean_shift_sequential_app.cpp)
+    include/mean_shift_sequential.hpp src/mean_shift_sequential.cpp
+    include/mean_shift_sequential_profiler.hpp src/mean_shift_sequential_profiler.cpp
+    include/mean_shift_sequential_app.hpp src/mean_shift_sequential_app.cpp)
 target_link_libraries(mean_shift_sequential_lib ${UTILS_LIBRARIES})
 
 add_subdirectory(test)
