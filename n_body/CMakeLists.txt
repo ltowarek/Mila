@@ -28,13 +28,7 @@ target_link_libraries(n_body_factories_lib
     ${N_BODY_INTERACTIVE_VIEW_LIBRARIES}
     ${N_BODY_UTILS_LIBRARIES})
 
-configure_file(${N_BODY_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-include_directories(${UTILS_INCLUDE_DIRS} ${N_BODY_FACTORIES_INCLUDE_DIRS})
-add_executable(n_body main.cpp)
-target_link_libraries(n_body ${UTILS_LIBRARIES} ${N_BODY_FACTORIES_LIBRARIES})
-
 add_subdirectory(test)
 
 set_property(TARGET n_body_factories_lib PROPERTY FOLDER "n_body")
-set_property(TARGET n_body PROPERTY FOLDER "n_body")
 set_property(TARGET glfw PROPERTY FOLDER "n_body")

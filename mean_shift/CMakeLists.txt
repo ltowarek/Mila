@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(mean_shift)
 
-
 add_subdirectory(utils)
 add_subdirectory(parallel)
 add_subdirectory(sequential)
@@ -23,12 +22,6 @@ target_link_libraries(mean_shift_factories_lib
     ${MEAN_SHIFT_IMAGE_PROCESSING_LIBRARIES}
     ${MEAN_SHIFT_UTILS_LIBRARIES})
 
-configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-include_directories(${UTILS_INCLUDE_DIRS} ${MEAN_SHIFT_FACTORIES_INCLUDE_DIRS})
-add_executable(mean_shift main.cpp)
-target_link_libraries(mean_shift ${UTILS_LIBRARIES} ${MEAN_SHIFT_FACTORIES_LIBRARIES})
-
 add_subdirectory(test)
 
 set_property(TARGET mean_shift_factories_lib PROPERTY FOLDER "mean_shift")
-set_property(TARGET mean_shift PROPERTY FOLDER "mean_shift")
