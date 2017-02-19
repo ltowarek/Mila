@@ -435,7 +435,7 @@ int main() {
         return error;
       }
 
-      cl_uint device_max_work_group_size = 0;
+      size_t device_max_work_group_size = 0;
       error = GetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, device_max_work_group_size);
       if (error) {
         return error;
