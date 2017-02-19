@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_SEQUENTIAL_APP_H
-#define MILA_MEAN_SHIFT_SEQUENTIAL_APP_H
+#ifndef MILA_MEAN_SHIFT_SEQUENTIAL_APP_HPP
+#define MILA_MEAN_SHIFT_SEQUENTIAL_APP_HPP
 
 #include "plugin.hpp"
 #include "mean_shift_sequential_profiler.hpp"
@@ -33,4 +33,4 @@ class SequentialMeanShiftApp : public Plugin {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  //MILA_MEAN_SHIFT_SEQUENTIAL_APP_H
+#endif  //MILA_MEAN_SHIFT_SEQUENTIAL_APP_HPP

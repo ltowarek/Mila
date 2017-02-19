@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_UTILS_H
-#define MILA_MEAN_SHIFT_UTILS_H
+#ifndef MILA_MEAN_SHIFT_UTILS_HPP
+#define MILA_MEAN_SHIFT_UTILS_HPP
 
 #include <cstdint>
 #include <string>
@@ -30,4 +30,4 @@ class Image {
   std::string file_name_;
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_UTILS_H
+#endif  // MILA_MEAN_SHIFT_UTILS_HPP

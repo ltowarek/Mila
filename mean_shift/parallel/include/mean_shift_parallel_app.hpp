@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_PARALLEL_APP_H
-#define MILA_MEAN_SHIFT_PARALLEL_APP_H
+#ifndef MILA_MEAN_SHIFT_PARALLEL_APP_HPP
+#define MILA_MEAN_SHIFT_PARALLEL_APP_HPP
 
 #include "plugin.hpp"
 #include "mean_shift_parallel_profiler.hpp"
@@ -44,4 +44,4 @@ class ParallelMeanShiftApp : public Plugin {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  //MILA_MEAN_SHIFT_PARALLEL_APP_H
+#endif  //MILA_MEAN_SHIFT_PARALLEL_APP_HPP

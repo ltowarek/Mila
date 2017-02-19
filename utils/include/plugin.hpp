@@ -1,5 +1,5 @@
-#ifndef MILA_PLUGIN_H
-#define MILA_PLUGIN_H
+#ifndef MILA_PLUGIN_HPP
+#define MILA_PLUGIN_HPP
 
 namespace mila {
 class Plugin {
@@ -8,4 +8,4 @@ class Plugin {
   virtual void Run(int argc, char **argv) const = 0;
 };
 }  // mila
-#endif //MILA_PLUGIN_H
+#endif //MILA_PLUGIN_HPP

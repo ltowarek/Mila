@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_SEQUENTIAL_H
-#define MILA_MEAN_SHIFT_SEQUENTIAL_H
+#ifndef MILA_MEAN_SHIFT_SEQUENTIAL_HPP
+#define MILA_MEAN_SHIFT_SEQUENTIAL_HPP
 
 #include <cmath>
 #include <cstdint>
@@ -26,4 +26,4 @@ class SequentialMeanShift : public MeanShift {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_SEQUENTIAL_H
+#endif  // MILA_MEAN_SHIFT_SEQUENTIAL_HPP

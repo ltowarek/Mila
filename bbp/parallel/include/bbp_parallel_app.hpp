@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_PARALLEL_APP_H
-#define MILA_BBP_PARALLEL_APP_H
+#ifndef MILA_BBP_PARALLEL_APP_HPP
+#define MILA_BBP_PARALLEL_APP_HPP
 
 #include "plugin.hpp"
 #include "bbp_parallel_profiler.hpp"
@@ -39,4 +39,4 @@ class ParallelBBPApp: public Plugin {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif //MILA_BBP_PARALLEL_APP_H
+#endif //MILA_BBP_PARALLEL_APP_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_UTILS_MEAN_SHIFT_H
-#define MILA_UTILS_MEAN_SHIFT_H
+#ifndef MILA_UTILS_MEAN_SHIFT_HPP
+#define MILA_UTILS_MEAN_SHIFT_HPP
 
 #include <vector>
 #include <memory>
@@ -29,4 +29,4 @@ class MeanShiftProfiler : public MeanShift {
   virtual ~MeanShiftProfiler() = 0;
 };
 }  // mila
-#endif  // MILA_UTILS_MEAN_SHIFT_H
+#endif  // MILA_UTILS_MEAN_SHIFT_HPP

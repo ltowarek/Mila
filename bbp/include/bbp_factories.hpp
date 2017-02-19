@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_FACTORIES_H
-#define MILA_BBP_FACTORIES_H
+#ifndef MILA_BBP_FACTORIES_HPP
+#define MILA_BBP_FACTORIES_HPP
 
 #include <memory>
 
@@ -27,4 +27,4 @@ class BBPFactory {
                                                        const std::shared_ptr<Logger> logger) const;
 };
 }  // mila
-#endif  // MILA_BBP_FACTORIES_H
+#endif  // MILA_BBP_FACTORIES_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_SEQUENTIAL_PROFILER_H
-#define MILA_BBP_SEQUENTIAL_PROFILER_H
+#ifndef MILA_BBP_SEQUENTIAL_PROFILER_HPP
+#define MILA_BBP_SEQUENTIAL_PROFILER_HPP
 
 #include "bbp_sequential.hpp"
 #include "profiler.hpp"
@@ -29,4 +29,4 @@ class SequentialBBPProfiler : public BBPProfiler {
   void InitResults();
 };
 }  // mila
-#endif  // MILA_BBP_SEQUENTIAL_PROFILER_H
+#endif  // MILA_BBP_SEQUENTIAL_PROFILER_HPP

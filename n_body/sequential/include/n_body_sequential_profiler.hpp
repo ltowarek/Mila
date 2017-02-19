@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_SEQUENTIAL_PROFILER_H
-#define MILA_N_BODY_SEQUENTIAL_PROFILER_H
+#ifndef MILA_N_BODY_SEQUENTIAL_PROFILER_HPP
+#define MILA_N_BODY_SEQUENTIAL_PROFILER_HPP
 
 #include "n_body_sequential.hpp"
 #include "profiler.hpp"
@@ -33,4 +33,4 @@ class SequentialNBodyProfiler : public NBody {
   void InitResults();
 };
 }  // mila
-#endif  // MILA_N_BODY_SEQUENTIAL_PROFILER_H
+#endif  // MILA_N_BODY_SEQUENTIAL_PROFILER_HPP

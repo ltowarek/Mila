@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_SEQUENTIAL_H
-#define MILA_BBP_SEQUENTIAL_H
+#ifndef MILA_BBP_SEQUENTIAL_HPP
+#define MILA_BBP_SEQUENTIAL_HPP
 
 #include <cmath>
 #include <cstddef>
@@ -29,4 +29,4 @@ class SequentialBBP : public GenericBBP {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  // MILA_BBP_SEQUENTIAL_H
+#endif  // MILA_BBP_SEQUENTIAL_HPP

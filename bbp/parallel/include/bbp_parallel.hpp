@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_PARALLEL_H
-#define MILA_BBP_PARALLEL_H
+#ifndef MILA_BBP_PARALLEL_HPP
+#define MILA_BBP_PARALLEL_HPP
 
 #include <string>
 #include <vector>
@@ -41,4 +41,4 @@ class ParallelBBP: public GenericBBP {
   const std::string kernel_name_;
 };
 }  // mila
-#endif  // MILA_BBP_PARALLEL_H
+#endif  // MILA_BBP_PARALLEL_HPP

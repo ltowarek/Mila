@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_INTERACTIVE_VIEW_PROFILER_H
-#define MILA_N_BODY_INTERACTIVE_VIEW_PROFILER_H
+#ifndef MILA_N_BODY_INTERACTIVE_VIEW_PROFILER_HPP
+#define MILA_N_BODY_INTERACTIVE_VIEW_PROFILER_HPP
 
 #include "profiler.hpp"
 #include "n_body_interactive_view.hpp"
@@ -38,4 +38,4 @@ class NBodyInteractiveViewProfiler {
   void SetResultsAfterReplay(const size_t number_of_frames);
 };
 }  // mila
-#endif  // MILA_N_BODY_INTERACTIVE_VIEW_PROFILER_H
+#endif  // MILA_N_BODY_INTERACTIVE_VIEW_PROFILER_HPP

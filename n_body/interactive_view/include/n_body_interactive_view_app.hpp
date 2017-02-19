@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_INTERACTIVE_VIEW_APP_H
-#define MILA_N_BODY_INTERACTIVE_VIEW_APP_H
+#ifndef MILA_N_BODY_INTERACTIVE_VIEW_APP_HPP
+#define MILA_N_BODY_INTERACTIVE_VIEW_APP_HPP
 
 #include "plugin.hpp"
 #include "n_body_sequential.hpp"
@@ -68,4 +68,4 @@ class SequentialNBodyInteractiveViewApp : public Plugin {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  //MILA_N_BODY_INTERACTIVE_VIEW_APP_H
+#endif  //MILA_N_BODY_INTERACTIVE_VIEW_APP_HPP

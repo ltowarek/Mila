@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_PARALLEL_H
-#define MILA_MEAN_SHIFT_PARALLEL_H
+#ifndef MILA_MEAN_SHIFT_PARALLEL_HPP
+#define MILA_MEAN_SHIFT_PARALLEL_HPP
 
 #include "clpp.h"
 #include "mean_shift.hpp"
@@ -34,4 +34,4 @@ class ParallelMeanShift : public MeanShift {
   clpp::Kernel kernel_;
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_PARALLEL_H
+#endif  // MILA_MEAN_SHIFT_PARALLEL_HPP

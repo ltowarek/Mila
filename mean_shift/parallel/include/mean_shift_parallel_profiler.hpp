@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_PARALLEL_PROFILER_H
-#define MILA_MEAN_SHIFT_PARALLEL_PROFILER_H
+#ifndef MILA_MEAN_SHIFT_PARALLEL_PROFILER_HPP
+#define MILA_MEAN_SHIFT_PARALLEL_PROFILER_HPP
 
 #include "mean_shift_parallel.hpp"
 #include "statistics.hpp"
@@ -40,4 +40,4 @@ class ParallelMeanShiftProfiler : public MeanShiftProfiler {
   void SetResultsAfterInitialize();
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_PARALLEL_PROFILER_H
+#endif  // MILA_MEAN_SHIFT_PARALLEL_PROFILER_HPP

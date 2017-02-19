@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_H
-#define MILA_MEAN_SHIFT_IMAGE_PROCESSING_H
+#ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_HPP
+#define MILA_MEAN_SHIFT_IMAGE_PROCESSING_HPP
 
 #include "mean_shift.hpp"
 #include "logger.hpp"
@@ -29,4 +29,4 @@ class MeanShiftImageProcessingStub : public MeanShiftImageProcessing {
   }
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_IMAGE_PROCESSING_H
+#endif  // MILA_MEAN_SHIFT_IMAGE_PROCESSING_HPP

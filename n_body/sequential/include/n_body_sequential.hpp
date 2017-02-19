@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_SEQUENTIAL_H
-#define MILA_N_BODY_SEQUENTIAL_H
+#ifndef MILA_N_BODY_SEQUENTIAL_HPP
+#define MILA_N_BODY_SEQUENTIAL_HPP
 
 #include "logger.hpp"
 #include "n_body.hpp"
@@ -29,4 +29,4 @@ class SequentialNBody : public NBody {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  // MILA_N_BODY_SEQUENTIAL_H
+#endif  // MILA_N_BODY_SEQUENTIAL_HPP

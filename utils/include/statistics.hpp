@@ -1,5 +1,5 @@
-#ifndef MILA_STATISTICS_H
-#define MILA_STATISTICS_H
+#ifndef MILA_STATISTICS_HPP
+#define MILA_STATISTICS_HPP
 
 #include <string>
 #include <sstream>
@@ -43,4 +43,4 @@ class OpenCLStatistics {
   std::chrono::microseconds read_buffer_ = std::chrono::microseconds(0);
 };
 }  // mila
-#endif  //MILA_STATISTICS_H
+#endif  //MILA_STATISTICS_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_PROFILER_H
-#define MILA_PROFILER_H
+#ifndef MILA_PROFILER_HPP
+#define MILA_PROFILER_HPP
 
 #include <chrono>
 #include <map>
@@ -58,4 +58,4 @@ class ProfilerStub : public Profiler {
   }
 };
 }  // mila
-#endif //MILA_PROFILER_H
+#endif //MILA_PROFILER_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H
-#define MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H
+#ifndef MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_HPP
+#define MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_HPP
 
 #include "mean_shift_sequential.hpp"
 #include "profiler.hpp"
@@ -30,4 +30,4 @@ class SequentialMeanShiftProfiler : public MeanShift {
   void InitResults();
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_H
+#endif  // MILA_MEAN_SHIFT_SEQUENTIAL_PROFILER_HPP

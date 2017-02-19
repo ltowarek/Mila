@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_FACTORIES_H
-#define MILA_N_BODY_FACTORIES_H
+#ifndef MILA_N_BODY_FACTORIES_HPP
+#define MILA_N_BODY_FACTORIES_HPP
 
 #include <memory>
 
@@ -28,4 +28,4 @@ class NBodyFactory {
                                                     const std::shared_ptr<Logger> logger) const;
 };
 }  // mila
-#endif  // MILA_N_BODY_FACTORIES_H
+#endif  // MILA_N_BODY_FACTORIES_HPP

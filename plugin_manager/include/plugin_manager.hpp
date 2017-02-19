@@ -1,5 +1,5 @@
-#ifndef MILA_PLUGIN_MANAGER_H
-#define MILA_PLUGIN_MANAGER_H
+#ifndef MILA_PLUGIN_MANAGER_HPP
+#define MILA_PLUGIN_MANAGER_HPP
 
 #include "plugin.hpp"
 #include "logger.hpp"
@@ -19,4 +19,4 @@ class PluginManager {
   static std::unique_ptr<mila::Plugin> Create(const std::string &name, const std::shared_ptr<mila::Logger> logger);
 };
 }  // mila
-#endif //MILA_PLUGIN_MANAGER_H
+#endif //MILA_PLUGIN_MANAGER_HPP

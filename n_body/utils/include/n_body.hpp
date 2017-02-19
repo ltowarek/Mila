@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_H
-#define MILA_N_BODY_H
+#ifndef MILA_N_BODY_HPP
+#define MILA_N_BODY_HPP
 
 #include <cstddef>
 #include <vector>
@@ -41,4 +41,4 @@ class NBody {
                                                  const float max);
 };
 }  // mila
-#endif  // MILA_N_BODY_H
+#endif  // MILA_N_BODY_HPP

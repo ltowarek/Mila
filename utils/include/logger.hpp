@@ -1,5 +1,5 @@
-#ifndef MILA_LOGGER_H
-#define MILA_LOGGER_H
+#ifndef MILA_LOGGER_HPP
+#define MILA_LOGGER_HPP
 
 #include <algorithm>
 #include <cstdio>
@@ -56,4 +56,4 @@ class LoggerSpy : public Logger {
 
 bool ContainsStr(const std::vector<std::string> &v, const std::string str);
 }  // mila
-#endif //MILA_LOGGER_H
+#endif //MILA_LOGGER_HPP

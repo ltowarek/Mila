@@ -1,5 +1,5 @@
-#ifndef MILA_OCL_APP_PROFILER_H
-#define MILA_OCL_APP_PROFILER_H
+#ifndef MILA_OCL_APP_PROFILER_HPP
+#define MILA_OCL_APP_PROFILER_HPP
 
 #include <string>
 #include <memory>
@@ -26,4 +26,4 @@ class OpenCLApplicationProfiler: public OpenCLApplication {
   std::unique_ptr<mila::OpenCLApplication> app_;
 };
 }  // mila
-#endif //MILA_OCL_APP_PROFILER_H
+#endif //MILA_OCL_APP_PROFILER_HPP

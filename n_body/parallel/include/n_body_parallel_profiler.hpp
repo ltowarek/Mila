@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_PARALLEL_PROFILER_H
-#define MILA_N_BODY_PARALLEL_PROFILER_H
+#ifndef MILA_N_BODY_PARALLEL_PROFILER_HPP
+#define MILA_N_BODY_PARALLEL_PROFILER_HPP
 
 #include "n_body_parallel.hpp"
 #include "statistics.hpp"
@@ -41,4 +41,4 @@ class ParallelNBodyProfiler : public NBody {
   void InitResults();
 };
 }  // mila
-#endif  // MILA_N_BODY_PARALLEL_PROFILER_H
+#endif  // MILA_N_BODY_PARALLEL_PROFILER_HPP

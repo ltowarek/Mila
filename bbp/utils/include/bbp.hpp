@@ -1,5 +1,5 @@
-#ifndef MILA_UTILS_BBP_H
-#define MILA_UTILS_BBP_H
+#ifndef MILA_UTILS_BBP_HPP
+#define MILA_UTILS_BBP_HPP
 
 #include <vector>
 #include <string>
@@ -25,4 +25,4 @@ class BBPProfiler: public BBP {
   virtual ~BBPProfiler() = 0;
 };
 }  // mila
-#endif  // MILA_UTILS_BBP_H
+#endif  // MILA_UTILS_BBP_HPP

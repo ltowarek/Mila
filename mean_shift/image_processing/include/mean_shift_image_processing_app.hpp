@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_H
-#define MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_H
+#ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_HPP
+#define MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_HPP
 
 #include "plugin.hpp"
 #include "mean_shift_image_processing_profiler.hpp"
@@ -66,4 +66,4 @@ class ParallelMeanShiftImageProcessingApp : public Plugin {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  //MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_H
+#endif  //MILA_MEAN_SHIFT_IMAGE_PROCESSING_APP_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_INTERACTIVE_VIEW_H
-#define MILA_N_BODY_INTERACTIVE_VIEW_H
+#ifndef MILA_N_BODY_INTERACTIVE_VIEW_HPP
+#define MILA_N_BODY_INTERACTIVE_VIEW_HPP
 
 #include "GLFW/glfw3.h"
 #include "n_body.hpp"
@@ -70,4 +70,4 @@ class NBodyInteractiveViewStub : public NBodyInteractiveView {
 
 };
 }  // mila
-#endif  // MILA_N_BODY_INTERACTIVE_VIEW_H
+#endif  // MILA_N_BODY_INTERACTIVE_VIEW_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_PARALLEL_H
-#define MILA_N_BODY_PARALLEL_H
+#ifndef MILA_N_BODY_PARALLEL_HPP
+#define MILA_N_BODY_PARALLEL_HPP
 
 #include "clpp.h"
 #include "n_body.hpp"
@@ -31,4 +31,4 @@ class ParallelNBody : public NBody {
   clpp::Kernel kernel_;
 };
 }  // mila
-#endif  // MILA_N_BODY_PARALLEL_H
+#endif  // MILA_N_BODY_PARALLEL_HPP

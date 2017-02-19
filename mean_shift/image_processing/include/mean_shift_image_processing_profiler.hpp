@@ -1,5 +1,5 @@
-#ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_PROFILER_H
-#define MILA_MEAN_SHIFT_IMAGE_PROCESSING_PROFILER_H
+#ifndef MILA_MEAN_SHIFT_IMAGE_PROCESSING_PROFILER_HPP
+#define MILA_MEAN_SHIFT_IMAGE_PROCESSING_PROFILER_HPP
 
 #include "mean_shift_image_processing.hpp"
 #include "profiler.hpp"
@@ -30,4 +30,4 @@ class MeanShiftImageProcessingProfiler : public MeanShiftImageProcessing {
   void SetResultsAfterRun(const size_t number_of_pixels);
 };
 }  // mila
-#endif  // MILA_MEAN_SHIFT_IMAGE_PROCESSING_PROFILER_H
+#endif  // MILA_MEAN_SHIFT_IMAGE_PROCESSING_PROFILER_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_N_BODY_PARALLEL_APP_H
-#define MILA_N_BODY_PARALLEL_APP_H
+#ifndef MILA_N_BODY_PARALLEL_APP_HPP
+#define MILA_N_BODY_PARALLEL_APP_HPP
 
 #include "plugin.hpp"
 #include "n_body_parallel_profiler.hpp"
@@ -38,4 +38,4 @@ class ParallelNBodyApp : public Plugin {
   const std::shared_ptr<mila::Logger> logger_;
 };
 }  // mila
-#endif  //MILA_N_BODY_PARALLEL_APP_H
+#endif  //MILA_N_BODY_PARALLEL_APP_HPP

@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_UTILS_H
-#define MILA_BBP_UTILS_H
+#ifndef MILA_BBP_UTILS_HPP
+#define MILA_BBP_UTILS_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -12,4 +12,4 @@ namespace mila {
 std::string ConvertFractionToHex(float number, size_t number_of_digits);
 std::vector<std::string> ConvertFractionsToHex(const std::vector<float>& numbers, size_t number_of_digits);
 }  // mila
-#endif  // MILA_BBP_UTILS_H
+#endif  // MILA_BBP_UTILS_HPP

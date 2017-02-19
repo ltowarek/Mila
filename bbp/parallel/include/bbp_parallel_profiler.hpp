@@ -1,5 +1,5 @@
-#ifndef MILA_BBP_PARALLEL_PROFILER_H
-#define MILA_BBP_PARALLEL_PROFILER_H
+#ifndef MILA_BBP_PARALLEL_PROFILER_HPP
+#define MILA_BBP_PARALLEL_PROFILER_HPP
 
 #include <chrono>
 #include <map>
@@ -40,4 +40,4 @@ class ParallelBBPProfiler: public BBPProfiler {
   void InitResults();
 };
 }  // mila
-#endif  // MILA_BBP_PARALLEL_PROFILER_H
+#endif  // MILA_BBP_PARALLEL_PROFILER_HPP

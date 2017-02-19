@@ -1,5 +1,5 @@
-#ifndef MILA_UTILS_H
-#define MILA_UTILS_H
+#ifndef MILA_UTILS_HPP
+#define MILA_UTILS_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -82,4 +82,4 @@ T CoefficientOfVariation(const std::vector<T> &values) {
 
 std::vector<float> ExtractTimeCountFromVector(const std::vector<std::chrono::microseconds> &input);
 }  // mila
-#endif  // MILA_UTILS_H
+#endif  // MILA_UTILS_HPP

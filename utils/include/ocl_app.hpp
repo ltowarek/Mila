@@ -1,5 +1,5 @@
-#ifndef MILA_OCL_APP_H
-#define MILA_OCL_APP_H
+#ifndef MILA_OCL_APP_HPP
+#define MILA_OCL_APP_HPP
 
 #include <fstream>
 #include <sstream>
@@ -59,4 +59,4 @@ class GenericOpenCLApplication: public OpenCLApplication {
   const size_t device_id_;
 };
 }
-#endif //MILA_OCL_APP_H
+#endif //MILA_OCL_APP_HPP
