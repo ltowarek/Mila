@@ -10,9 +10,4 @@ target_link_libraries(bbp_sequential_lib ${BBP_UTILS_LIBRARIES} ${UTILS_LIBRARIE
 
 add_subdirectory(test)
 
-include_directories(${BBP_SEQUENTIAL_INCLUDE_DIRS})
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${BBP_SEQUENTIAL_LIBRARIES})
-
 set_property(TARGET bbp_sequential_lib PROPERTY FOLDER "bbp")
-set_property(TARGET bbp_sequential PROPERTY FOLDER "bbp")
