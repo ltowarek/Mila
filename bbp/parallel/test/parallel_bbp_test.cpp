@@ -2,9 +2,9 @@
 #include <list>
 #include <thread>
 #include "gtest/gtest.h"
-#include "bbp_parallel.h"
-#include "bbp_parallel_profiler.h"
-#include "bbp_parallel_app.h"
+#include "bbp_parallel.hpp"
+#include "bbp_parallel_profiler.hpp"
+#include "bbp_parallel_app.hpp"
 
 class ParallelBBPProfilerTest : public testing::Test {
  protected:

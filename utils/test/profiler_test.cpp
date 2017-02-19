@@ -1,7 +1,7 @@
 #include <thread>
 
 #include "gtest/gtest.h"
-#include "profiler.h"
+#include "profiler.hpp"
 
 template<typename T>
 std::unique_ptr<mila::Profiler> CreateProfiler();
@@ -12,7 +12,7 @@ std::unique_ptr<mila::Profiler> CreateProfiler<mila::ChronoProfiler>() {
 }
 
 template<typename T>
-class ProfilerTest: public testing::Test {
+class ProfilerTest : public testing::Test {
  protected:
   ProfilerTest() : profiler_(std::move(CreateProfiler<T>())) {}
   std::unique_ptr<mila::Profiler> profiler_;

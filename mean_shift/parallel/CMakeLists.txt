@@ -1,23 +1,15 @@
 cmake_minimum_required(VERSION 3.4)
 project(mean_shift_parallel)
 
-find_package(OpenCL REQUIRED)
-include_directories(${OpenCL_INCLUDE_DIR})
-
 configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-include_directories(${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
+include_directories(${MEAN_SHIFT_PARALLEL_INCLUDE_DIRS})
 add_library(mean_shift_parallel_lib
-    include/mean_shift_parallel.h include/mean_shift_parallel.cpp
-    include/mean_shift_parallel_profiler.h include/mean_shift_parallel_profiler.cpp
-    include/mean_shift_parallel_app.h include/mean_shift_parallel_app.cpp)
-target_link_libraries(mean_shift_parallel_lib ${UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
+            include/mean_shift_parallel.hpp src/mean_shift_parallel.cpp
+            include/mean_shift_parallel_profiler.hpp src/mean_shift_parallel_profiler.cpp
+            include/mean_shift_parallel_app.hpp src/mean_shift_parallel_app.cpp)
+target_link_libraries(${MEAN_SHIFT_PARALLEL_LIBRARIES})
 
 add_subdirectory(test)
 
-include_directories(${MEAN_SHIFT_PARALLEL_INCLUDE_DIRS})
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${MEAN_SHIFT_PARALLEL_LIBRARIES})
-
 set_property(TARGET mean_shift_parallel_lib PROPERTY FOLDER "mean_shift")
-set_property(TARGET mean_shift_parallel PROPERTY FOLDER "mean_shift")

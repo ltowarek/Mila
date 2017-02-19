@@ -6,13 +6,12 @@
 #define MILA_VERSION_PATCH 1
 
 #include "gtest/gtest.h"
-#include "version.h"
+#include "version.hpp"
 
 TEST(VersionTest, GetVersion) {
-
   std::stringstream ss;
   ss << MILA_VERSION_MAJOR << "." << MILA_VERSION_MINOR << "." << MILA_VERSION_PATCH;
   std::string expected_version = ss.str();
 
-  EXPECT_STREQ(mila::version::GetVersion().c_str(), expected_version.c_str());
+  EXPECT_STREQ(mila::GetVersion().c_str(), expected_version.c_str());
 }

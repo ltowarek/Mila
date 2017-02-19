@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "n_body_parallel.h"
-#include "n_body_parallel_profiler.h"
-#include "n_body_parallel_app.h"
+#include "n_body_parallel.hpp"
+#include "n_body_parallel_profiler.hpp"
+#include "n_body_parallel_app.hpp"
 
 class ParallelNBodyProfilerTest : public testing::Test {
  protected:

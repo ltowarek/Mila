@@ -1,0 +1,14 @@
+#ifndef MILA_VERSION_H
+#define MILA_VERSION_H
+
+#include <string>
+
+namespace mila {
+#define MILA_VERSION_MAJOR @MILA_VERSION_MAJOR@
+#define MILA_VERSION_MINOR @MILA_VERSION_MINOR@
+#define MILA_VERSION_PATCH @MILA_VERSION_PATCH@
+
+std::string GetVersion();
+}  // mila
+#endif  // MILA_VERSION_H
+

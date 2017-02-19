@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "logger.h"
+#include "logger.hpp"
 
-class PrintfLoggerTest: public testing::Test {
+class PrintfLoggerTest : public testing::Test {
  protected:
   virtual void SetUp() {
     logger_ = mila::PrintfLogger();

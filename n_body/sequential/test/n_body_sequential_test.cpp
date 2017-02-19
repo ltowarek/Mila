@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "n_body_sequential.h"
-#include "n_body_sequential_profiler.h"
-#include "n_body_sequential_app.h"
+#include "n_body_sequential.hpp"
+#include "n_body_sequential_profiler.hpp"
+#include "n_body_sequential_app.hpp"
 
 TEST(SequentialNBodyTest, ApplyCentralForceZeroDistance) {
   const auto n_body = mila::SequentialNBody(nullptr);

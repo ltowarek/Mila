@@ -4,10 +4,13 @@ project(Mila)
 set(MILA_VERSION_MAJOR 0)
 set(MILA_VERSION_MINOR 4)
 set(MILA_VERSION_PATCH 0)
-configure_file (
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h.in"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.h"
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.hpp.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/version.hpp"
 )
+
+find_package(OpenCL REQUIRED)
+find_package(OpenGL REQUIRED)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -15,23 +18,23 @@ include(CheckCXXCompilerFlag)
 
 check_cxx_compiler_flag(/fp:strict HAS_FP_STRICT)
 if (HAS_FP_STRICT)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+endif ()
 
 check_cxx_compiler_flag(-msse2 HAS_MSSE2)
 if (HAS_MSSE2)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+endif ()
 
 check_cxx_compiler_flag(-mfpmath HAS_MFPMATH)
 if (HAS_MFPMATH)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
+endif ()
 
 check_cxx_compiler_flag(-std=gnu++11 HAS_CPP11)
 if (HAS_CPP11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+endif ()
 
 set(gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll")
 set(GTEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
@@ -51,9 +54,9 @@ configure_file(CTestCustom.cmake ${CMAKE_BINARY_DIR})
 set(BBP_UTILS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/bbp/utils/include)
 set(BBP_UTILS_LIBRARIES bbp_utils_lib)
 set(BBP_SEQUENTIAL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/bbp/sequential/include ${BBP_UTILS_INCLUDE_DIRS})
-set(BBP_SEQUENTIAL_LIBRARIES bbp_sequential_lib)
+set(BBP_SEQUENTIAL_LIBRARIES bbp_sequential_lib ${UTILS_LIBRARIES} ${BBP_UTILS_LIBRARIES})
 set(BBP_PARALLEL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/bbp/parallel/include ${BBP_UTILS_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIR} ${CLPP_INCLUDE_DIRS})
-set(BBP_PARALLEL_LIBRARIES bbp_parallel_lib)
+set(BBP_PARALLEL_LIBRARIES bbp_parallel_lib ${UTILS_LIBRARIES} ${BBP_UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
 set(BBP_KERNEL_FILE ${PROJECT_SOURCE_DIR}/bbp/parallel/bbp.cl)
 add_subdirectory(bbp)
 
@@ -61,10 +64,10 @@ set(LODEPNG_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/mean_shift/deps/lodepng)
 set(MEAN_SHIFT_UTILS_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/mean_shift/utils/include ${LODEPNG_INCLUDE_DIRS})
 set(MEAN_SHIFT_UTILS_LIBRARIES mean_shift_utils_lib)
 set(MEAN_SHIFT_PARALLEL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/mean_shift/parallel/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_PARALLEL_LIBRARIES mean_shift_parallel_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
+set(MEAN_SHIFT_PARALLEL_LIBRARIES mean_shift_parallel_lib ${UTILS_LIBRARIES} ${MEAN_SHIFT_UTILS_LIBRARIES})
 set(MEAN_SHIFT_KERNEL_FILE ${PROJECT_SOURCE_DIR}/mean_shift/parallel/mean_shift.cl)
 set(MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/mean_shift/sequential/include ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
-set(MEAN_SHIFT_SEQUENTIAL_LIBRARIES mean_shift_sequential_lib ${MEAN_SHIFT_UTILS_LIBRARIES})
+set(MEAN_SHIFT_SEQUENTIAL_LIBRARIES mean_shift_sequential_lib ${UTILS_LIBRARIES} ${MEAN_SHIFT_UTILS_LIBRARIES})
 set(MEAN_SHIFT_IMAGE_PROCESSING_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/mean_shift/image_processing/include ${MEAN_SHIFT_SEQUENTIAL_INCLUDE_DIRS} ${MEAN_SHIFT_PARALLEL_INCLUDE_DIRS} ${MEAN_SHIFT_UTILS_INCLUDE_DIRS})
 set(MEAN_SHIFT_IMAGE_PROCESSING_LIBRARIES mean_shift_image_processing_lib ${MEAN_SHIFT_UTILS_LIBRARIES} ${UTILS_LIBRARIES} ${MEAN_SHIFT_SEQUENTIAL_LIBRARIES} ${MEAN_SHIFT_PARALLEL_LIBRARIES})
 add_subdirectory(mean_shift)
@@ -79,7 +82,7 @@ set(N_BODY_PARALLEL_INCLUDE_DIRS ${UTILS_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/n_b
 set(N_BODY_PARALLEL_LIBRARIES n_body_parallel_lib ${N_BODY_UTILS_LIBRARIES} ${UTILS_LIBRARIES} ${OpenCL_LIBRARIES})
 set(N_BODY_KERNEL_FILE ${PROJECT_SOURCE_DIR}/n_body/parallel/n_body.cl)
 set(N_BODY_INTERACTIVE_VIEW_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/n_body/interactive_view/include ${UTILS_INCLUDE_DIRS} ${N_BODY_UTILS_INCLUDE_DIRS} ${N_BODY_SEQUENTIAL_INCLUDE_DIRS} ${N_BODY_PARALLEL_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
-set(N_BODY_INTERACTIVE_VIEW_LIBRARIES n_body_interactive_view_lib ${UTILS_LIBRARIES} ${N_BODY_SEQUENTIAL_LIBRARIES} ${N_BODY_PARALLEL_LIBRARIES} ${N_BODY_UTILS_LIBRARIES} ${GLFW_LIBRARIES} ${OPENGL_LIBRARY})
+set(N_BODY_INTERACTIVE_VIEW_LIBRARIES n_body_interactive_view_lib ${N_BODY_UTILS_LIBRARIES} ${UTILS_LIBRARIES} ${N_BODY_SEQUENTIAL_LIBRARIES} ${N_BODY_PARALLEL_LIBRARIES} ${GLFW_LIBRARIES} ${OPENGL_LIBRARY})
 add_subdirectory(n_body)
 
 add_subdirectory(ocl2json)
@@ -117,7 +120,7 @@ configure_file(${BBP_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(${MEAN_SHIFT_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(${N_BODY_KERNEL_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 include_directories(${PLUGIN_MANAGER_INCLUDE_DIRS})
-add_executable(mila main.cpp)
+add_executable(mila src/main.cpp)
 target_link_libraries(mila ${PLUGIN_MANAGER_LIBRARIES})
 
 set_property(TARGET gtest PROPERTY FOLDER "deps")

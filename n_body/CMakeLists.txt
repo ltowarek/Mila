@@ -15,18 +15,18 @@ add_subdirectory(interactive_view)
 set(N_BODY_FACTORIES_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
 set(N_BODY_FACTORIES_LIBRARIES n_body_factories_lib)
 include_directories(${UTILS_INCLUDE_DIRS}
-    ${N_BODY_PARALLEL_INCLUDE_DIRS}
-    ${N_BODY_SEQUENTIAL_INCLUDE_DIRS}
-    ${N_BODY_INTERACTIVE_VIEW_INCLUDE_DIRS}
-    ${N_BODY_UTILS_INCLUDE_DIRS})
+                    ${N_BODY_PARALLEL_INCLUDE_DIRS}
+                    ${N_BODY_SEQUENTIAL_INCLUDE_DIRS}
+                    ${N_BODY_INTERACTIVE_VIEW_INCLUDE_DIRS}
+                    ${N_BODY_UTILS_INCLUDE_DIRS})
 add_library(n_body_factories_lib
-    include/n_body_factories.h include/n_body_factories.cpp)
+            include/n_body_factories.hpp src/n_body_factories.cpp)
 target_link_libraries(n_body_factories_lib
-    ${UTILS_LIBRARIES}
-    ${N_BODY_PARALLEL_LIBRARIES}
-    ${N_BODY_SEQUENTIAL_LIBRARIES}
-    ${N_BODY_INTERACTIVE_VIEW_LIBRARIES}
-    ${N_BODY_UTILS_LIBRARIES})
+                      ${UTILS_LIBRARIES}
+                      ${N_BODY_PARALLEL_LIBRARIES}
+                      ${N_BODY_SEQUENTIAL_LIBRARIES}
+                      ${N_BODY_INTERACTIVE_VIEW_LIBRARIES}
+                      ${N_BODY_UTILS_LIBRARIES})
 
 add_subdirectory(test)
 

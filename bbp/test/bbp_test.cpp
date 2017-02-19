@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "bbp_factories.h"
+#include "bbp_factories.hpp"
 
 template<typename T>
 std::unique_ptr<mila::BBP> CreateBBP();

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "bbp_sequential.h"
-#include "bbp_sequential_profiler.h"
-#include "bbp_sequential_app.h"
+#include "bbp_sequential.hpp"
+#include "bbp_sequential_profiler.hpp"
+#include "bbp_sequential_app.hpp"
 
 TEST(BBPSequentialTest, FloatPrecision) {
   EXPECT_NEAR(powf(8 * 100 + 6, 2), 649636, 1e-5);

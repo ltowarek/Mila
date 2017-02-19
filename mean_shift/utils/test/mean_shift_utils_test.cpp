@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "mean_shift_utils.h"
+#include "mean_shift_utils.hpp"
 
 TEST(MeanShiftUtilsPointTest, InitializeWithSingleValue) {
   mila::Point point = {0.0f};
@@ -65,7 +65,8 @@ TEST(MeanShiftUtilsPointTest, VectorOfPointsToString) {
   const auto points = std::vector<mila::Point>{{1.0f, 2.0f, 3.0f, 4.0f},
                                                {5.0f, 6.0f, 7.0f, 8.0f}
   };
-  EXPECT_STREQ(mila::to_string(points).c_str(), "1.000000 2.000000 3.000000 4.000000\n5.000000 6.000000 7.000000 8.000000\n");
+  EXPECT_STREQ(mila::to_string(points).c_str(),
+               "1.000000 2.000000 3.000000 4.000000\n5.000000 6.000000 7.000000 8.000000\n");
 }
 
 TEST(MeanShiftUtilsImageTest, Read) {
