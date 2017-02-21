@@ -24,54 +24,58 @@ Parallel implementation of the BBP formula accepts as an input the following par
 ### Sequential
 Example input and output of the sequential implementation which computes 100 digits of pi starting from 500-th digit with 2 iterations:
 
-    bbp_sequential 100 500 2
-    Mila version: 0.3.0
-    Initial results
-    Digits per second: 2041.769897
-    Duration [us]: 48977.000000
-    Number of Digits: 100
-    Starting Position: 500
-    PI in hex: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
-    Iterations
-    Iteration: 0, Digits per second: 2027.782349, Duration [us]: 49314.000000
-    Iteration: 1, Digits per second: 2130.613770, Duration [us]: 46934.000000
-    Statistics
-    Mean: 2079.197998
-    Median: 2079.197998
-    Variance: 5287.150391
-    Standard Deviation: 72.712791
-    Coefficient of Variation: 0.034972
+    mila bbp_sequential 100 500 2
+    INFO     Version: 0.4.0
+    INFO     Number of digits: 100
+    INFO     Starting position: 500
+    INFO     Number of iterations: 2
+    INFO     Digits: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
+    INFO     Throughput mean: 1428.863037 digits/s
+    INFO     Throughput median: 1428.863037 digits/s
+    INFO     Throughput standard deviation: 29.372379 digits/s
+    INFO     Throughput coefficient of variation: 0.020556
+    INFO     Compute digits duration mean: 70000.500000 us
+    INFO     Compute digits duration median: 70000.500000 us
+    INFO     Compute digits duration standard deviation: 1438.962280 us
+    INFO     Compute digits duration coefficient of variation: 0.020556
 
 ### Parallel
 Example input and output of the parallel implementation which computes 100 digits of pi starting from 500-th digit on OpenCL platform 0, device 0 and with 2 iterations:
 
-    bbp_parallel 100 500 0 0 2
-    Mila version: 0.3.0
-    Initial results
-    Digits per second: 1022.535278
-    Duration: 97796.000000 us
-    Platform: NVIDIA CUDA
-    Device: GeForce GTX 960
-    Number of Digits: 100
-    Starting Position: 500
-    PI in hex: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
-    Iterations
-    Iteration: 0
-    Host statistics:
-    Duration: 73645.000000 us, Digits per second: 1357.855225, Bandwidth: 0.000062 GB/s
-    OpenCL statistics:
-    Build kernel: 410 us, Read buffer: 3 us, Enqueue ND range: 6451 us
-    Iteration: 1
-    Host statistics:
-    Duration: 69080.000000 us, Digits per second: 1447.584473, Bandwidth: 0.000063 GB/s
-    OpenCL statistics:
-    Build kernel: 400 us, Read buffer: 3 us, Enqueue ND range: 6359 us
-    Statistics
-    Mean: 1402.719849
-    Median: 1402.719849
-    Variance: 4025.668945
-    Standard Deviation: 63.448158
-    Coefficient of Variation: 0.045232
+    mila bbp_parallel 100 500 0 0 2
+    INFO     Version: 0.4.0
+    INFO     Number of digits: 100
+    INFO     Starting position: 500
+    INFO     Number of iterations: 2
+    INFO     Platform id: 0
+    INFO     Device id: 0
+    INFO     Platform name: NVIDIA CUDA
+    INFO     Device name: GeForce GTX 960
+    INFO     Digits: 86AF7C72E993B3EE1411636FBC2A2BA9C55D741822F6CE5C3E169514B01EA082D7420C4F4CEC7A2242A6912284AB255EF85C
+    INFO     Bandwidth mean: 0.000060 GB/s
+    INFO     Bandwidth median: 0.000060 GB/s
+    INFO     Bandwidth standard deviation: 0.000000 GB/s
+    INFO     Bandwidth coefficient of variation: 0.000106
+    INFO     Throughput mean: 15002.625000 digits/s
+    INFO     Throughput median: 15002.625000 digits/s
+    INFO     Throughput standard deviation: 1.590990 digits/s
+    INFO     Throughput coefficient of variation: 0.000106
+    INFO     Initialize duration mean: 474.000000 us
+    INFO     Initialize duration median: 474.000000 us
+    INFO     Initialize duration standard deviation: 9.899495 us
+    INFO     Initialize duration coefficient of variation: 0.020885
+    INFO     Compute digits duration mean: 6665.500000 us
+    INFO     Compute digits duration median: 6665.500000 us
+    INFO     Compute digits duration standard deviation: 0.707107 us
+    INFO     Compute digits duration coefficient of variation: 0.000106
+    INFO     Enqueue ND range duration mean: 6321.000000 us
+    INFO     Enqueue ND range duration median: 6321.000000 us
+    INFO     Enqueue ND range duration standard deviation: 0.000000 us
+    INFO     Enqueue ND range duration coefficient of variation: 0.000000
+    INFO     Read buffer duration mean: 3.000000 us
+    INFO     Read buffer duration median: 3.000000 us
+    INFO     Read buffer duration standard deviation: 0.000000 us
+    INFO     Read buffer duration coefficient of variation: 0.000000
 
 ## References
 1. http://www.davidhbailey.com/dhbpapers/bbp-alg.pdf

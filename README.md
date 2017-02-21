@@ -11,9 +11,9 @@ Currently Mila has 3 projects which produce stable results:
 ## Dependencies
 Mila needs the following dependencies to work correctly:
 
-1. OpenCL device with the latest driver installed;
+1. OpenCL;
 1. OpenGL;
-1. CMake 3.4+;
+1. CMake;
 1. The remaining dependencies will be downloaded during `git clone --recursive` step.
 
 ## Build
